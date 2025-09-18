@@ -1,4 +1,4 @@
-import { UserModel } from "../../infrastructure/db/userModel";
+import { UserModel } from "../../infrastructure/database/models/UserSchema";
 import { hashPassword } from "../../infrastructure/security/bcrypt";
 
 export const registerUser = async (name: string, email: string, password: string) => {
