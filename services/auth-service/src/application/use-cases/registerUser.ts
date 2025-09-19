@@ -1,14 +1,25 @@
-import { UserModel } from "../../infrastructure/database/models/UserSchema";
-import { hashPassword } from "../../infrastructure/security/bcrypt";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { HashService } from "../../infrastructure/services/HashService";
+import { User } from "../../domain/entities/User";
 
-export const registerUser = async (name: string, email: string, password: string) => {
-  const existing = await UserModel.findOne({ email });
-  if (existing){
-     throw new Error("email already exists")
+export class RegisterUser {
+  constructor(
+    private userRepository:IUserRepository,
+    private hashService:HashService
+  ){}
+
+  async execute(fullName:string, email:string, password:string) {
+    const existing = await this.userRepository.findByEmail(email);
+    if(existing) throw new Error('user already exists');
+
+    const hashed = await this.hashService.hash(password);
+    const user:User = {
+      id:undefined,
+      fullName,
+      email,
+      password:hashed,
+      createdAt:new Date(),
+    };
+    return this.userRepository.save(user);
   }
-  
-  const hashed = await hashPassword(password);
-  const user = new UserModel({ name, email, password: hashed });
-  await user.save();
-  return user;
-};
+}

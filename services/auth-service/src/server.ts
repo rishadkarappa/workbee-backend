@@ -1,7 +1,7 @@
 import express from "express";
-import mongoose from "mongoose";
-import authRoutes from "./interface/routes/UserRoutes";
 import dotenv from "dotenv";
+import { connectDatabase } from "./infrastructure/config/connectMongo";
+import UserRoutes from './presentation/routes/UserRoutes'
 
 dotenv.config();
 const PORT = process.env.PORT
@@ -9,13 +9,8 @@ const PORT = process.env.PORT
 const app = express();
 app.use(express.json());
 
-app.use("/", authRoutes)
+app.use("/", UserRoutes)
 
-mongoose.connect(process.env.MONGO_URI!)
-  .then(() => {
-    console.log("MongoDB connected");
-    app.listen(PORT, () => console.log("Auth Service running on 4001"))
-  })
-  .catch(err => console.error(err));
-
-
+connectDatabase().then(() => {
+  app.listen(PORT, () => console.log('Auth Service running on port 4001'))
+})
