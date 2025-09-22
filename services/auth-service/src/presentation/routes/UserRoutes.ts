@@ -5,5 +5,6 @@ const router = Router();
 
 router.post("/register", UserContoller.register);
 router.post("/login", UserContoller.login);
+router.get("/verify", UserContoller.verify)
 
 export default router;

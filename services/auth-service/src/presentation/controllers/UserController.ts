@@ -18,7 +18,9 @@ export class UserContoller {
     try {
       const { name, email, password } = req.body;
       const user = await registerUser.execute(name, email, password)
-      res.json({ success: true, user })
+      const token = tokenService.generate(user.id!)
+
+      res.json({ success: true, user, token })
     }catch(err:any){
       res.status(400).json({success:false,message:err.message})
     }
@@ -32,6 +34,21 @@ export class UserContoller {
 
     }catch(err:any){
       res.status(400).json({success:false, message:err.message})
+    }
+  }
+
+  static async verify(req:Request, res:Response) {
+    try {
+      const authHeader = req.headers["authorization"]
+      const token = authHeader && authHeader.split(" ")[1]
+      if(!token) return res.status(401).json({message:'no token'})
+
+      const payload = tokenService.verify(token)
+      const user = await userRepo.findById(payload.id)
+      if(!user) return res.status(404).json({message:'user not found'})
+      res.json({user})
+    } catch (error) {
+      res.status(403).json({message:'invalid token or expired token'})
     }
   }
 
