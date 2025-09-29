@@ -1,27 +1,43 @@
 import { Request, Response } from "express";
 import { RegisterUser } from "../../application/use-cases/RegisterUser";
 import { LoginUser } from "../../application/use-cases/LoginUser";
-import { MongoUserRepository } from "../../infrastructure/database/repositories/MongoUserRepository";
+import { MongoUserRepository } from "../../infrastructure/database/repositories/UserRepository";
 import { HashService } from "../../infrastructure/services/HashService";
 import { TokenService } from "../../infrastructure/services/TokenService";
+import { OtpRepository } from "../../infrastructure/database/repositories/OtpRepository";
+import { OtpService } from "../../infrastructure/services/OtpService";
+import { VerifyOtp } from "../../application/use-cases/VerifyOtp";
+import { EmailService } from "../../infrastructure/services/EmailService";
 
 const userRepo = new MongoUserRepository();
+const optRepo = new OtpRepository()
 const hashService = new HashService()
 const tokenService = new TokenService()
+const otpService = new OtpService()
+const emailService = new EmailService();
 
-const registerUser = new RegisterUser(userRepo, hashService);
+const registerUser = new RegisterUser(userRepo, optRepo, hashService, otpService, emailService);
 const loginUser = new LoginUser(userRepo, hashService, tokenService)
+const verifyOtp = new VerifyOtp(userRepo, optRepo, tokenService)
 
 export class UserContoller {
 
   static async register(req: Request, res: Response) {
     try {
       const { name, email, password } = req.body;
-      const user = await registerUser.execute(name, email, password)
-      const token = tokenService.generate(user.id!)
-
-      res.json({ success: true, user, token })
+      const result = await registerUser.execute(name, email, password)
+      res.json({ success: true, ...result })
     }catch(err:any){
+      res.status(400).json({success:false,message:err.message})
+    }
+  }
+
+  static async verifyOtp(req:Request,res:Response){
+    try {
+      const {userId, otp} = req.body;
+      const {user, token} = await verifyOtp.execute(userId, otp)
+      res.json({success:true,user, token})
+    } catch (err:any) {
       res.status(400).json({success:false,message:err.message})
     }
   }
@@ -36,22 +52,6 @@ export class UserContoller {
       res.status(400).json({success:false, message:err.message})
     }
   }
-
-  static async verify(req:Request, res:Response) {
-    try {
-      const authHeader = req.headers["authorization"]
-      const token = authHeader && authHeader.split(" ")[1]
-      if(!token) return res.status(401).json({message:'no token'})
-
-      const payload = tokenService.verify(token)
-      const user = await userRepo.findById(payload.id)
-      if(!user) return res.status(404).json({message:'user not found'})
-      res.json({user})
-    } catch (error) {
-      res.status(403).json({message:'invalid token or expired token'})
-    }
-  }
-
 }
 
 
