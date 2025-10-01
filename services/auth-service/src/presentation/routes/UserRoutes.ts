@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { UserContoller } from "../controllers/UserController";
+import { UserController } from "../controllers/UserController";
 
 const router = Router();
 
-router.post("/register", UserContoller.register);
-router.get("/verifyOtp", UserContoller.verifyOtp)
-router.post("/login", UserContoller.login);
+router.post("/register", UserController.register);
+router.post("/verifyOtp", UserController.verifyOtp);
+router.post("/login", UserController.login);
+router.get("/verify",UserController.verify)
 
 export default router;

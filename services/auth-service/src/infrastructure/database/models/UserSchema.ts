@@ -2,17 +2,19 @@ import mongoose, { Document, ObjectId, Schema } from "mongoose";
 
 export interface UserDocument extends Document {
   _id: ObjectId;
-  fullName: string;
+  name: string;
   email: string;
   password: string;
+  isVerified:boolean;
   createdAt: Date;
 }
 
 const UserSchema = new Schema<UserDocument>(
   {
-    fullName: { type: String, required: true },
+    name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    isVerified: {type:Boolean, default:false}
   },
   { timestamps: true }
 )

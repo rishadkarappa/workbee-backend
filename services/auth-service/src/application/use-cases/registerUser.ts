@@ -11,31 +11,38 @@ export class RegisterUser {
     private otpRepository:IOtpRepository,
     private hashService:HashService,
     private otpService:OtpService,
-    private emailSerivice:EmailService
+    private emailService:EmailService
   ){}
 
-  async execute(fullName:string, email:string, password:string) {
+  async execute(name:string, email:string, password:string) {
+    console.log('hited apl leyer')
     const existing = await this.userRepository.findByEmail(email);
-    if(existing) throw new Error('user already exists');
+    if(existing&&existing.isVerified) throw new Error('user already exists');
 
     const hashed = await this.hashService.hash(password);
 
     const user:User = {
       id:undefined,
-      fullName,
+      name,
       email,
       password:hashed,
-      createdAt:new Date(),
+      isVerified:false,
     };
-
+    // console.log(user)
     const savedUser = await this.userRepository.save(user)
-
+    
     const otp = this.otpService.generateOtp().toString()
-    const expiresAt = new Date(Date.now()+5*60*1000);
-    await this.otpRepository.save(savedUser.id!, otp, expiresAt);
-
-    await this.emailSerivice.sendOtp(email, otp)
-
+    console.log(otp)
+    const expiresAt = new Date(Date.now() +5*60*1000);
+    await this.otpRepository.save({
+      userId:savedUser.id!,
+      otp,
+      expiresAt
+    });
+    // console.log(savedUser,'nnnnnnnnn');
+    await this.emailService.sendOtp(email, otp)
+    
+    
     return {userId:savedUser.id, message:'otp sent to email'}
   }
 }

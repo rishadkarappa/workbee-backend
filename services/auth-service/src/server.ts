@@ -1,9 +1,10 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
 import { connectDatabase } from "./infrastructure/config/connectMongo";
 import UserRoutes from './presentation/routes/UserRoutes'
 
-dotenv.config();
 const PORT = process.env.PORT
 
 const app = express();

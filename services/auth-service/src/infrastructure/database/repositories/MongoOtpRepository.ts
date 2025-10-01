@@ -2,7 +2,7 @@ import { OtpModel } from "../models/OtpSchema";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
 import { Otp } from "../../../domain/entities/Otp";
 
-export class OtpRepository implements IOtpRepository{
+export class MongoOtpRepository implements IOtpRepository{
     async save(otp: Otp): Promise<Otp> {
         const newOtp = new OtpModel(otp)
         const saved = await newOtp.save()
