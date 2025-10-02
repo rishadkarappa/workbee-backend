@@ -1,5 +1,7 @@
+import { injectable } from 'tsyringe'
 import jwt from 'jsonwebtoken'
 
+injectable()
 const JWT_SECRET = process.env.JWT_SECRET || 'gwtSecret'
 
 export class TokenService {

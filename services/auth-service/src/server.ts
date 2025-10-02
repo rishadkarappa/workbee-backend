@@ -1,9 +1,12 @@
+import "reflect-metadata"
+import "./di/container"
+
 import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
 import { connectDatabase } from "./infrastructure/config/connectMongo";
-import UserRoutes from './presentation/routes/UserRoutes'
+import UserRoutes from './presentation/routes/user/UserRoutes'
 
 const PORT = process.env.PORT
 

@@ -1,10 +1,12 @@
+import { injectable } from "tsyringe";
 import nodemailer from "nodemailer"
 
+@injectable()
 export class EmailService{
     private transporter;
 
     constructor(){
-        console.log('hited email service transporter');
+        console.log('hited email service transporter seviceeeee');
         
         this.transporter = nodemailer.createTransport({
             service:'gmail',
