@@ -1,4 +1,5 @@
 import { injectable,inject } from "tsyringe";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
@@ -15,14 +16,14 @@ export class VerifyOtpUseCase {
 
     async execute(userId:string, otp:string){
         const otpRecord = await this.otpRepository.findByUserId(userId);
-        if(!otpRecord) throw new Error('didnt get otp');
-        if(otpRecord.otp !== otp) throw new Error('invalid otp')
-        if(otpRecord.expiresAt<new Date()) throw new Error("otp expired")
+        if(!otpRecord) throw new Error(ErrorMessages.USER.DONT_GET_OTP);
+        if(otpRecord.otp !== otp) throw new Error(ErrorMessages.USER.INVALID_OTP)
+        if(otpRecord.expiresAt<new Date()) throw new Error(ErrorMessages.USER.OTP_EXPIRED)
         
         await this.otpRepository.deleteByUserId(userId)
 
         const user = await this.userRepository.findById(userId)
-        if(!user) throw new Error('user not found when sent otp');
+        if(!user) throw new Error(ErrorMessages.GENERAL.NOT_FOUND_OTP);
 
         user.isVerified = true
         await this.userRepository.save(user)

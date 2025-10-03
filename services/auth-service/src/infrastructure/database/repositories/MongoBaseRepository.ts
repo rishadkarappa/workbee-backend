@@ -1,4 +1,4 @@
-import { Document,Model,FilterQuery } from "mongoose";
+import { Document,Model } from "mongoose";
 
 export abstract class MongoBaseRepository<TDomain,TDocument extends Document>{
     protected readonly model:Model<TDocument>;

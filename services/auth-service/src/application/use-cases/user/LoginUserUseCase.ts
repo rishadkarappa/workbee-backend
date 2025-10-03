@@ -1,4 +1,6 @@
 import { injectable,inject } from "tsyringe";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { HashService } from "../../../infrastructure/services/HashService";
 import { TokenService } from "../../../infrastructure/services/TokenService";
@@ -14,10 +16,10 @@ export class LoginUserUseCase {
   async execute(email:string, password:string) {
 
     const user = await this.userRepository.findByEmail(email)
-    if(!user) throw new Error('user does not exist please register')
+    if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
     
     const isMatch = await this.hashService.compare(password, user.password)
-    if(!isMatch) throw new Error('invalid password')
+    if(!isMatch) throw new Error(ErrorMessages.USER.INVALID_PASSWORD)
 
     const token = this.tokenService.generate(user.id!)
     return {user, token}

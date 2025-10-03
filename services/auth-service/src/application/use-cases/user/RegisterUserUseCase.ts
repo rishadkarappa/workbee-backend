@@ -1,4 +1,6 @@
 import { injectable,inject } from "tsyringe";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
 import { HashService } from "../../../infrastructure/services/HashService";
@@ -17,9 +19,9 @@ export class RegisterUserUseCase {
   ){}
 
   async execute(name:string, email:string, password:string) {
-    console.log('hited apl leyer')
+    // console.log('hited apl leyer')
     const existing = await this.userRepository.findByEmail(email);
-    if(existing&&existing.isVerified) throw new Error('user already exists');
+    if(existing&&existing.isVerified) throw new Error(ErrorMessages.USER.ALREADY_EXISTS);
 
     const hashed = await this.hashService.hash(password);
 
