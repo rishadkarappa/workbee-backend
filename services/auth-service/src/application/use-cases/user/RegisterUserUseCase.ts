@@ -31,6 +31,7 @@ export class RegisterUserUseCase {
       name,
       email,
       password:hashed,
+      role:'user',
       isVerified:false,
     };
     // console.log(user)

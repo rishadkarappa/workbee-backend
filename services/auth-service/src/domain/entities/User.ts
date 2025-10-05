@@ -4,5 +4,7 @@ export interface User {
   email: string;
   password: string;
   isVerified?: boolean;
-  createdAt?: Date
+  role:"user"|"admin";
+  createdAt?: Date;
+  updatedAt?:Date;
 }

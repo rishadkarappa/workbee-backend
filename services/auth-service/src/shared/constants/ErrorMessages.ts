@@ -17,6 +17,11 @@ export const ErrorMessages = {
         ATUH_HEADER_IS_MISSING:"Authorization header is missing"
     },
 
+    ADMIN:{
+        ADMIN_NOT_FOUND:"Admin not found proviced email is wrong",
+        WRONG_PASSWORD:"provided admin password was wrong"
+    },
+
     GENERAL:{
         SERVER_ERROR:"Something went wrong, Please try again later",
         BAD_REQUEST:"Invalid request",

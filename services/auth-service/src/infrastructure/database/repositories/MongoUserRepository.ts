@@ -16,6 +16,7 @@ export class MongoUserRepository extends MongoBaseRepository<User, any> implemen
             name:user.name,
             email:user.email,
             password:user.password,
+            role:user.role,
             isVerified:user.isVerified,
             createdAt:user.createdAt
         }

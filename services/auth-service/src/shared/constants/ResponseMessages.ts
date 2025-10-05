@@ -15,6 +15,10 @@ export const ResponseMessage = {
         VERFIFIED:"user verified successfully"
     },
 
+    ADMIN:{
+        LOGINED_SUCCESFULLY:"admin Verified Logined successful"
+    },
+
     OTP: {
         SENT: "OTP sent successfully",
         EXPIRED: "OTP expired",
