@@ -1,11 +1,12 @@
 import { injectable } from 'tsyringe'
 import jwt from 'jsonwebtoken'
 
+import { ITokenService } from '../../domain/services/ITokenService'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'gwtSecret'
 
 @injectable()
-export class TokenService {
+export class TokenService implements ITokenService{
     
     generate(id:string):string {
         return jwt.sign({id}, JWT_SECRET, {expiresIn:'7d'})

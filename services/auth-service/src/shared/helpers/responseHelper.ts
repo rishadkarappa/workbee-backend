@@ -1,4 +1,4 @@
-import { ApiResponse } from "../models/ApiResponse";
+import { ApiResponse } from "./ApiResponseModel";
 import { HttpStatus } from "../enums/HttpStatus";
 
 

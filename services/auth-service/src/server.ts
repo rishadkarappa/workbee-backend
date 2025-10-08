@@ -17,14 +17,14 @@ const PORT = process.env.PORT
 const app = express();
 app.use(express.json());
 
-// morgan + winston can check the app apies logs
-app.use(
-  morgan("combined", {
-    stream: {
-      write: (message) => logger.info(message.trim()),
-    },
-  })
-);
+//morgan + winston can check the app apies logs
+// app.use(
+//   morgan("combined", {
+//     stream: {
+//       write: (message) => logger.info(message.trim()),
+//     },
+//   })
+// );
 
 app.use("/", UserRoutes)
 app.use("/", AdminRoutes)

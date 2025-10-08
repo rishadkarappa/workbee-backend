@@ -17,4 +17,5 @@ export class AdminController{
             res.status(HttpStatus.UNAUTHORIZED).json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))
         }
     }
+
 }
