@@ -12,7 +12,7 @@ export const ResponseMessage = {
     USER:{
         REGISTERD_SUCCESSFULLY:"User registered successfully",
         LOGINED_SUCCESFULLY:"User Logined successful",
-        VERFIFIED:"user verified successfully"
+        VERFIFIED:"user verified successfully",
     },
 
     ADMIN:{

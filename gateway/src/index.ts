@@ -2,12 +2,15 @@ import express from "express";
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import dotenv from 'dotenv'
+import { httpLogger,logger } from "./middleware/centralized-logging";
 
 dotenv.config()
 const PORT = process.env.PORT
 
 const app = express();
 app.use(cors());
+
+app.use(httpLogger)
 
 //auth service
 app.use("/auth", createProxyMiddleware({

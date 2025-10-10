@@ -1,6 +1,5 @@
 import { injectable,inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-import logger from "../../../shared/logger/logger";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { HashService } from "../../../infrastructure/services/HashService";
@@ -17,11 +16,11 @@ export class LoginUserUseCase {
   
   async execute(email:string, password:string) {
     // console.log('hited loginuse case');
-    logger.info('hited login case')
+    // logger.info('hited login case')
     const user = await this.userRepository.findByEmail(email)
     if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
     
-    const isMatch = await this.hashService.compare(password, user.password)
+    const isMatch = await this.hashService.compare(password, user.password!)
     if(!isMatch) throw new Error(ErrorMessages.USER.INVALID_PASSWORD)
 
     const token = this.tokenService.generate(user.id!)

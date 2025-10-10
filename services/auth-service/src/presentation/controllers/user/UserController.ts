@@ -8,6 +8,7 @@ import { RegisterUserUseCase } from "../../../application/use-cases/user/Registe
 import { LoginUserUseCase } from "../../../application/use-cases/user/LoginUserUseCase";
 import { VerifyOtpUseCase } from "../../../application/use-cases/user/VerifyOtpUseCase";
 import { VerifyUserUseCase } from "../../../application/use-cases/user/VerifyUserUseCase";
+import { GoogleLoginUserUseCase } from "../../../application/use-cases/user/GoogleLoginUserUseCase";
 
 export class UserController {
   static async register(req: Request, res: Response) {
@@ -73,6 +74,22 @@ export class UserController {
       res
         .status(HttpStatus.UNAUTHORIZED)
         .json(ResponseHelper.error(err.message, HttpStatus.UNAUTHORIZED));
+    }
+  }
+
+  static async googleLogin(req:Request, res:Response){
+    try {
+      const googleLogin = container.resolve(GoogleLoginUserUseCase)
+      const {credential} = req.body;
+      const { user, token } = await googleLogin.execute(credential)
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success({user, token}, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK))
+
+    } catch (err:any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))
     }
   }
 }

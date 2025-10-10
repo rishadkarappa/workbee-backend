@@ -7,5 +7,6 @@ router.post("/register", UserController.register);
 router.post("/verifyOtp", UserController.verifyOtp);
 router.post("/login", UserController.login);
 router.get("/verify",UserController.verify)
+router.post("/google-login",UserController.googleLogin)
 
 export default router;
