@@ -9,6 +9,8 @@ import { LoginUserUseCase } from "../../../application/use-cases/user/LoginUserU
 import { VerifyOtpUseCase } from "../../../application/use-cases/user/VerifyOtpUseCase";
 import { VerifyUserUseCase } from "../../../application/use-cases/user/VerifyUserUseCase";
 import { GoogleLoginUserUseCase } from "../../../application/use-cases/user/GoogleLoginUserUseCase";
+import { ForgotPasswordUseCase } from "../../../application/use-cases/user/ForgotUserPasswordUseCase";
+import { ResetPasswordUseCase } from "../../../application/use-cases/user/ResetUserPasswordUseCase";
 
 export class UserController {
   static async register(req: Request, res: Response) {
@@ -90,6 +92,41 @@ export class UserController {
       res
         .status(HttpStatus.BAD_REQUEST)
         .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))
+    }
+  }
+
+  static async forgotPassword(req:Request, res:Response) {
+    try {
+      console.log('hited contoller forgot passs')
+      const { email } = req.body;
+      const forgotPassword = container.resolve(ForgotPasswordUseCase)
+      const result = await forgotPassword.execute(email)
+
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success({result},ResponseMessage.USER.SENT_RESET_LINK, HttpStatus.OK))
+    } catch (error:any) {
+      res 
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+    }
+  }
+  
+  static async resetPassword(req:Request, res:Response){
+    try {
+      console.log("bodycontets",req.body)
+      const { token} = req.params
+      const { password} = req.body
+      console.log('passssss',req.body.passoword)
+      const resetPassword = container.resolve(ResetPasswordUseCase)
+      const result = await resetPassword.execute(token, password)
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success({result}, ResponseMessage.USER.PASSOWORD_UPDATED, HttpStatus.OK))
+    } catch (error:any) {
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
     }
   }
 }

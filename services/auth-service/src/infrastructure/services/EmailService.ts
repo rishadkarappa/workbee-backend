@@ -24,7 +24,18 @@ export class EmailService{
             subject:'Your OTP for WorkBee Registration',
             text:`Your OTP is: ${otp}, it will be expire in 5 minutes`
         }
-        console.log(JSON.stringify(mailOption),'meilserviceeeeeeee')
+        // console.log(JSON.stringify(mailOption),'meilserviceeeeeeee')
+        await this.transporter.sendMail(mailOption)
+    }
+
+    //forgot pass reset link
+    async sendResentPasswordLink(to:string, link:string){
+        const mailOption = {
+            from:process.env.EMAIL_USER,
+            to,
+            subject:"WorkBee - Reset Password Link",
+            text: `Click the following link to reset you WorkBee password : ${link}\n this link will expire after 10 minutes`
+        }
         await this.transporter.sendMail(mailOption)
     }
 }

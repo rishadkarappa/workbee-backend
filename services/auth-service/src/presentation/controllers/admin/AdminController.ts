@@ -18,4 +18,12 @@ export class AdminController{
         }
     }
 
+    // static async adminDashboard(req:Request, res:Response){
+    //     try {
+            
+    //     } catch (error) {
+            
+    //     }
+    // }
+
 }

@@ -24,7 +24,7 @@ export class LoginAdminUseCase{
 
         if(!admin||admin.role!=='admin') throw new Error(ErrorMessages.ADMIN.ADMIN_NOT_FOUND);
 
-        const isAdmin = await this.hashService.compare(password, admin.password)
+        const isAdmin = await this.hashService.compare(password, admin.password!)
         if(!isAdmin) throw new Error(ErrorMessages.ADMIN.WRONG_PASSWORD)
 
         const token = this.tokenService.generate(admin.id!)

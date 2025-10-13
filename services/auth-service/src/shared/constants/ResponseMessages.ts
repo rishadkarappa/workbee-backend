@@ -13,6 +13,8 @@ export const ResponseMessage = {
         REGISTERD_SUCCESSFULLY:"User registered successfully",
         LOGINED_SUCCESFULLY:"User Logined successful",
         VERFIFIED:"user verified successfully",
+        SENT_RESET_LINK:"Reset link sent successfully",
+        PASSOWORD_UPDATED:"password reset successfully"
     },
 
     ADMIN:{
