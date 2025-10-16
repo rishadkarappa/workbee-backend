@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import dotenv from 'dotenv'
-import { httpLogger,logger } from "./middleware/centralized-logging";
+import { httpLogger } from "./middleware/centralized-logging";
 
 dotenv.config()
 const PORT = process.env.PORT

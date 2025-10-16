@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import "./presentation/di/container"
+import "./infrastructure/di/container"
 
 import dotenv from "dotenv";
 dotenv.config();
