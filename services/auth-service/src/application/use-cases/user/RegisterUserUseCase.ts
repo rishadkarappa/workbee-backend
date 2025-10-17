@@ -1,21 +1,21 @@
 import { injectable,inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { User } from "../../../domain/entities/User";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
-import { HashService } from "../../../infrastructure/services/HashService";
-import { EmailService } from "../../../infrastructure/services/EmailService";
-import { OtpService } from "../../../infrastructure/services/OtpService";
-import { User } from "../../../domain/entities/User";
+import { IHashService } from "../../../domain/services/IHashService";
+import { IOtpService } from "../../../domain/services/IOtpService";
+import { IEmailService } from "../../../domain/services/IEmailService";
 
 @injectable()
 export class RegisterUserUseCase {
   constructor(
     @inject("UserRepository") private userRepository:IUserRepository,
     @inject("OtpRepository") private otpRepository:IOtpRepository,
-    private hashService:HashService,
-    private otpService:OtpService,
-    private emailService:EmailService
+    @inject("HashService") private hashService:IHashService,
+    @inject("OtpService") private otpService:IOtpService,
+    @inject("EmailService") private emailService:IEmailService
   ){}
 
   async execute(name:string, email:string, password:string) {

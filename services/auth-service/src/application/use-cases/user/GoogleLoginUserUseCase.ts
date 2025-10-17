@@ -1,8 +1,9 @@
 import { OAuth2Client } from "google-auth-library";
-import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { TokenService } from "../../../infrastructure/services/TokenService";
 import { User } from "../../../domain/entities/User";
 import { inject, injectable } from "tsyringe";
+
+import { IUserRepository } from "../../../domain/repositories/IUserRepository";
+import { ITokenService } from "../../../domain/services/ITokenService";
 
 const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
@@ -10,7 +11,7 @@ const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 export class GoogleLoginUserUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
-        private tokenSerivice:TokenService
+        @inject("TokenService") private tokenSerivice:ITokenService
     ){}
 
     async execute(credential:string){

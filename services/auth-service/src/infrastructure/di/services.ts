@@ -5,13 +5,14 @@ import { TokenService } from "../services/TokenService";
 import { EmailService } from "../services/EmailService";
 import { OtpService } from "../services/OtpService";
 
-//service repos
+//service interfaces
 import { ITokenService } from "../../domain/services/ITokenService";
+import { IHashService } from "../../domain/services/IHashService";
+import { IEmailService } from "../../domain/services/IEmailService";
+import { IOtpService } from "../../domain/services/IOtpService";
 
 //bind sevices as singletons
-container.registerSingleton(HashService)
-container.registerSingleton(TokenService)
-container.registerSingleton(EmailService)
-container.registerSingleton(OtpService)
-
-container.register<ITokenService>("ITokenService",{useClass:TokenService})
+container.registerSingleton<IHashService>("HashService", HashService);
+container.registerSingleton<ITokenService>("TokenService", TokenService);
+container.registerSingleton<IEmailService>("EmailService", EmailService);
+container.registerSingleton<IOtpService>("OtpService", OtpService);

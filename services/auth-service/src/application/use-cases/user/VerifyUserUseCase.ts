@@ -1,13 +1,14 @@
 import { injectable,inject } from "tsyringe";
-import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { TokenService } from "../../../infrastructure/services/TokenService";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+
+import { IUserRepository } from "../../../domain/repositories/IUserRepository";
+import { ITokenService } from "../../../domain/services/ITokenService";
 
 @injectable()
 export class VerifyUserUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
-        private tokenService:TokenService
+        @inject("TokenService") private tokenService:ITokenService
     ){}
     async execute(authHeader?:string){
         if(!authHeader) throw new Error(ErrorMessages.AUTH.ATUH_HEADER_IS_MISSING)

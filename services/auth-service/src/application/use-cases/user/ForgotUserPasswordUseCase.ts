@@ -1,16 +1,17 @@
 import { injectable, inject } from "tsyringe";
-import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { TokenService } from "../../../infrastructure/services/TokenService";
-import { EmailService } from "../../../infrastructure/services/EmailService";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
+
+import { IUserRepository } from "../../../domain/repositories/IUserRepository";
+import { IEmailService } from "../../../domain/services/IEmailService";
+import { ITokenService } from "../../../domain/services/ITokenService";
 
 @injectable()
 export class ForgotPasswordUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
-        private tokenService:TokenService,
-        private emailService:EmailService
+        @inject("TokenService") private tokenService:ITokenService,
+        @inject("EmailService") private emailService:IEmailService
     ){}
 
     async execute(email:string){

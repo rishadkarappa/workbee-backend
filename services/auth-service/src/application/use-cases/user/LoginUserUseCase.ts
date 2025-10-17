@@ -2,15 +2,15 @@ import { injectable,inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { HashService } from "../../../infrastructure/services/HashService";
-import { TokenService } from "../../../infrastructure/services/TokenService";
+import { ITokenService } from "../../../domain/services/ITokenService";
+import { IHashService } from "../../../domain/services/IHashService";
 
 @injectable()
 export class LoginUserUseCase {
   constructor(
     @inject("UserRepository") private userRepository:IUserRepository,
-    private hashService:HashService,
-    private tokenService:TokenService
+    @inject("HashService") private hashService:IHashService,
+    @inject("TokenService") private tokenService:ITokenService
   ) {}
   
   

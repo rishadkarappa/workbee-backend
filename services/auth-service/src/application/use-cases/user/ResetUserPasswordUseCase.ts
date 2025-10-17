@@ -1,17 +1,18 @@
 import { inject, injectable } from "tsyringe";
-import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { TokenService } from "../../../infrastructure/services/TokenService";
-import { HashService } from "../../../infrastructure/services/HashService";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
+
+import { IUserRepository } from "../../../domain/repositories/IUserRepository";
+import { ITokenService } from "../../../domain/services/ITokenService";
+import { IHashService } from "../../../domain/services/IHashService";
 
 
 @injectable()
 export class ResetPasswordUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
-        private tokenService:TokenService,
-        private hashService:HashService
+        @inject("TokenService") private tokenService:ITokenService,
+        @inject("HashService") private hashService:IHashService
     ){}
 
     async execute(token:string, password:string){

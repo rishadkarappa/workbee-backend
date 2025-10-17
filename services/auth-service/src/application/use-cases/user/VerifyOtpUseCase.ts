@@ -3,15 +3,14 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
-
-import { TokenService } from "../../../infrastructure/services/TokenService";
+import { ITokenService } from "../../../domain/services/ITokenService";
 
 @injectable()
 export class VerifyOtpUseCase {
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("OtpRepository") private otpRepository:IOtpRepository,
-        private tokenService:TokenService
+        @inject("TokenService") private tokenService:ITokenService
     ){}
 
     async execute(userId:string, otp:string){
