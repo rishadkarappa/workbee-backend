@@ -1,14 +1,17 @@
 import { Router } from "express";
+import { container } from "tsyringe";
 import { UserController } from "../../controllers/user/UserController";
 
 const router = Router();
 
-router.post("/register", UserController.register);
-router.post("/verifyOtp", UserController.verifyOtp);
-router.post("/login", UserController.login);
-router.get("/verify", UserController.verify)
-router.post("/google-login", UserController.googleLogin)
-router.post("/forgot-password", UserController.forgotPassword)
-router.post("/reset-password/:token", UserController.resetPassword)
+const userController = container.resolve(UserController);
+
+router.post("/register", userController.register.bind(userController));
+router.post("/verifyOtp", userController.verifyOtp.bind(userController));
+router.post("/login", userController.login.bind(userController));
+router.get("/verify", userController.verify.bind(userController))
+router.post("/google-login", userController.googleLogin.bind(userController))
+router.post("/forgot-password", userController.forgotPassword.bind(userController))
+router.post("/reset-password/:token", userController.resetPassword.bind(userController))
 
 export default router;

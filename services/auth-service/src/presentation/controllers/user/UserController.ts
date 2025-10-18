@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { container } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
@@ -12,13 +12,23 @@ import { GoogleLoginUserUseCase } from "../../../application/use-cases/user/Goog
 import { ForgotPasswordUseCase } from "../../../application/use-cases/user/ForgotUserPasswordUseCase";
 import { ResetPasswordUseCase } from "../../../application/use-cases/user/ResetUserPasswordUseCase";
 
+@injectable()
 export class UserController {
-  static async register(req: Request, res: Response) {
+  constructor(
+    @inject(RegisterUserUseCase) private registerUserUseCase: RegisterUserUseCase,
+    @inject(LoginUserUseCase) private loginUserUseCase: LoginUserUseCase,
+    @inject(VerifyOtpUseCase) private verifyOtpUseCase: VerifyOtpUseCase,
+    @inject(VerifyUserUseCase) private verifyUserUseCase: VerifyUserUseCase,
+    @inject(GoogleLoginUserUseCase) private googleLoginUserUseCase: GoogleLoginUserUseCase,
+    @inject(ForgotPasswordUseCase) private forgotPasswordUseCase: ForgotPasswordUseCase,
+    @inject(ResetPasswordUseCase) private resetPasswordUseCase: ResetPasswordUseCase
+  ) {}
+
+  async register(req: Request, res: Response) {
     try {
-      const registerUser = container.resolve(RegisterUserUseCase);
       const { name, email, password } = req.body;
 
-      const result = await registerUser.execute(name, email, password);
+      const result = await this.registerUserUseCase.execute(name, email, password);
 
       res
         .status(HttpStatus.CREATED)
@@ -30,12 +40,11 @@ export class UserController {
     }
   }
 
-  static async verifyOtp(req: Request, res: Response) {
+  async verifyOtp(req: Request, res: Response) {
     try {
-      const verifyOtp = container.resolve(VerifyOtpUseCase);
       const { userId, otp } = req.body;
 
-      const { user, token } = await verifyOtp.execute(userId, otp);
+      const { user, token } = await this.verifyOtpUseCase.execute(userId, otp);
 
       res
         .status(HttpStatus.OK)
@@ -47,12 +56,10 @@ export class UserController {
     }
   }
 
-  static async login(req: Request, res: Response) {
+  async login(req: Request, res: Response) {
     try {
-      const loginUser = container.resolve(LoginUserUseCase);
       const { email, password } = req.body;
-
-      const { user, token } = await loginUser.execute(email, password);
+      const { user, token } = await this.loginUserUseCase.execute(email, password);
 
       res
         .status(HttpStatus.OK)
@@ -64,10 +71,9 @@ export class UserController {
     }
   }
 
-  static async verify(req: Request, res: Response) {
+  async verify(req: Request, res: Response) {
     try {
-      const verifyUser = container.resolve(VerifyUserUseCase);
-      const user = await verifyUser.execute(req.headers.authorization);
+      const user = await this.verifyUserUseCase.execute(req.headers.authorization);
 
       res
         .status(HttpStatus.OK)
@@ -79,11 +85,10 @@ export class UserController {
     }
   }
 
-  static async googleLogin(req:Request, res:Response){
+  async googleLogin(req:Request, res:Response){
     try {
-      const googleLogin = container.resolve(GoogleLoginUserUseCase)
       const {credential} = req.body;
-      const { user, token } = await googleLogin.execute(credential)
+      const { user, token } = await this.googleLoginUserUseCase.execute(credential)
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({user, token}, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK))
@@ -95,12 +100,12 @@ export class UserController {
     }
   }
 
-  static async forgotPassword(req:Request, res:Response) {
+  async forgotPassword(req:Request, res:Response) {
     try {
       console.log('hited contoller forgot passs')
       const { email } = req.body;
-      const forgotPassword = container.resolve(ForgotPasswordUseCase)
-      const result = await forgotPassword.execute(email)
+
+      const result = await this.forgotPasswordUseCase.execute(email)
       console.log('rrrrrrr',result)
       res
         .status(HttpStatus.OK)
@@ -112,15 +117,15 @@ export class UserController {
     }
   }
   
-  static async resetPassword(req:Request, res:Response){
+  async resetPassword(req:Request, res:Response){
     try {
       console.log("bodycontets",req.body)
       const { token} = req.params
       const { password} = req.body
       console.log(password)
       console.log('passssss',req.body.passoword)
-      const resetPassword = container.resolve(ResetPasswordUseCase)
-      const result = await resetPassword.execute(token, password)
+
+      const result = await this.resetPasswordUseCase.execute(token, password)
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({result}, ResponseMessage.USER.PASSOWORD_UPDATED, HttpStatus.OK))
