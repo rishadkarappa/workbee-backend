@@ -1,0 +1,2 @@
+2025-10-19 00:07:01 [[32minfo[39m]: ::1 - - [18/Oct/2025:18:37:01 +0000] "GET /auth/verify HTTP/1.1" 304 - "http://localhost:5173/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+2025-10-19 00:07:01 [[32minfo[39m]: ::1 - - [18/Oct/2025:18:37:01 +0000] "GET /auth/verify HTTP/1.1" 304 - "http://localhost:5173/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
