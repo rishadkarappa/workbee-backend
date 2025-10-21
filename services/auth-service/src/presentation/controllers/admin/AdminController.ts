@@ -6,11 +6,13 @@ import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
 import { LoginAdminUseCase } from "../../../application/use-cases/admin/LoginAdminUseCase";
+import { GetUsersUseCase } from "../../../application/use-cases/admin/GetUsersUseCase";
 
 @injectable()
 export class AdminController{
     constructor(
-        @inject(LoginAdminUseCase) private loginAdminUseCase:LoginAdminUseCase
+        @inject(LoginAdminUseCase) private loginAdminUseCase:LoginAdminUseCase,
+        @inject(GetUsersUseCase) private getUsersUseCase:GetUsersUseCase
     ){}
 
     async adminLogin(req:Request, res:Response){
@@ -23,12 +25,13 @@ export class AdminController{
         }
     }
 
-    // static async adminDashboard(req:Request, res:Response){
-    //     try {
-            
-    //     } catch (error) {
-            
-    //     }
-    // }
+    async getUsers(req:Request, res:Response){
+        try {
+            const result = await this.getUsersUseCase.execute()
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.GET_USERS))
+        } catch (error:any) {
+            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
+        }
+    }
 
 }

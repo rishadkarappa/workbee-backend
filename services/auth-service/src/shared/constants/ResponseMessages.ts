@@ -18,7 +18,8 @@ export const ResponseMessage = {
     },
 
     ADMIN:{
-        LOGINED_SUCCESFULLY:"admin Verified Logined successful"
+        LOGINED_SUCCESFULLY:"admin Verified Logined successful",
+        GET_USERS:"get suers successfully"
     },
 
     OTP: {

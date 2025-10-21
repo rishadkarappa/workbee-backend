@@ -12,6 +12,8 @@ import { VerifyOtpUseCase } from "../../application/use-cases/user/VerifyOtpUseC
 
 //admin
 import { LoginAdminUseCase } from "../../application/use-cases/admin/LoginAdminUseCase";
+import { GetUsersUseCase } from "../../application/use-cases/admin/GetUsersUseCase";
+
 
 //usecases will injected by auto via @inject
 //user
@@ -25,3 +27,4 @@ container.registerSingleton(VerifyOtpUseCase);
 
 //admin
 container.registerSingleton(LoginAdminUseCase)
+container.registerSingleton(GetUsersUseCase)
