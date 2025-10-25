@@ -7,5 +7,7 @@ const workController = container.resolve(WorkController)
 
 router.post("/apply-worker", workController.applyWorker.bind(workController))
 router.get("/get-new-appliers", workController.getNewAppliers.bind(workController))
+router.post("/worker-login", workController.workerLogin.bind(workController))
+router.post("/approve-worker", workController.approveWorker.bind(workController))
 
 export default router
