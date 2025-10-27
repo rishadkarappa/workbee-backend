@@ -10,9 +10,14 @@ import { ITokenService } from "../../domain/services/ITokenService";
 import { IHashService } from "../../domain/services/IHashService";
 import { IEmailService } from "../../domain/services/IEmailService";
 import { IOtpService } from "../../domain/services/IOtpService";
+import { WorkerGrpcService } from "../services/WorkerGrpcService";
+import { IWorkerGrpcService } from "../../domain/services/IWorkerGrpcService";
 
 //bind sevices as singletons
 container.registerSingleton<IHashService>("HashService", HashService);
 container.registerSingleton<ITokenService>("TokenService", TokenService);
 container.registerSingleton<IEmailService>("EmailService", EmailService);
 container.registerSingleton<IOtpService>("OtpService", OtpService);
+
+//grpc
+container.register<IWorkerGrpcService>("WorkerGrpcService", {useClass:WorkerGrpcService});

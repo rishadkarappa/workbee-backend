@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
-import { ApplyWorkerUseCase } from "../../use-case/ApplyWorkerUseCase";
 import { inject, injectable } from "tsyringe";
-import { GetNewAppliersUseCase } from "../../use-case/GetNewAppliersUseCase";
 import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
+
+import { ApplyWorkerUseCase } from "../../use-case/ApplyWorkerUseCase";
+import { GetNewAppliersUseCase } from "../../use-case/GetNewAppliersUseCase";
 import { WorkerLoginUseCase } from "../../use-case/WorkerLoginUseCase";
-import { WorkerModel } from "../../infrastructure/database/models/WorkerSchema";
+import { WorkerApproveUseCase } from "../../use-case/WorkerApproveUseCase";
+import { GetAllWorkersUseCase } from "../../use-case/GetAllWorkersUseCase";
+// import { WorkerModel } from "../../infrastructure/database/models/WorkerSchema";
 
 @injectable()
 export class WorkController {
@@ -14,6 +17,9 @@ export class WorkController {
     @inject(ApplyWorkerUseCase) private applyWorkerUseCase: ApplyWorkerUseCase,
     @inject(GetNewAppliersUseCase) private getNewAppliersUseCase: GetNewAppliersUseCase,
     @inject(WorkerLoginUseCase) private workerLoginUseCase: WorkerLoginUseCase,
+    @inject(WorkerApproveUseCase) private workerApproveUseCase:WorkerApproveUseCase,
+    @inject(GetAllWorkersUseCase) private getAllWorkersUseCase:GetAllWorkersUseCase,
+
   ) { }
 
   async applyWorker(req: Request, res: Response): Promise<void> {
@@ -60,9 +66,28 @@ export class WorkController {
 
   async approveWorker(req:Request, res:Response):Promise<void>{
     try {
-        
-    } catch (error) {
-      
+        const { email } = req.body
+        const result = await this.workerApproveUseCase.execute(email)
+        res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(result, "wokrer approved successfully")) 
+    } catch (error:any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+    }
+  }
+
+  async getWorkers(req:Request, res:Response):Promise<void>{
+    try {
+      const workers = await this.getAllWorkersUseCase.execute()
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(workers, "get all wokrers")) 
+    } catch (error:any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
     }
   }
 }

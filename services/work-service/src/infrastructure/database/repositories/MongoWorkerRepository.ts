@@ -45,7 +45,12 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
     }
 
     async getNewAppliers(): Promise<Worker[]> {
-        const newAppliers = await this.findAll()
+        const newAppliers = await WorkerModel.find({isApproved:false})
         return newAppliers
+    }
+
+    async getAllWorkers(): Promise<Worker[]> {
+        const workers = await WorkerModel.find({isApproved:true})
+        return workers.map((w) => this.map(w))
     }
 }

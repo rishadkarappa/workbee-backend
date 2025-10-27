@@ -10,6 +10,7 @@ import { connectDatabase } from "./infrastructure/config/connectMongo";
 
 import UserRoutes from './presentation/routes/user/UserRoutes'
 import AdminRoutes from './presentation/routes/admin/AdminRoutes'
+import WorkerRoutes from './presentation/routes/worker/WorkerRoutes'
 
 const PORT = process.env.PORT
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/", UserRoutes)
 app.use("/", AdminRoutes)
+app.use("/", WorkerRoutes)
 
 connectDatabase().then(() => {
   app.listen(PORT, () => console.log('Auth Service running on port 4001'))
