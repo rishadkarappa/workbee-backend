@@ -2,7 +2,7 @@ import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import path from 'path';
 import { container } from 'tsyringe';
-import { WorkerLoginUseCase } from '../../use-case/WorkerLoginUseCase';
+import { ValidateWorkerCredentialsUseCase } from '../../use-case/ValidateWorkerCredentialsUseCase';
 
 const PROTO_PATH = path.join(__dirname, '../../../../../shared/protos/worker.proto');
 
@@ -37,8 +37,8 @@ export class WorkerGrpcServer {
     try {
       const { email, password } = call.request;
       
-      const workerLoginUseCase = container.resolve(WorkerLoginUseCase);
-      const worker = await workerLoginUseCase.execute(email, password);
+      const validateWorkerCredentialsUseCase = container.resolve(ValidateWorkerCredentialsUseCase);
+      const worker = await validateWorkerCredentialsUseCase.execute(email, password);
 
       callback(null, {
         success: true,
