@@ -11,7 +11,7 @@ const PORT = process.env.PORT
 const GRPC_PORT = process.env.GRPC_PORT
 
 import WorkRoutes from "./presentation/routes/WorkRoutes" 
-import { WorkerGrpcServer } from "./infrastructure/grpc/WorkerGrpcServer";
+import { WorkerGrpcServer } from "./infrastructure/grpc/servers/WorkerGrpcServer";
 
 const app = express()
 app.use(express.json())

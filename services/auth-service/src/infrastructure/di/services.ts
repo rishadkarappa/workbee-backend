@@ -10,7 +10,7 @@ import { ITokenService } from "../../domain/services/ITokenService";
 import { IHashService } from "../../domain/services/IHashService";
 import { IEmailService } from "../../domain/services/IEmailService";
 import { IOtpService } from "../../domain/services/IOtpService";
-import { WorkerGrpcService } from "../services/WorkerGrpcService";
+import { WorkerGrpcService } from "../services/grpc/WorkerGrpcService";
 import { IWorkerGrpcService } from "../../domain/services/IWorkerGrpcService";
 
 //bind sevices as singletons

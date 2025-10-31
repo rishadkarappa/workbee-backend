@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
-import { IWorkerGrpcService, WorkerData } from "../../domain/services/IWorkerGrpcService";
-import { WorkerGrpcClient } from "../grpc/WorkerGrpcClient";
+import { IWorkerGrpcService, WorkerData } from "../../../domain/services/IWorkerGrpcService";
+import { WorkerGrpcClient } from "../../grpc/WorkerGrpcClient";
 
 @injectable()
 export class WorkerGrpcService implements IWorkerGrpcService {

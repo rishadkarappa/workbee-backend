@@ -2,7 +2,7 @@ import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import path from 'path';
 import { container } from 'tsyringe';
-import { ValidateWorkerCredentialsUseCase } from '../../use-case/ValidateWorkerCredentialsUseCase';
+import { ValidateWorkerCredentialsUseCase } from '../../../use-case/ValidateWorkerCredentialsUseCase';
 
 const PROTO_PATH = path.join(__dirname, '../../../../../shared/protos/worker.proto');
 

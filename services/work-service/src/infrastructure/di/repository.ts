@@ -3,3 +3,4 @@ import { MongoWorkerRepository } from "../database/repositories/MongoWorkerRepos
 
 
 container.register("WorkerRepository", { useClass : MongoWorkerRepository})
+container.register("WorkRepository",{useClass:MongoWorkerRepository})
