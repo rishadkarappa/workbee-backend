@@ -4,7 +4,7 @@ import { Work } from "../../../domain/entities/Work";
 import { WorkModel } from "../models/WorkSchema";
 
 @injectable()
-export class TaskRepository implements IWorkRepository {
+export class MongoWorkRepository implements IWorkRepository {
     async create(work: Work): Promise<Work> {
         const createdWork = await WorkModel.create(work);
         return this.mapToEntity(createdWork);

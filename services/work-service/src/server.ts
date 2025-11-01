@@ -15,6 +15,7 @@ import { WorkerGrpcServer } from "./infrastructure/grpc/servers/WorkerGrpcServer
 
 const app = express()
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.use("/", WorkRoutes)
 

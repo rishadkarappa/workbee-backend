@@ -4,7 +4,7 @@ import path from 'path';
 import { container } from 'tsyringe';
 import { ValidateWorkerCredentialsUseCase } from '../../../use-case/ValidateWorkerCredentialsUseCase';
 
-const PROTO_PATH = path.join(__dirname, '../../../../../shared/protos/worker.proto');
+const PROTO_PATH = path.join(__dirname, '../../../../../../shared/protos/worker.proto');
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,

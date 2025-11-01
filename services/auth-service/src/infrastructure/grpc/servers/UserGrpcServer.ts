@@ -5,7 +5,7 @@ import { container } from 'tsyringe';
 import { GetUserByIdUseCase } from '../../../application/use-cases/user/grpc/GetUserByIdUseCase';
 import { ValidateUserUseCase } from '../../../application/use-cases/user/grpc/ValidateUserUseCase';
 
-const PROTO_PATH = path.join(__dirname, '../../../../../shared/protos/user.proto');
+const PROTO_PATH = path.join(__dirname, '../../../../../../shared/protos/user.proto');
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
