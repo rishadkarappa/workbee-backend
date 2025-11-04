@@ -10,6 +10,8 @@ import { WorkerApproveUseCase } from "../../use-case/WorkerApproveUseCase";
 import { GetAllWorkersUseCase } from "../../use-case/GetAllWorkersUseCase";
 import { PostWorkUseCase } from "../../use-case/PostWorkUseCase";
 import { FileUploadService } from "../../infrastructure/services/FileUploadService";
+import { GetAllWorksUseCase } from "../../use-case/GetAllWorksUseCase";
+import { WorkerModel } from "../../infrastructure/database/models/WorkerSchema";
 
 @injectable()
 export class WorkController {
@@ -19,7 +21,8 @@ export class WorkController {
     @inject(WorkerApproveUseCase) private workerApproveUseCase: WorkerApproveUseCase,
     @inject(GetAllWorkersUseCase) private getAllWorkersUseCase: GetAllWorkersUseCase,
     @inject(PostWorkUseCase) private postWorkUseCase: PostWorkUseCase,
-    @inject("FileUploadService") private fileUploadService: FileUploadService
+    @inject("FileUploadService") private fileUploadService: FileUploadService,
+    @inject(GetAllWorksUseCase) private getAllWorksUseCase:GetAllWorksUseCase
 
   ) { }
 
@@ -118,4 +121,30 @@ export class WorkController {
     }
   }
 
+  async getAllWorks(req:Request, res:Response):Promise<void>{
+    try{
+      const works = await this.getAllWorksUseCase.execute()
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(works, "get all works"))
+    } catch (error: any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+    }
+  }
+
+  async blockWorker(req:Request, res:Response):Promise<void>{
+    try {
+      const { id } = req.params
+      const works = await WorkerModel.updateOne({_id:id},{$set:{isBlocked:true}})
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(works, "get all works"))
+    } catch (error:any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+    }
+  }
 }

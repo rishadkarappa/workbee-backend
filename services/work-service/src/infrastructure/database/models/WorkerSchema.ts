@@ -13,6 +13,7 @@ export interface WorkerDocument extends Document {
     honest: boolean;
     termsAccepted: boolean;
   };
+  isBlocked:boolean;
   isApproved: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -31,6 +32,7 @@ const WorkerSchema = new Schema<WorkerDocument>({
     honest: { type: Boolean, required: true },
     termsAccepted: { type: Boolean, required: true },
   },
+  isBlocked:{ type:Boolean, default:false},
   isApproved: { type:Boolean, default:false}
 }, { timestamps: true });
 

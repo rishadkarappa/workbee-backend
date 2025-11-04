@@ -13,6 +13,7 @@ export interface Worker {
         termsAccepted:boolean;
     };
     isApproved?:boolean;
+    isBlocked?:boolean;
     createdAt?:Date;
     updatedAt?:Date;
 }

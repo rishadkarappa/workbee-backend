@@ -12,13 +12,14 @@ router.post("/apply-worker", workController.applyWorker.bind(workController))
 router.get("/get-new-appliers", workController.getNewAppliers.bind(workController))
 router.post("/approve-worker", workController.approveWorker.bind(workController))
 router.get("/get-workers", workController.getWorkers.bind(workController))
-router.post(
-    "/post-work",
+router.get("/get-all-works", workController.getAllWorks.bind(workController))
+router.post("/post-work",
     upload.fields([
         { name: 'voiceFile', maxCount: 1 },
         { name: 'videoFile', maxCount: 1 },
         { name: 'beforeImage', maxCount: 1 }
-    ]),
-    workController.postWork.bind(workController)
+    ]),workController.postWork.bind(workController)
 );
+router.patch("/block-worker/:id", workController.blockWorker.bind(workController))
+
 export default router

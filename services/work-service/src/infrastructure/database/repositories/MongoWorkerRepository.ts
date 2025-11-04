@@ -23,6 +23,7 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
             preferredWorks:worker.preferredWorks,
             confirmations:worker.confirmations,
             isApproved:worker.isApproved,
+            isBlocked:worker.isBlocked,
             createdAt:worker.createdAt,
             updatedAt:worker.updatedAt
         }
