@@ -10,9 +10,9 @@ export class RabbitMQConnection {
         try {
             this.connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://localhost');
             this.channel = await this.connection.createChannel();
-            console.log('RabbitMQ connected successfully');
+            console.log('-- RabbitMQ connected successfully');
         } catch (error) {
-            console.error('RabbitMQ connection failed:', error);
+            console.error('-- RabbitMQ connection failed:', error);
             throw error;
         }
     }

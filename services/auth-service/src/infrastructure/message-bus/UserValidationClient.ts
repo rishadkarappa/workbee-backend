@@ -1,31 +1,30 @@
 /**
- * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker is valid or not 
- * so check from auth service is the worker is verified or not
+ * this is the inter communicaiton bw work sevice - auth service 
+ * bec : when the post work time want to save the user id into worker db so want fetch user id and want to check the user is valid or not
  */
 
 import { Channel } from 'amqplib';
 import { v4 as uuidv4 } from 'uuid';
 
-interface WorkerLoginRequest {
-    email: string;
-    password: string;
+interface UserValidationRequest {
+    userId: string;
     correlationId: string;
 }
 
-interface WorkerLoginResponse {
+interface UserValidationResponse {
     success: boolean;
     data?: any;
     error?: string;
 }
 
-export class WorkerValidationClient {
-    private readonly REQUEST_QUEUE = 'worker.validate.request';
-    private readonly RESPONSE_QUEUE = 'worker.validate.response';
-    private readonly TIMEOUT = 10000; 
+export class UserValidationClient {
+    private readonly REQUEST_QUEUE = 'user.validate.request';
+    private readonly RESPONSE_QUEUE = 'user.validate.response';
+    private readonly TIMEOUT = 10000;
 
     constructor(private channel: Channel) {}
 
-    async validateWorker(email: string, password: string): Promise<WorkerLoginResponse> {
+    async validateUser(userId: string): Promise<UserValidationResponse> {
         const correlationId = uuidv4();
 
         await this.channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
@@ -33,10 +32,9 @@ export class WorkerValidationClient {
 
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
-                reject(new Error('Worker validation request timeout'));
+                reject(new Error('User validation request timeout'));
             }, this.TIMEOUT);
 
-            // Setup response consumer
             this.channel.consume(
                 this.RESPONSE_QUEUE,
                 (msg) => {
@@ -44,7 +42,7 @@ export class WorkerValidationClient {
 
                     if (msg.properties.correlationId === correlationId) {
                         clearTimeout(timeout);
-                        const response: WorkerLoginResponse = JSON.parse(msg.content.toString());
+                        const response: UserValidationResponse = JSON.parse(msg.content.toString());
                         this.channel.ack(msg);
                         resolve(response);
                     }
@@ -52,10 +50,8 @@ export class WorkerValidationClient {
                 { noAck: false }
             );
 
-            // Send request
-            const request: WorkerLoginRequest = {
-                email,
-                password,
+            const request: UserValidationRequest = {
+                userId,
                 correlationId
             };
 
@@ -68,7 +64,7 @@ export class WorkerValidationClient {
                 }
             );
 
-            console.log('Sent worker validation request:', email);
+            console.log('Sent user validation request:', userId);
         });
     }
 }

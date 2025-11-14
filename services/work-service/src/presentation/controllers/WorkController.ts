@@ -8,7 +8,7 @@ import { ApplyWorkerUseCase } from "../../use-case/ApplyWorkerUseCase";
 import { GetNewAppliersUseCase } from "../../use-case/GetNewAppliersUseCase";
 import { WorkerApproveUseCase } from "../../use-case/WorkerApproveUseCase";
 import { GetAllWorkersUseCase } from "../../use-case/GetAllWorkersUseCase";
-// import { PostWorkUseCase } from "../../use-case/PostWorkUseCase";
+import { PostWorkUseCase } from "../../use-case/PostWorkUseCase";
 import { FileUploadService } from "../../infrastructure/services/FileUploadService";
 import { GetAllWorksUseCase } from "../../use-case/GetAllWorksUseCase";
 
@@ -19,7 +19,7 @@ export class WorkController {
     @inject(GetNewAppliersUseCase) private getNewAppliersUseCase: GetNewAppliersUseCase,
     @inject(WorkerApproveUseCase) private workerApproveUseCase: WorkerApproveUseCase,
     @inject(GetAllWorkersUseCase) private getAllWorkersUseCase: GetAllWorkersUseCase,
-    // @inject(PostWorkUseCase) private postWorkUseCase: PostWorkUseCase,
+    @inject(PostWorkUseCase) private postWorkUseCase: PostWorkUseCase,
     @inject("FileUploadService") private fileUploadService: FileUploadService,
     @inject(GetAllWorksUseCase) private getAllWorksUseCase:GetAllWorksUseCase
 
@@ -80,45 +80,45 @@ export class WorkController {
     }
   }
 
-  // async postWork(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const WorkData = req.body;
-  //     const files = req.files as any;
+  async postWork(req: Request, res: Response): Promise<void> {
+    try {
+      const WorkData = req.body;
+      const files = req.files as any;
 
-  //     if (files) {
-  //       console.log("Processing files...");
-  //       if (files.voiceFile) {
-  //         WorkData.voiceFile = await this.fileUploadService.saveFile(files.voiceFile[0], 'voice');
-  //         console.log("Voice file saved:", WorkData.voiceFile);
-  //       }
-  //       if (files.videoFile) {
-  //         WorkData.videoFile = await this.fileUploadService.saveFile(files.videoFile[0], 'video');
-  //         console.log("Video file saved:", WorkData.videoFile);
-  //       }
-  //       if (files.beforeImage) {
-  //         WorkData.beforeImage = await this.fileUploadService.saveFile(files.beforeImage[0], 'images');
-  //         console.log("Image file saved:", WorkData.beforeImage);
-  //       }
-  //     }
+      if (files) {
+        console.log("Processing files...");
+        if (files.voiceFile) {
+          WorkData.voiceFile = await this.fileUploadService.saveFile(files.voiceFile[0], 'voice');
+          console.log("Voice file saved:", WorkData.voiceFile);
+        }
+        if (files.videoFile) {
+          WorkData.videoFile = await this.fileUploadService.saveFile(files.videoFile[0], 'video');
+          console.log("Video file saved:", WorkData.videoFile);
+        }
+        if (files.beforeImage) {
+          WorkData.beforeImage = await this.fileUploadService.saveFile(files.beforeImage[0], 'images');
+          console.log("Image file saved:", WorkData.beforeImage);
+        }
+      }
 
-  //     WorkData.termsAccepted = WorkData.termsAccepted === 'true' || WorkData.termsAccepted === true;
+      WorkData.termsAccepted = WorkData.termsAccepted === 'true' || WorkData.termsAccepted === true;
 
-  //     console.log("Final WorkData:", JSON.stringify(WorkData, null, 2));
-  //     console.log("Calling PostWorkUseCase...");
+      console.log("Final WorkData:", JSON.stringify(WorkData, null, 2));
+      console.log("Calling PostWorkUseCase...");
 
-  //     const result = await this.postWorkUseCase.execute(WorkData);
+      const result = await this.postWorkUseCase.execute(WorkData);
 
-  //     console.log("Work posted successfully:", result);
+      console.log("Work posted successfully:", result);
 
-  //     res
-  //       .status(HttpStatus.OK)
-  //       .json(ResponseHelper.success(result, "Task booked successfully"));
-  //   } catch (error: any) {
-  //     res
-  //       .status(HttpStatus.BAD_REQUEST)
-  //       .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
-  //   }
-  // }
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(result, "Task booked successfully"));
+    } catch (error: any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+    }
+  }
 
   async getAllWorks(req:Request, res:Response):Promise<void>{
     try{

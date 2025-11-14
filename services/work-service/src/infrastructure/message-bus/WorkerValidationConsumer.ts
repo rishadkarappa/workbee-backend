@@ -1,3 +1,8 @@
+/**
+ * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker is valid or not 
+ * so check from auth service is the worker is verified or not
+ */
+
 import { Channel } from 'amqplib';
 import { injectable, inject } from 'tsyringe';
 import { IWorkerRepository } from '../../domain/repositories/IWorkerRepository';
@@ -29,14 +34,14 @@ export class WorkerValidationConsumer {
         await channel.assertQueue(this.QUEUE_NAME, { durable: true });
         await channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
-        console.log(`🎧 Listening for worker validation requests on ${this.QUEUE_NAME}`);
+        console.log(` Listening for worker validation requests on ${this.QUEUE_NAME}`);
 
         channel.consume(this.QUEUE_NAME, async (msg) => {
             if (!msg) return;
 
             try {
                 const request: WorkerLoginRequest = JSON.parse(msg.content.toString());
-                console.log('📨 Received worker validation request:', request.email);
+                console.log(' Received worker validation request:', request.email);
 
                 const response = await this.validateWorker(request);
 
@@ -51,9 +56,9 @@ export class WorkerValidationConsumer {
                 );
 
                 channel.ack(msg);
-                console.log('✅ Worker validation response sent');
+                console.log('-- Worker validation response sent');
             } catch (error: any) {
-                console.error('❌ Error processing worker validation:', error);
+                console.error('Error processing worker validation:', error);
                 
                 const errorResponse: WorkerLoginResponse = {
                     success: false,
