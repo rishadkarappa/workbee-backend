@@ -35,7 +35,7 @@ export class UserValidationConsumer {
 
             try {
                 const request: UserValidationRequest = JSON.parse(msg.content.toString());
-                console.log('📨 Received user validation request:', request.userId);
+                console.log('Received user validation request:', request.userId);
 
                 // For work service, we just acknowledge the request came from auth service
                 const response: UserValidationResponse = {
