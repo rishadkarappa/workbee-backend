@@ -20,7 +20,9 @@
     "mongoose": "^8.19.1",
     "multer": "^2.0.2",
     "reflect-metadata": "^0.2.2",
-    "tsyringe": "^4.10.0"
+    "tsyringe": "^4.10.0",
+    "winston": "^3.18.3",
+    "winston-logstash-transport": "^2.0.0"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
