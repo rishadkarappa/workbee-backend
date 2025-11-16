@@ -4,6 +4,7 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { VerifyOtpRequestDTO, VerifyOtpResponseDTO } from "../../dtos/user/VerifyOtpDTO";
 
 @injectable()
 export class VerifyOtpUseCase {
@@ -13,7 +14,8 @@ export class VerifyOtpUseCase {
         @inject("TokenService") private tokenService:ITokenService
     ){}
 
-    async execute(userId:string, otp:string){
+    async execute(data:VerifyOtpRequestDTO):Promise<VerifyOtpResponseDTO>{
+        const { userId, otp } = data
         const otpRecord = await this.otpRepository.findByUserId(userId);
         if(!otpRecord) throw new Error(ErrorMessages.USER.DONT_GET_OTP);
         if(otpRecord.otp !== otp) throw new Error(ErrorMessages.USER.INVALID_OTP)

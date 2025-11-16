@@ -4,6 +4,7 @@ import { inject, injectable } from "tsyringe";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { GoogleLoginRequestDTO, GoogleLoginResponseDTO } from "../../dtos/user/GoogleLoginDTO";
 
 const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
@@ -14,7 +15,8 @@ export class GoogleLoginUserUseCase{
         @inject("TokenService") private tokenSerivice:ITokenService
     ){}
 
-    async execute(credential:string){
+    async execute(data:GoogleLoginRequestDTO):Promise<GoogleLoginResponseDTO>{
+        const { credential } = data
         const ticket = await clientId.verifyIdToken({
             idToken:credential,
             audience:process.env.GOOGLE_CLIENT_ID

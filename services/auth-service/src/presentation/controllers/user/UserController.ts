@@ -12,6 +12,11 @@ import { GoogleLoginUserUseCase } from "../../../application/use-cases/user/Goog
 import { ForgotPasswordUseCase } from "../../../application/use-cases/user/ForgotUserPasswordUseCase";
 import { ResetPasswordUseCase } from "../../../application/use-cases/user/ResetUserPasswordUseCase";
 
+import { RegisterUserRequestDTO } from "../../../application/dtos/user/RegisterUserDTO";
+import { LoginUserRequestDTO } from "../../../application/dtos/user/LoginUserDTO";
+import { VerifyOtpRequestDTO } from "../../../application/dtos/user/VerifyOtpDTO";
+import { GoogleLoginRequestDTO } from "../../../application/dtos/user/GoogleLoginDTO";
+
 @injectable()
 export class UserController {
   constructor(
@@ -26,9 +31,9 @@ export class UserController {
 
   async register(req: Request, res: Response) {
     try {
-      const { name, email, password } = req.body;
+      const dto: RegisterUserRequestDTO = req.body;
 
-      const result = await this.registerUserUseCase.execute(name, email, password);
+      const result = await this.registerUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.CREATED)
@@ -42,9 +47,8 @@ export class UserController {
 
   async verifyOtp(req: Request, res: Response) {
     try {
-      const { userId, otp } = req.body;
-
-      const { user, token } = await this.verifyOtpUseCase.execute(userId, otp);
+      const dto:VerifyOtpRequestDTO = req.body
+      const { user, token } = await this.verifyOtpUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -58,8 +62,9 @@ export class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
-      const { user, token } = await this.loginUserUseCase.execute(email, password);
+      const dto:LoginUserRequestDTO = req.body
+
+      const { user, token } = await this.loginUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -87,8 +92,8 @@ export class UserController {
 
   async googleLogin(req:Request, res:Response){
     try {
-      const {credential} = req.body;
-      const { user, token } = await this.googleLoginUserUseCase.execute(credential)
+      const dto:GoogleLoginRequestDTO = req.body
+      const { user, token } = await this.googleLoginUserUseCase.execute(dto)
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({user, token}, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK))

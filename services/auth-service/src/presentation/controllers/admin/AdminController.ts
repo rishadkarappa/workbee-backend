@@ -7,6 +7,7 @@ import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
 import { LoginAdminUseCase } from "../../../application/use-cases/admin/LoginAdminUseCase";
 import { GetUsersUseCase } from "../../../application/use-cases/admin/GetUsersUseCase";
+import { LoginAdminRequestDTO } from "../../../application/dtos/admin/LoginAdminDTO";
 
 @injectable()
 export class AdminController{
@@ -17,8 +18,9 @@ export class AdminController{
 
     async adminLogin(req:Request, res:Response){
         try {
-            const {email, password} = req.body;
-            const result = await this.loginAdminUseCase.execute(email, password)
+            // const {email, password} = req.body;
+            const dto:LoginAdminRequestDTO = req.body
+            const result = await this.loginAdminUseCase.execute(dto)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.LOGINED_SUCCESFULLY))
         } catch (err:any) {
             res.status(HttpStatus.UNAUTHORIZED).json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))

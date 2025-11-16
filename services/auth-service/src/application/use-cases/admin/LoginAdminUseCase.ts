@@ -5,6 +5,7 @@ import { UserRoles } from "../../../shared/constants/UserRoles";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IHashService } from "../../../domain/services/IHashService";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { LoginAdminRequestDTO, LoginAdminResponseDTO } from "../../dtos/admin/LoginAdminDTO";
 
 @injectable()
 export class LoginAdminUseCase{
@@ -14,7 +15,8 @@ export class LoginAdminUseCase{
         @inject("TokenService") private tokenService:ITokenService
     ){}
 
-    async execute(email:string, password:string){
+    async execute(data:LoginAdminRequestDTO):Promise<LoginAdminResponseDTO>{
+        const { email, password} = data
         console.log('adminusecase illkj')
         console.log('emil',email);
         console.log('pln pas',password);
