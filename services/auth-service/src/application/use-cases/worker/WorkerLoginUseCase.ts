@@ -1,22 +1,3 @@
-// import { injectable } from "tsyringe";
-// import { WorkerValidationClient } from "../../../infrastructure/message-bus";
-// import { RabbitMQConnection } from "../../../infrastructure/message-bus";
-
-// @injectable()
-// export class WorkerLoginUseCase {
-//     async execute(email: string, password: string) {
-//         const channel = await RabbitMQConnection.getChannel();
-//         const client = new WorkerValidationClient(channel);
-
-//         const response = await client.validateWorker(email, password);
-
-//         if (!response.success) {
-//             throw new Error(response.error || 'Worker validation failed');
-//         }
-//         return response.data;
-//     }
-// }
-
 import { injectable } from "tsyringe";
 import {
     WorkerLoginRequestDTO,
@@ -29,6 +10,7 @@ import {
 } from "../../dtos/worker/WorkerLoginRMQDTO";
 
 import { WorkerValidationClient, RabbitMQConnection } from "../../../infrastructure/message-bus";
+import { WorkerMapper } from "../../mappers/WorkerMapper";
 
 @injectable()
 export class WorkerLoginUseCase {
@@ -45,7 +27,7 @@ export class WorkerLoginUseCase {
         if (!response.success) {
             throw new Error(response.error || "Worker validation failed");
         }
+        return WorkerMapper.toLoginResponse(response.data);
 
-        return response.data as WorkerLoginResponseDTO;
     }
 }

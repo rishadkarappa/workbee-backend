@@ -5,7 +5,9 @@ import { UserRoles } from "../../../shared/constants/UserRoles";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IHashService } from "../../../domain/services/IHashService";
 import { ITokenService } from "../../../domain/services/ITokenService";
+
 import { LoginAdminRequestDTO, LoginAdminResponseDTO } from "../../dtos/admin/LoginAdminDTO";
+import { AdminMapper } from "../../mappers/AdminMapper";
 
 @injectable()
 export class LoginAdminUseCase{
@@ -32,7 +34,7 @@ export class LoginAdminUseCase{
 
         const token = this.tokenService.generate(admin.id!)
 
-        return { admin, token}
+        return AdminMapper.toLoginResponse(admin, token);
     }
 }
 

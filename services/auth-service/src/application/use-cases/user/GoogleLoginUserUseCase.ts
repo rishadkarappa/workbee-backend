@@ -5,6 +5,7 @@ import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { GoogleLoginRequestDTO, GoogleLoginResponseDTO } from "../../dtos/user/GoogleLoginDTO";
+import { UserMapper } from "../../mappers/UserMapper";
 
 const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
@@ -41,7 +42,8 @@ export class GoogleLoginUserUseCase{
         }
 
         const token =  this.tokenSerivice.generate(user.id!);
-        return {user, token}
+        return UserMapper.toGoogleLoginResponse(user, token);
+
     }
 
 }

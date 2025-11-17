@@ -37,6 +37,7 @@ import { LoginUserRequestDTO, LoginUserResponseDTO } from "../../dtos/user/Login
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IHashService } from "../../../domain/services/IHashService";
+import { UserMapper } from "../../mappers/UserMapper";
 
 @injectable()
 export class LoginUserUseCase {
@@ -57,7 +58,9 @@ export class LoginUserUseCase {
     if (!isMatch) throw new Error(ErrorMessages.USER.INVALID_PASSWORD)
 
     const token = this.tokenService.generate(user.id!)
-    return { user, token }
+
+    return UserMapper.toLoginResponse(user, token);
+
   }
 }
 

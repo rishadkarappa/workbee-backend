@@ -5,6 +5,7 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { VerifyOtpRequestDTO, VerifyOtpResponseDTO } from "../../dtos/user/VerifyOtpDTO";
+import { UserMapper } from "../../mappers/UserMapper";
 
 @injectable()
 export class VerifyOtpUseCase {
@@ -31,6 +32,7 @@ export class VerifyOtpUseCase {
         
         const token = this.tokenService.generate(user.id!)
 
-        return {user, token}
+        return UserMapper.toVerifyOtpResponse(user, token);
+
     }
 }
