@@ -9,8 +9,10 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 import { LoginAdminRequestDTO, LoginAdminResponseDTO } from "../../dtos/admin/LoginAdminDTO";
 import { AdminMapper } from "../../mappers/AdminMapper";
 
+import { ILoginAdminUseCase } from "../../ports/admin/ILoginAdminUseCase";
+
 @injectable()
-export class LoginAdminUseCase{
+export class LoginAdminUseCase implements ILoginAdminUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("HashService") private hashService:IHashService,

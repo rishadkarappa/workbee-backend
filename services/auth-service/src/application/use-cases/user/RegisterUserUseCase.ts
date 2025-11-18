@@ -65,9 +65,10 @@ import { IHashService } from "../../../domain/services/IHashService";
 import { IOtpService } from "../../../domain/services/IOtpService";
 import { IEmailService } from "../../../domain/services/IEmailService";
 import { UserMapper } from "../../mappers/UserMapper";
+import { IRegisterUserUseCase } from "../../ports/user/IRegisterUserUseCase";
 
 @injectable()
-export class RegisterUserUseCase {
+export class RegisterUserUseCase implements IRegisterUserUseCase{
   constructor(
     @inject("UserRepository") private userRepository:IUserRepository,
     @inject("OtpRepository") private otpRepository:IOtpRepository,
@@ -106,7 +107,7 @@ export class RegisterUserUseCase {
     // console.log(savedUser,'nnnnnnnnn');
     await this.emailService.sendOtp(email, otp)
     
-        return UserMapper.toRegisterResponse(savedUser.id!);
+    return UserMapper.toRegisterResponse(savedUser.id!);
 
   }
 }

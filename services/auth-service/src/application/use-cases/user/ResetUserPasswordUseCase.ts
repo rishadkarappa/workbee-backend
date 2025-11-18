@@ -6,9 +6,11 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IHashService } from "../../../domain/services/IHashService";
 
+import { IResetPasswordUseCase } from "../../ports/user/IResetPasswordUseCase";
+
 
 @injectable()
-export class ResetPasswordUseCase{
+export class ResetPasswordUseCase implements IResetPasswordUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("TokenService") private tokenService:ITokenService,

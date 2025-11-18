@@ -11,9 +11,10 @@ import {
 
 import { WorkerValidationClient, RabbitMQConnection } from "../../../infrastructure/message-bus";
 import { WorkerMapper } from "../../mappers/WorkerMapper";
+import { IWorkerLoginUseCase } from "../../ports/worker/IWorkerLoginUseCase";
 
 @injectable()
-export class WorkerLoginUseCase {
+export class WorkerLoginUseCase implements IWorkerLoginUseCase{
     async execute(data: WorkerLoginRequestDTO): Promise<WorkerLoginResponseDTO> {
 
         const { email, password } = data;

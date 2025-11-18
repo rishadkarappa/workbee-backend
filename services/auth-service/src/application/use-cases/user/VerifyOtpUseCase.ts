@@ -7,8 +7,10 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 import { VerifyOtpRequestDTO, VerifyOtpResponseDTO } from "../../dtos/user/VerifyOtpDTO";
 import { UserMapper } from "../../mappers/UserMapper";
 
+import { IVerifyOtpUseCase } from "../../ports/user/IVerifyOtpUseCase";
+
 @injectable()
-export class VerifyOtpUseCase {
+export class VerifyOtpUseCase implements IVerifyOtpUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("OtpRepository") private otpRepository:IOtpRepository,
