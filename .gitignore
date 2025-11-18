@@ -1,2 +1,18 @@
 gateway/logs/*.log
 gateway/logs/*.json
+
+# Logs
+*.log
+logs/
+gateway/logs/
+
+# Dependencies
+node_modules/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
