@@ -5,9 +5,10 @@ import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IEmailService } from "../../../domain/services/IEmailService";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { IForgotPasswordUseCase } from "../../ports/user/IForgotPasswordUseCase";
 
 @injectable()
-export class ForgotPasswordUseCase{
+export class ForgotPasswordUseCase implements IForgotPasswordUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("TokenService") private tokenService:ITokenService,

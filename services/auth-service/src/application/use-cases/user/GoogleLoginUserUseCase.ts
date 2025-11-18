@@ -4,17 +4,21 @@ import { inject, injectable } from "tsyringe";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { GoogleLoginRequestDTO, GoogleLoginResponseDTO } from "../../dtos/user/GoogleLoginDTO";
+import { UserMapper } from "../../mappers/UserMapper";
+import { IGoogleLoginUserUseCase } from "../../ports/user/IGoogleLoginUserUseCase";
 
 const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 @injectable()
-export class GoogleLoginUserUseCase{
+export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("TokenService") private tokenSerivice:ITokenService
     ){}
 
-    async execute(credential:string){
+    async execute(data:GoogleLoginRequestDTO):Promise<GoogleLoginResponseDTO>{
+        const { credential } = data
         const ticket = await clientId.verifyIdToken({
             idToken:credential,
             audience:process.env.GOOGLE_CLIENT_ID
@@ -39,7 +43,8 @@ export class GoogleLoginUserUseCase{
         }
 
         const token =  this.tokenSerivice.generate(user.id!);
-        return {user, token}
+        return UserMapper.toGoogleLoginResponse(user, token);
+
     }
 
 }

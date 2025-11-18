@@ -16,3 +16,4 @@ container.registerSingleton<IHashService>("HashService", HashService);
 container.registerSingleton<ITokenService>("TokenService", TokenService);
 container.registerSingleton<IEmailService>("EmailService", EmailService);
 container.registerSingleton<IOtpService>("OtpService", OtpService);
+

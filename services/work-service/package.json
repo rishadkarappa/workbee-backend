@@ -12,14 +12,25 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.10.9",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "mongoose": "^8.19.1"
+    "mongoose": "^8.19.1",
+    "multer": "^2.0.2",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0",
+    "winston": "^3.18.3",
+    "winston-logstash-transport": "^2.0.0"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.8",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/google-protobuf": "^3.15.12",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.7.2",
     "nodemon": "^3.1.10",
     "ts-node-dev": "^2.0.0",

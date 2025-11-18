@@ -4,16 +4,21 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { VerifyOtpRequestDTO, VerifyOtpResponseDTO } from "../../dtos/user/VerifyOtpDTO";
+import { UserMapper } from "../../mappers/UserMapper";
+
+import { IVerifyOtpUseCase } from "../../ports/user/IVerifyOtpUseCase";
 
 @injectable()
-export class VerifyOtpUseCase {
+export class VerifyOtpUseCase implements IVerifyOtpUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("OtpRepository") private otpRepository:IOtpRepository,
         @inject("TokenService") private tokenService:ITokenService
     ){}
 
-    async execute(userId:string, otp:string){
+    async execute(data:VerifyOtpRequestDTO):Promise<VerifyOtpResponseDTO>{
+        const { userId, otp } = data
         const otpRecord = await this.otpRepository.findByUserId(userId);
         if(!otpRecord) throw new Error(ErrorMessages.USER.DONT_GET_OTP);
         if(otpRecord.otp !== otp) throw new Error(ErrorMessages.USER.INVALID_OTP)
@@ -29,6 +34,7 @@ export class VerifyOtpUseCase {
         
         const token = this.tokenService.generate(user.id!)
 
-        return {user, token}
+        return UserMapper.toVerifyOtpResponse(user, token);
+
     }
 }
