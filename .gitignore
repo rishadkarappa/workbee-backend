@@ -1,0 +1,2 @@
+gateway/logs/*.log
+gateway/logs/*.json
