@@ -4,29 +4,29 @@ import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
-import { RegisterUserUseCase } from "../../../application/use-cases/user/RegisterUserUseCase";
-import { LoginUserUseCase } from "../../../application/use-cases/user/LoginUserUseCase";
-import { VerifyOtpUseCase } from "../../../application/use-cases/user/VerifyOtpUseCase";
-import { VerifyUserUseCase } from "../../../application/use-cases/user/VerifyUserUseCase";
-import { GoogleLoginUserUseCase } from "../../../application/use-cases/user/GoogleLoginUserUseCase";
-import { ForgotPasswordUseCase } from "../../../application/use-cases/user/ForgotUserPasswordUseCase";
-import { ResetPasswordUseCase } from "../../../application/use-cases/user/ResetUserPasswordUseCase";
-
 import { RegisterUserRequestDTO } from "../../../application/dtos/user/RegisterUserDTO";
 import { LoginUserRequestDTO } from "../../../application/dtos/user/LoginUserDTO";
 import { VerifyOtpRequestDTO } from "../../../application/dtos/user/VerifyOtpDTO";
 import { GoogleLoginRequestDTO } from "../../../application/dtos/user/GoogleLoginDTO";
 
+import { IRegisterUserUseCase } from "../../../application/ports/user/IRegisterUserUseCase";
+import { ILoginUserUseCase } from "../../../application/ports/user/ILoginUserUseCase";
+import { IVerifyOtpUseCase } from "../../../application/ports/user/IVerifyOtpUseCase";
+import { IVerifyUserUseCase } from "../../../application/ports/user/IVerifyUserUseCase";
+import { IGoogleLoginUserUseCase } from "../../../application/ports/user/IGoogleLoginUserUseCase";
+import { IForgotPasswordUseCase } from "../../../application/ports/user/IForgotPasswordUseCase";
+import { IResetPasswordUseCase } from "../../../application/ports/user/IResetPasswordUseCase";
+
 @injectable()
 export class UserController {
   constructor(
-    @inject(RegisterUserUseCase) private registerUserUseCase: RegisterUserUseCase,
-    @inject(LoginUserUseCase) private loginUserUseCase: LoginUserUseCase,
-    @inject(VerifyOtpUseCase) private verifyOtpUseCase: VerifyOtpUseCase,
-    @inject(VerifyUserUseCase) private verifyUserUseCase: VerifyUserUseCase,
-    @inject(GoogleLoginUserUseCase) private googleLoginUserUseCase: GoogleLoginUserUseCase,
-    @inject(ForgotPasswordUseCase) private forgotPasswordUseCase: ForgotPasswordUseCase,
-    @inject(ResetPasswordUseCase) private resetPasswordUseCase: ResetPasswordUseCase
+    @inject("RegisterUserUseCase") private registerUserUseCase: IRegisterUserUseCase,
+    @inject("LoginUserUseCase") private loginUserUseCase: ILoginUserUseCase,
+    @inject("VerifyOtpUseCase") private verifyOtpUseCase: IVerifyOtpUseCase,
+    @inject("VerifyUserUseCase") private verifyUserUseCase: IVerifyUserUseCase,
+    @inject("GoogleLoginUserUseCase") private googleLoginUserUseCase: IGoogleLoginUserUseCase,
+    @inject("ForgotPasswordUseCase") private forgotPasswordUseCase: IForgotPasswordUseCase,
+    @inject("ResetPasswordUseCase") private resetPasswordUseCase: IResetPasswordUseCase
   ) {}
 
   async register(req: Request, res: Response) {

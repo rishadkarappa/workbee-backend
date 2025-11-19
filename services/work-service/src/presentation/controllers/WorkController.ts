@@ -4,26 +4,27 @@ import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
-import { ApplyWorkerUseCase } from "../../application/use-case/ApplyWorkerUseCase";
-import { GetNewAppliersUseCase } from "../../application/use-case/GetNewAppliersUseCase";
-import { WorkerApproveUseCase } from "../../application/use-case/WorkerApproveUseCase";
-import { GetAllWorkersUseCase } from "../../application/use-case/GetAllWorkersUseCase";
-import { PostWorkUseCase } from "../../application/use-case/PostWorkUseCase";
-import { FileUploadService } from "../../infrastructure/services/FileUploadService";
-import { GetAllWorksUseCase } from "../../application/use-case/GetAllWorksUseCase";
 import { PostWorkDto } from "../../application/dtos/WorkDTO";
 import { ApplyWorkerDto, WorkerApproveDto } from "../../application/dtos/WorkerDTO";
+
+import { IApplyWorkerUseCase } from "../../application/ports/worker/IApplyWorkerUseCase";
+import { IGetNewAppliersUseCase } from "../../application/ports/worker/IGetNewAppliersUseCase";
+import { IWorkerApproveUseCase } from "../../application/ports/worker/IWorkerApproveUseCase";
+import { IGetAllWorkersUseCase } from "../../application/ports/worker/IGetAllWorkersUseCase";
+import { IPostWorkUseCase } from "../../application/ports/work/IPostWorkUseCase";
+import { IFileUploadService } from "../../domain/services/IFileUploadService";
+import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUseCase";
 
 @injectable()
 export class WorkController {
     constructor(
-        @inject(ApplyWorkerUseCase) private applyWorkerUseCase: ApplyWorkerUseCase,
-        @inject(GetNewAppliersUseCase) private getNewAppliersUseCase: GetNewAppliersUseCase,
-        @inject(WorkerApproveUseCase) private workerApproveUseCase: WorkerApproveUseCase,
-        @inject(GetAllWorkersUseCase) private getAllWorkersUseCase: GetAllWorkersUseCase,
-        @inject(PostWorkUseCase) private postWorkUseCase: PostWorkUseCase,
-        @inject("FileUploadService") private fileUploadService: FileUploadService,
-        @inject(GetAllWorksUseCase) private getAllWorksUseCase: GetAllWorksUseCase
+        @inject("ApplyWorkerUseCase") private applyWorkerUseCase: IApplyWorkerUseCase,
+        @inject("GetNewAppliersUseCase") private getNewAppliersUseCase: IGetNewAppliersUseCase,
+        @inject("WorkerApproveUseCase") private workerApproveUseCase: IWorkerApproveUseCase,
+        @inject("GetAllWorkersUseCase") private getAllWorkersUseCase: IGetAllWorkersUseCase,
+        @inject("PostWorkUseCase") private postWorkUseCase: IPostWorkUseCase,
+        @inject("FileUploadService") private fileUploadService: IFileUploadService,
+        @inject("GetAllWorksUseCase") private getAllWorksUseCase: IGetAllWorksUseCase
     ) {}
 
     async applyWorker(req: Request, res: Response): Promise<void> {
@@ -119,12 +120,12 @@ export class WorkController {
                 termsAccepted
             };
 
-            console.log("Final WorkData:", JSON.stringify(dto, null, 2));
-            console.log("Calling PostWorkUseCase...");
+            console.log("einal WorkData", JSON.stringify(dto, null, 2));
+            console.log("calling PostWorkUseCase;;;;");
 
             const result = await this.postWorkUseCase.execute(dto);
 
-            console.log("Work posted successfully:", result);
+            console.log("work posted successfully=", result);
 
             res
                 .status(HttpStatus.OK)
