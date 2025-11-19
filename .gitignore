@@ -14,3 +14,5 @@ node_modules/
 .vscode/
 .env
 **/.env
+.env.local
+**/.env.local
