@@ -19,12 +19,12 @@ import { IPostWorkUseCase } from "../../application/ports/work/IPostWorkUseCase"
 import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUseCase";
 
 // register worker usecase
-container.registerSingleton<IApplyWorkerUseCase>(ApplyWorkerUseCase, ApplyWorkerUseCase);
-container.registerSingleton<IGetAllWorkersUseCase>(GetAllWorkersUseCase, GetAllWorkersUseCase);
-container.registerSingleton<IGetNewAppliersUseCase>(GetNewAppliersUseCase, GetNewAppliersUseCase);
-container.registerSingleton<IWorkerApproveUseCase>(WorkerApproveUseCase, WorkerApproveUseCase);
+container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
+container.registerSingleton<IGetAllWorkersUseCase>("GetAllWorkersUseCase", GetAllWorkersUseCase);
+container.registerSingleton<IGetNewAppliersUseCase>("GetNewAppliersUseCase", GetNewAppliersUseCase);
+container.registerSingleton<IWorkerApproveUseCase>("WorkerApproveUseCase", WorkerApproveUseCase);
 
 // register work usecase
-container.registerSingleton<IPostWorkUseCase>(PostWorkUseCase, PostWorkUseCase);
-container.registerSingleton<IGetAllWorksUseCase>(GetAllWorksUseCase, GetAllWorksUseCase);
+container.registerSingleton<IPostWorkUseCase>("PostWorkUseCase", PostWorkUseCase);
+container.registerSingleton<IGetAllWorksUseCase>("GetAllWorksUseCase", GetAllWorksUseCase);
 

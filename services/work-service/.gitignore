@@ -8,7 +8,6 @@ logs/
 .env
 .env.local
 .env.*
-!.env.example
 
 # system
 .vscode/
