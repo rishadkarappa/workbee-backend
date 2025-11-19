@@ -10,8 +10,10 @@ import { LoginAdminRequestDTO } from "../../../application/dtos/admin/LoginAdmin
 import { ILoginAdminUseCase } from "../../../application/ports/admin/ILoginAdminUseCase";
 import { IGetUsersUseCase } from "../../../application/ports/admin/IGetUsersUseCase";
 
+import { IAdminContoller } from "../../ports/IAdminController";
+
 @injectable()
-export class AdminController{
+export class AdminController implements IAdminContoller{
     constructor(
         @inject("LoginAdminUseCase") private loginAdminUseCase:ILoginAdminUseCase,
         @inject("GetUsersUseCase") private getUsersUseCase:IGetUsersUseCase

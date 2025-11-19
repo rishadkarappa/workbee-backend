@@ -15,8 +15,10 @@ import { IPostWorkUseCase } from "../../application/ports/work/IPostWorkUseCase"
 import { IFileUploadService } from "../../domain/services/IFileUploadService";
 import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUseCase";
 
+import { IWorkController } from "../ports/IWorkContoller";
+
 @injectable()
-export class WorkController {
+export class WorkController implements IWorkController{
     constructor(
         @inject("ApplyWorkerUseCase") private applyWorkerUseCase: IApplyWorkerUseCase,
         @inject("GetNewAppliersUseCase") private getNewAppliersUseCase: IGetNewAppliersUseCase,

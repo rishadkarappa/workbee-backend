@@ -16,9 +16,10 @@ import { IVerifyUserUseCase } from "../../../application/ports/user/IVerifyUserU
 import { IGoogleLoginUserUseCase } from "../../../application/ports/user/IGoogleLoginUserUseCase";
 import { IForgotPasswordUseCase } from "../../../application/ports/user/IForgotPasswordUseCase";
 import { IResetPasswordUseCase } from "../../../application/ports/user/IResetPasswordUseCase";
+import { IUserController } from "../../ports/IUserContoller";
 
 @injectable()
-export class UserController {
+export class UserController implements IUserController{
   constructor(
     @inject("RegisterUserUseCase") private registerUserUseCase: IRegisterUserUseCase,
     @inject("LoginUserUseCase") private loginUserUseCase: ILoginUserUseCase,

@@ -6,8 +6,10 @@ import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { WorkerLoginRequestDTO } from "../../../application/dtos/worker/LoginWorkerDTO";
 import { IWorkerLoginUseCase } from "../../../application/ports/worker/IWorkerLoginUseCase";
 
+import { IWorkerController } from "../../ports/IWorkerController";
+
 @injectable()
-export class WorkerController {
+export class WorkerController implements IWorkerController{
     constructor(
         @inject("WorkerLoginUseCase") private workerLoginUseCase: IWorkerLoginUseCase,
 
