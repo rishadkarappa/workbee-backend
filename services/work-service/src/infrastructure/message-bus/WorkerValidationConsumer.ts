@@ -1,5 +1,5 @@
 /**
- * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker is valid or not 
+ * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker details like password, and valid or not 
  * so check from auth service is the worker is verified or not
  */
 
@@ -34,7 +34,7 @@ export class WorkerValidationConsumer {
         await channel.assertQueue(this.QUEUE_NAME, { durable: true });
         await channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
-        console.log(` Listening for worker validation requests on ${this.QUEUE_NAME}`);
+        console.log(`Listening for worker validation requests on ${this.QUEUE_NAME}`);
 
         channel.consume(this.QUEUE_NAME, async (msg) => {
             if (!msg) return;

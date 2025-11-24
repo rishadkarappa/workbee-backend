@@ -22,8 +22,7 @@ export class WorkerLoginUseCase implements IWorkerLoginUseCase{
         const channel = await RabbitMQConnection.getChannel();
         const client = new WorkerValidationClient(channel);
 
-        const response: WorkerLoginResponseRMQDTO =
-            await client.validateWorker(email, password);
+        const response: WorkerLoginResponseRMQDTO = await client.validateWorker(email, password);
 
         if (!response.success) {
             throw new Error(response.error || "Worker validation failed");

@@ -1,18 +1,21 @@
-gateway/logs/*.log
-gateway/logs/*.json
-
 # Logs
-*.log
 logs/
+*.log
 gateway/logs/
 
-# Dependencies
-node_modules/
+# Environment Variables
 .env
+.env.*
+!.env.example   # allow .env.example
+
+
+# Node Modules
+node_modules/
+**/node_modules/
+
+dist/
 
 # IDE
 .vscode/
-.env
-**/.env
-.env.local
-**/.env.local
+.idea/
+.DS_Store

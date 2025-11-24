@@ -54,4 +54,9 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
         const workers = await WorkerModel.find({isApproved:true})
         return workers.map((w) => this.map(w))
     }
+
+    async getWorkersCount(): Promise<number> {
+         const count = await WorkerModel.countDocuments({isApproved:true})
+        return count
+    }
 }

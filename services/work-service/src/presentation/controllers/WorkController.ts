@@ -16,6 +16,7 @@ import { IFileUploadService } from "../../domain/services/IFileUploadService";
 import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUseCase";
 
 import { IWorkController } from "../ports/IWorkContoller";
+import { GetWorkersCountUseCase } from "../../application/use-case/GetWorkersCountUseCase";
 
 @injectable()
 export class WorkController implements IWorkController{
@@ -26,7 +27,8 @@ export class WorkController implements IWorkController{
         @inject("GetAllWorkersUseCase") private getAllWorkersUseCase: IGetAllWorkersUseCase,
         @inject("PostWorkUseCase") private postWorkUseCase: IPostWorkUseCase,
         @inject("FileUploadService") private fileUploadService: IFileUploadService,
-        @inject("GetAllWorksUseCase") private getAllWorksUseCase: IGetAllWorksUseCase
+        @inject("GetAllWorksUseCase") private getAllWorksUseCase: IGetAllWorksUseCase,
+        @inject("GetWorkersCountUseCase") private getWorkersCountUseCase: GetWorkersCountUseCase,
     ) {}
 
     async applyWorker(req: Request, res: Response): Promise<void> {
@@ -146,6 +148,19 @@ export class WorkController implements IWorkController{
                 .status(HttpStatus.OK)
                 .json(ResponseHelper.success(works, "Get all works"));
         } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async getWorkersCount(req:Request, res:Response):Promise<void>{
+        try {
+            const count = await this.getWorkersCountUseCase.execute()
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(count, "Get workes count"));
+        } catch (error:any) {
             res
                 .status(HttpStatus.BAD_REQUEST)
                 .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));

@@ -63,6 +63,7 @@ export class UserController implements IUserController{
 
   async login(req: Request, res: Response) {
     try {
+      
       const dto:LoginUserRequestDTO = req.body
 
       const { user, token } = await this.loginUserUseCase.execute(dto);

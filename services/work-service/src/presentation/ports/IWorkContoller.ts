@@ -7,4 +7,5 @@ export interface IWorkController {
     getWorkers(req: Request, res: Response): Promise<void>;
     postWork(req: Request, res: Response): Promise<void>;
     getAllWorks(req: Request, res: Response): Promise<void>;
+    getWorkersCount(req: Request, res: Response): Promise<void>;
 }

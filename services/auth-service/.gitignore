@@ -6,7 +6,6 @@ logs/
 
 # env
 .env
-.env.local
 .env.*
 !.env.example
 
