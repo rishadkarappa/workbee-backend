@@ -24,4 +24,3 @@ export class RabbitMQClient {
 
 export { RabbitMQConnection } from './RabbitMQConnection';
 export { WorkerValidationClient } from './WorkerValidationClient';
-// export { UserValidationClient } from './UserValidationClient';

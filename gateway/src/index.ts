@@ -1,29 +1,41 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import dotenv from 'dotenv'
 import { httpLogger } from "./middleware/centralized-logging";
+import { verifyToken } from "./middleware/auth-middleware";
 
-dotenv.config()
-const PORT = process.env.PORT
+
+const PORT = process.env.PORT;
 
 const app = express();
 app.use(cors());
+app.use(httpLogger);
 
-app.use(httpLogger)
+app.use(verifyToken);
 
+// services
+const services = [
+    {
+        route: "/auth",
+        target: process.env.AUTH_SERVICE
+    },
+    {
+        route: "/work",
+        target: process.env.WORK_SERVICE
+    }
+];
 
-// Auth Service
-app.use("/auth", createProxyMiddleware({
-    target: "http://localhost:4001",
-    changeOrigin: true
-}));
+services.forEach((service) => {
+    app.use(
+        `${service.route}`,
+        createProxyMiddleware({
+            target: service.target,
+            changeOrigin: true,
+        })
+    );
+});
 
-// Work Service
-app.use("/work", createProxyMiddleware({
-    target: "http://localhost:4002",
-    changeOrigin: true
-}))
-
-
-app.listen(PORT, () => console.log("API Gateway running on 4000"));
+app.listen(PORT, () => console.log(`API Gateway running on ${PORT}`));
