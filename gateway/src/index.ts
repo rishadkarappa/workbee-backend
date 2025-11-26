@@ -11,7 +11,14 @@ import { verifyToken } from "./middleware/auth-middleware";
 const PORT = process.env.PORT;
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-user-role"]
+}));
+
 app.use(httpLogger);
 
 app.use(verifyToken);
