@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { isPublic } from "../utils/public-routes";
 
-const JWT_SECRET = process.env.JWT_SECRET!
+const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
