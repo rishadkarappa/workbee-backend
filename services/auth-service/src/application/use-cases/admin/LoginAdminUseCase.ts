@@ -6,21 +6,27 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IHashService } from "../../../domain/services/IHashService";
 import { ITokenService } from "../../../domain/services/ITokenService";
 
+import { LoginAdminRequestDTO, LoginAdminResponseDTO } from "../../dtos/admin/LoginAdminDTO";
+import { AdminMapper } from "../../mappers/AdminMapper";
+
+import { ILoginAdminUseCase } from "../../ports/admin/ILoginAdminUseCase";
+
 @injectable()
-export class LoginAdminUseCase{
+export class LoginAdminUseCase implements ILoginAdminUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("HashService") private hashService:IHashService,
         @inject("TokenService") private tokenService:ITokenService
     ){}
 
-    async execute(email:string, password:string){
+    async execute(data:LoginAdminRequestDTO):Promise<LoginAdminResponseDTO>{
+        const { email, password} = data
         console.log('adminusecase illkj')
         console.log('emil',email);
         console.log('pln pas',password);
         
         const admin = await this.userRepository.findByEmail(email)
-        console.log('admin found',admin)
+        // console.log('admin found',admin)
         console.log('admin hash pas',admin?.password)
 
         if(!admin||admin.role!==UserRoles.ADMIN) throw new Error(ErrorMessages.ADMIN.ADMIN_NOT_FOUND);
@@ -30,7 +36,7 @@ export class LoginAdminUseCase{
 
         const token = this.tokenService.generate(admin.id!)
 
-        return { admin, token}
+        return AdminMapper.toLoginResponse(admin, token);
     }
 }
 

@@ -5,30 +5,38 @@ import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
-import { LoginAdminUseCase } from "../../../application/use-cases/admin/LoginAdminUseCase";
+import { LoginAdminRequestDTO } from "../../../application/dtos/admin/LoginAdminDTO";
+
+import { ILoginAdminUseCase } from "../../../application/ports/admin/ILoginAdminUseCase";
+import { IGetUsersUseCase } from "../../../application/ports/admin/IGetUsersUseCase";
+
+import { IAdminContoller } from "../../ports/IAdminController";
 
 @injectable()
-export class AdminController{
+export class AdminController implements IAdminContoller{
     constructor(
-        @inject(LoginAdminUseCase) private loginAdminUseCase:LoginAdminUseCase
+        @inject("LoginAdminUseCase") private loginAdminUseCase:ILoginAdminUseCase,
+        @inject("GetUsersUseCase") private getUsersUseCase:IGetUsersUseCase
     ){}
 
     async adminLogin(req:Request, res:Response){
         try {
-            const {email, password} = req.body;
-            const result = await this.loginAdminUseCase.execute(email, password)
+            // const {email, password} = req.body;
+            const dto:LoginAdminRequestDTO = req.body
+            const result = await this.loginAdminUseCase.execute(dto)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.LOGINED_SUCCESFULLY))
         } catch (err:any) {
             res.status(HttpStatus.UNAUTHORIZED).json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))
         }
     }
 
-    // static async adminDashboard(req:Request, res:Response){
-    //     try {
-            
-    //     } catch (error) {
-            
-    //     }
-    // }
+    async getUsers(req:Request, res:Response){
+        try {
+            const result = await this.getUsersUseCase.execute()
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.GET_USERS))
+        } catch (error:any) {
+            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
+        }
+    }
 
 }

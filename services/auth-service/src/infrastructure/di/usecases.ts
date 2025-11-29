@@ -1,4 +1,3 @@
-
 import { container } from "tsyringe";
 
 //user
@@ -12,16 +11,38 @@ import { VerifyOtpUseCase } from "../../application/use-cases/user/VerifyOtpUseC
 
 //admin
 import { LoginAdminUseCase } from "../../application/use-cases/admin/LoginAdminUseCase";
+import { GetUsersUseCase } from "../../application/use-cases/admin/GetUsersUseCase";
+
+
+import { ILoginUserUseCase } from "../../application/ports/user/ILoginUserUseCase";
+import { IRegisterUserUseCase } from "../../application/ports/user/IRegisterUserUseCase";
+import { IVerifyUserUseCase } from "../../application/ports/user/IVerifyUserUseCase";
+import { IGoogleLoginUserUseCase } from "../../application/ports/user/IGoogleLoginUserUseCase";
+import { IForgotPasswordUseCase } from "../../application/ports/user/IForgotPasswordUseCase";
+import { IResetPasswordUseCase } from "../../application/ports/user/IResetPasswordUseCase";
+import { IVerifyOtpUseCase } from "../../application/ports/user/IVerifyOtpUseCase";
+import { ILoginAdminUseCase } from "../../application/ports/admin/ILoginAdminUseCase";
+import { IGetUsersUseCase } from "../../application/ports/admin/IGetUsersUseCase";
+import { IWorkerLoginUseCase } from "../../application/ports/worker/IWorkerLoginUseCase";
+
+//worker
+import { WorkerLoginUseCase } from "../../application/use-cases/worker/WorkerLoginUseCase";
+
 
 //usecases will injected by auto via @inject
 //user
-container.registerSingleton(RegisterUserUseCase)
-container.registerSingleton(LoginUserUseCase)
-container.registerSingleton(VerifyUserUseCase)
-container.registerSingleton(GoogleLoginUserUseCase)
-container.registerSingleton(ForgotPasswordUseCase)
-container.registerSingleton(ResetPasswordUseCase)
-container.registerSingleton(VerifyOtpUseCase);
+
+container.registerSingleton<ILoginUserUseCase>("LoginUserUseCase",LoginUserUseCase)
+container.registerSingleton<IRegisterUserUseCase>("RegisterUserUseCase",RegisterUserUseCase)
+container.registerSingleton<IVerifyUserUseCase>("VerifyUserUseCase",VerifyUserUseCase);
+container.registerSingleton<IGoogleLoginUserUseCase>("GoogleLoginUserUseCase",GoogleLoginUserUseCase)
+container.registerSingleton<IForgotPasswordUseCase>("ForgotPasswordUseCase",ForgotPasswordUseCase)
+container.registerSingleton<IResetPasswordUseCase>("ResetPasswordUseCase",ResetPasswordUseCase)
+container.registerSingleton<IVerifyOtpUseCase>("VerifyOtpUseCase",VerifyOtpUseCase)
 
 //admin
-container.registerSingleton(LoginAdminUseCase)
+container.registerSingleton<ILoginAdminUseCase>("LoginAdminUseCase",LoginAdminUseCase)
+container.registerSingleton<IGetUsersUseCase>("GetUsersUseCase",GetUsersUseCase)
+
+//worker
+container.registerSingleton<IWorkerLoginUseCase>("WorkerLoginUseCase",WorkerLoginUseCase)

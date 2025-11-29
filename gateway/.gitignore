@@ -1,1 +1,12 @@
+# environment files
 .env
+.env.local
+
+# Logs
+*.log
+logs/
+gateway/logs/
+
+# Dependencies
+node_modules/
+

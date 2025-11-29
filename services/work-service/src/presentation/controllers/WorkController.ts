@@ -1,0 +1,169 @@
+import { Request, Response } from "express";
+import { inject, injectable } from "tsyringe";
+import { HttpStatus } from "../../shared/enums/HttpStatus";
+import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
+import { ResponseMessage } from "../../shared/constants/ResponseMessages";
+
+import { PostWorkDto } from "../../application/dtos/WorkDTO";
+import { ApplyWorkerDto, WorkerApproveDto } from "../../application/dtos/WorkerDTO";
+
+import { IApplyWorkerUseCase } from "../../application/ports/worker/IApplyWorkerUseCase";
+import { IGetNewAppliersUseCase } from "../../application/ports/worker/IGetNewAppliersUseCase";
+import { IWorkerApproveUseCase } from "../../application/ports/worker/IWorkerApproveUseCase";
+import { IGetAllWorkersUseCase } from "../../application/ports/worker/IGetAllWorkersUseCase";
+import { IPostWorkUseCase } from "../../application/ports/work/IPostWorkUseCase";
+import { IFileUploadService } from "../../domain/services/IFileUploadService";
+import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUseCase";
+
+import { IWorkController } from "../ports/IWorkContoller";
+import { GetWorkersCountUseCase } from "../../application/use-case/GetWorkersCountUseCase";
+
+@injectable()
+export class WorkController implements IWorkController{
+    constructor(
+        @inject("ApplyWorkerUseCase") private applyWorkerUseCase: IApplyWorkerUseCase,
+        @inject("GetNewAppliersUseCase") private getNewAppliersUseCase: IGetNewAppliersUseCase,
+        @inject("WorkerApproveUseCase") private workerApproveUseCase: IWorkerApproveUseCase,
+        @inject("GetAllWorkersUseCase") private getAllWorkersUseCase: IGetAllWorkersUseCase,
+        @inject("PostWorkUseCase") private postWorkUseCase: IPostWorkUseCase,
+        @inject("FileUploadService") private fileUploadService: IFileUploadService,
+        @inject("GetAllWorksUseCase") private getAllWorksUseCase: IGetAllWorksUseCase,
+        @inject("GetWorkersCountUseCase") private getWorkersCountUseCase: GetWorkersCountUseCase,
+    ) {}
+
+    async applyWorker(req: Request, res: Response): Promise<void> {
+        try {
+            const dto: ApplyWorkerDto = req.body;
+            const result = await this.applyWorkerUseCase.execute(dto);
+
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(result, ResponseMessage.WORKER.APPLIED));
+        } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async getNewAppliers(req: Request, res: Response): Promise<void> {
+        try {
+            const appliers = await this.getNewAppliersUseCase.execute();
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(appliers, ResponseMessage.WORKER.GET_ALL_APPLIERS));
+        } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async approveWorker(req: Request, res: Response): Promise<void> {
+        try {
+            const dto: WorkerApproveDto = { email: req.body.email };
+            const result = await this.workerApproveUseCase.execute(dto);
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(result, "Worker approved successfully"));
+        } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async getWorkers(req: Request, res: Response): Promise<void> {
+        try {
+            const workers = await this.getAllWorkersUseCase.execute();
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(workers, "Get all workers"));
+        } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async postWork(req: Request, res: Response): Promise<void> {
+        try {
+            const rawData = req.body;
+            const files = req.files as any;
+
+            // Handle file uploads
+            if (files) {
+                console.log("Processing files...");
+                if (files.voiceFile) {
+                    rawData.voiceFile = await this.fileUploadService.saveFile(
+                        files.voiceFile[0],
+                        'voice'
+                    );
+                    console.log("Voice file saved:", rawData.voiceFile);
+                }
+                if (files.videoFile) {
+                    rawData.videoFile = await this.fileUploadService.saveFile(
+                        files.videoFile[0],
+                        'video'
+                    );
+                    console.log("Video file saved:", rawData.videoFile);
+                }
+                if (files.beforeImage) {
+                    rawData.beforeImage = await this.fileUploadService.saveFile(
+                        files.beforeImage[0],
+                        'images'
+                    );
+                    console.log("Image file saved:", rawData.beforeImage);
+                }
+            }
+
+            const termsAccepted = rawData.termsAccepted === 'true' || rawData.termsAccepted === true;
+
+            const dto: PostWorkDto = {
+                ...rawData,
+                termsAccepted
+            };
+
+            console.log("einal WorkData", JSON.stringify(dto, null, 2));
+            console.log("calling PostWorkUseCase;;;;");
+
+            const result = await this.postWorkUseCase.execute(dto);
+
+            console.log("work posted successfully=", result);
+
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(result, "Task booked successfully"));
+        } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async getAllWorks(req: Request, res: Response): Promise<void> {
+        try {
+            const works = await this.getAllWorksUseCase.execute();
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(works, "Get all works"));
+        } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async getWorkersCount(req:Request, res:Response):Promise<void>{
+        try {
+            const count = await this.getWorkersCountUseCase.execute()
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(count, "Get workes count"));
+        } catch (error:any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+}

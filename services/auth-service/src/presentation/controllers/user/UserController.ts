@@ -4,31 +4,37 @@ import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
-import { RegisterUserUseCase } from "../../../application/use-cases/user/RegisterUserUseCase";
-import { LoginUserUseCase } from "../../../application/use-cases/user/LoginUserUseCase";
-import { VerifyOtpUseCase } from "../../../application/use-cases/user/VerifyOtpUseCase";
-import { VerifyUserUseCase } from "../../../application/use-cases/user/VerifyUserUseCase";
-import { GoogleLoginUserUseCase } from "../../../application/use-cases/user/GoogleLoginUserUseCase";
-import { ForgotPasswordUseCase } from "../../../application/use-cases/user/ForgotUserPasswordUseCase";
-import { ResetPasswordUseCase } from "../../../application/use-cases/user/ResetUserPasswordUseCase";
+import { RegisterUserRequestDTO } from "../../../application/dtos/user/RegisterUserDTO";
+import { LoginUserRequestDTO } from "../../../application/dtos/user/LoginUserDTO";
+import { VerifyOtpRequestDTO } from "../../../application/dtos/user/VerifyOtpDTO";
+import { GoogleLoginRequestDTO } from "../../../application/dtos/user/GoogleLoginDTO";
+
+import { IRegisterUserUseCase } from "../../../application/ports/user/IRegisterUserUseCase";
+import { ILoginUserUseCase } from "../../../application/ports/user/ILoginUserUseCase";
+import { IVerifyOtpUseCase } from "../../../application/ports/user/IVerifyOtpUseCase";
+import { IVerifyUserUseCase } from "../../../application/ports/user/IVerifyUserUseCase";
+import { IGoogleLoginUserUseCase } from "../../../application/ports/user/IGoogleLoginUserUseCase";
+import { IForgotPasswordUseCase } from "../../../application/ports/user/IForgotPasswordUseCase";
+import { IResetPasswordUseCase } from "../../../application/ports/user/IResetPasswordUseCase";
+import { IUserController } from "../../ports/IUserContoller";
 
 @injectable()
-export class UserController {
+export class UserController implements IUserController{
   constructor(
-    @inject(RegisterUserUseCase) private registerUserUseCase: RegisterUserUseCase,
-    @inject(LoginUserUseCase) private loginUserUseCase: LoginUserUseCase,
-    @inject(VerifyOtpUseCase) private verifyOtpUseCase: VerifyOtpUseCase,
-    @inject(VerifyUserUseCase) private verifyUserUseCase: VerifyUserUseCase,
-    @inject(GoogleLoginUserUseCase) private googleLoginUserUseCase: GoogleLoginUserUseCase,
-    @inject(ForgotPasswordUseCase) private forgotPasswordUseCase: ForgotPasswordUseCase,
-    @inject(ResetPasswordUseCase) private resetPasswordUseCase: ResetPasswordUseCase
+    @inject("RegisterUserUseCase") private registerUserUseCase: IRegisterUserUseCase,
+    @inject("LoginUserUseCase") private loginUserUseCase: ILoginUserUseCase,
+    @inject("VerifyOtpUseCase") private verifyOtpUseCase: IVerifyOtpUseCase,
+    @inject("VerifyUserUseCase") private verifyUserUseCase: IVerifyUserUseCase,
+    @inject("GoogleLoginUserUseCase") private googleLoginUserUseCase: IGoogleLoginUserUseCase,
+    @inject("ForgotPasswordUseCase") private forgotPasswordUseCase: IForgotPasswordUseCase,
+    @inject("ResetPasswordUseCase") private resetPasswordUseCase: IResetPasswordUseCase
   ) {}
 
   async register(req: Request, res: Response) {
     try {
-      const { name, email, password } = req.body;
+      const dto: RegisterUserRequestDTO = req.body;
 
-      const result = await this.registerUserUseCase.execute(name, email, password);
+      const result = await this.registerUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.CREATED)
@@ -42,9 +48,8 @@ export class UserController {
 
   async verifyOtp(req: Request, res: Response) {
     try {
-      const { userId, otp } = req.body;
-
-      const { user, token } = await this.verifyOtpUseCase.execute(userId, otp);
+      const dto:VerifyOtpRequestDTO = req.body
+      const { user, token } = await this.verifyOtpUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -58,8 +63,10 @@ export class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
-      const { user, token } = await this.loginUserUseCase.execute(email, password);
+      
+      const dto:LoginUserRequestDTO = req.body
+
+      const { user, token } = await this.loginUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -87,8 +94,8 @@ export class UserController {
 
   async googleLogin(req:Request, res:Response){
     try {
-      const {credential} = req.body;
-      const { user, token } = await this.googleLoginUserUseCase.execute(credential)
+      const dto:GoogleLoginRequestDTO = req.body
+      const { user, token } = await this.googleLoginUserUseCase.execute(dto)
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({user, token}, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK))

@@ -8,8 +8,7 @@ const router = Router()
 const adminContoller = container.resolve(AdminController)
 
 router.post('/admin/login', adminContoller.adminLogin.bind(adminContoller))
-
-// router.get('/admin/dashboard', AdminController.adminDashboard)
+router.get('/admin/get-users', adminContoller.getUsers.bind(adminContoller))
 
 export default router
 

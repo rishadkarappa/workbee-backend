@@ -3,9 +3,10 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { IVerifyUserUseCase } from "../../ports/user/IVerifyUserUseCase";
 
 @injectable()
-export class VerifyUserUseCase{
+export class VerifyUserUseCase implements IVerifyUserUseCase{
     constructor(
         @inject("UserRepository") private userRepository:IUserRepository,
         @inject("TokenService") private tokenService:ITokenService
@@ -17,7 +18,7 @@ export class VerifyUserUseCase{
         if(!token) throw new Error(ErrorMessages.USER.TOKEN_IS_MISSING)
 
         const payload = this.tokenService.verify(token)
-        const user = this.userRepository.findById(payload.id)
+        const user = await this.userRepository.findById(payload.id)
 
         if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
         return user;

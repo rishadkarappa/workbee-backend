@@ -27,6 +27,11 @@ export class MongoUserRepository extends MongoBaseRepository<User, any> implemen
         return user?this.map(user):null
     }
 
+    async getUsers(): Promise<User[]> {
+        const users = await this.findAll();
+        return users
+    }
+
     async save(user: User): Promise<User> {
         if(user.id){
             const updated = await UserModel.findByIdAndUpdate(user.id, user, {new:true})

@@ -10,6 +10,8 @@ const logFormat = printf(({ level, message, timestamp, stack }) => {
   return `${timestamp} [${level}]: ${stack || message}`;
 });
 
+// console.log('winston + morgan log-----------------start-------------------------')
+
 //logger instance
 const logger = createLogger({
   level: "info",

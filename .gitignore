@@ -1,0 +1,21 @@
+# Logs
+logs/
+*.log
+gateway/logs/
+
+# Environment Variables
+.env
+.env.*
+!.env.example   # allow .env.example
+
+
+# Node Modules
+node_modules/
+**/node_modules/
+
+dist/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
