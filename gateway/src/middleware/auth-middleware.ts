@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 import { NextFunction, Request, Response } from "express";
 import { isPublic } from "../utils/public-routes";
 
