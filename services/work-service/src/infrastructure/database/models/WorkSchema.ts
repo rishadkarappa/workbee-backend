@@ -19,6 +19,18 @@ const WorkSchema = new Schema<WorkTocument>(
         videoFile: { type: String },
         duration: { type: String },
         budget: { type: String },
+        location: {
+            type:{
+                type:String,
+                enum:["Point"],
+                default:"Point",
+                required: true
+            },
+            coordinates:{
+                type:[Number],//longi , lati
+                required: true
+            }
+        },
         currentLocation: { type: String },
         manualAddress: { type: String },
         landmark: { type: String },
@@ -37,6 +49,8 @@ const WorkSchema = new Schema<WorkTocument>(
     },
     { timestamps: true }
 );
+
+WorkSchema.index({ location: "2dsphere" });
 
 export const WorkModel = mongoose.model<WorkTocument>("Work",WorkSchema);
 

@@ -16,6 +16,10 @@ export class WorkMapper {
             description: dto.description,
             duration: dto.duration,
             budget: dto.budget,
+            location:{
+                type:'Point',
+                coordinates:[dto.longitude, dto.latitude]
+            },
             currentLocation: dto.currentLocation,
             manualAddress: dto.manualAddress,
             landmark: dto.landmark,
@@ -45,6 +49,7 @@ export class WorkMapper {
             videoFile: entity.videoFile,
             duration: entity.duration,
             budget: entity.budget,
+            location: entity.location,
             currentLocation: entity.currentLocation,
             manualAddress: entity.manualAddress,
             landmark: entity.landmark,

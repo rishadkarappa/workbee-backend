@@ -10,6 +10,8 @@ export interface PostWorkDto {
     description: string;
     duration?: string;
     budget?: string;
+    latitude: number;
+    longitude: number;
     currentLocation?: string;
     manualAddress?: string;
     landmark?: string;
@@ -37,6 +39,11 @@ export interface WorkResponseDto {
     duration?: string;
     budget?: string;
     currentLocation?: string;
+    location: {
+        type: 'Point';
+        coordinates: [number, number];
+    };
+    distance?: number; 
     manualAddress?: string;
     landmark?: string;
     place?: string;

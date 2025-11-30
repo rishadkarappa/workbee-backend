@@ -51,6 +51,7 @@ export class MongoWorkRepository implements IWorkRepository {
             videoFile: doc.videoFile,
             duration: doc.duration,
             budget: doc.budget,
+            location:doc.location,
             currentLocation: doc.currentLocation,
             manualAddress: doc.manualAddress,
             landmark: doc.landmark,
