@@ -18,6 +18,8 @@
 //     updatedAt?:Date;
 // }
 
+import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
+
 export interface Worker {
     id?: string;
     name: string;
@@ -32,7 +34,7 @@ export interface Worker {
         honest: boolean;
         termsAccepted: boolean;
     };
-    isApproved?: boolean;
+    status:WorkerStatus;
     isBlocked?: boolean;
     createdAt?: Date;
     updatedAt?: Date;

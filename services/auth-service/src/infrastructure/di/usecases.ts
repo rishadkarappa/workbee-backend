@@ -27,6 +27,8 @@ import { IWorkerLoginUseCase } from "../../application/ports/worker/IWorkerLogin
 
 //worker
 import { WorkerLoginUseCase } from "../../application/use-cases/worker/WorkerLoginUseCase";
+import { IBlockUserUseCase } from "../../application/ports/admin/IBlockUserUseCase";
+import { BlockUserUseCase } from "../../application/use-cases/admin/BlockUserUseCase";
 
 
 //usecases will injected by auto via @inject
@@ -43,6 +45,7 @@ container.registerSingleton<IVerifyOtpUseCase>("VerifyOtpUseCase",VerifyOtpUseCa
 //admin
 container.registerSingleton<ILoginAdminUseCase>("LoginAdminUseCase",LoginAdminUseCase)
 container.registerSingleton<IGetUsersUseCase>("GetUsersUseCase",GetUsersUseCase)
+container.registerSingleton<IBlockUserUseCase>("BlockUserUseCase",BlockUserUseCase)
 
 //worker
 container.registerSingleton<IWorkerLoginUseCase>("WorkerLoginUseCase",WorkerLoginUseCase)

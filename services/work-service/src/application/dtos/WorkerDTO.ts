@@ -27,7 +27,7 @@ export interface WorkerResponseDto {
         honest: boolean;
         termsAccepted: boolean;
     };
-    isApproved: boolean;
+    status: "pending" | "approved" | "rejected";
     isBlocked: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -35,5 +35,6 @@ export interface WorkerResponseDto {
 
 
 export interface WorkerApproveDto {
-    email: string;
+    workerId: string;
+    status: "approved" | "rejected";
 }

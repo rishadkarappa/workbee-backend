@@ -6,6 +6,7 @@ export interface UserDocument extends Document {
   email: string;
   password: string;
   isVerified: boolean;
+  isBlocked:boolean;
   role: string;
   createdAt: Date;
 }
@@ -16,6 +17,7 @@ const UserSchema = new Schema<UserDocument>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required:false},
     isVerified: { type: Boolean, default: false },
+    isBlocked: { type: Boolean, default: false },
     role: {
       type: String,
       enum:["user","admin"],

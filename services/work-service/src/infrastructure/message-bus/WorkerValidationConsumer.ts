@@ -1,12 +1,14 @@
 /**
- * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker details like password, and valid or not 
- * so check from auth service is the worker is verified or not
+ * worker-service → auth-service communication (login validation)
+ * Auth service sends: { email, password, correlationId }
+ * Worker service checks worker and responds with: { success, data?, error? }
  */
 
-import { Channel } from 'amqplib';
-import { injectable, inject } from 'tsyringe';
-import { IWorkerRepository } from '../../domain/repositories/IWorkerRepository';
-import { IHashService } from '../../domain/services/IHashService';
+import { Channel } from "amqplib";
+import { injectable, inject } from "tsyringe";
+import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
+import { IHashService } from "../../domain/services/IHashService";
+import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
 
 interface WorkerLoginRequest {
     email: string;
@@ -22,8 +24,8 @@ interface WorkerLoginResponse {
 
 @injectable()
 export class WorkerValidationConsumer {
-    private readonly QUEUE_NAME = 'worker.validate.request';
-    private readonly RESPONSE_QUEUE = 'worker.validate.response';
+    private readonly REQUEST_QUEUE = "worker.validate.request";
+    private readonly RESPONSE_QUEUE = "worker.validate.response";
 
     constructor(
         @inject("WorkerRepository") private workerRepository: IWorkerRepository,
@@ -31,21 +33,21 @@ export class WorkerValidationConsumer {
     ) {}
 
     async start(channel: Channel): Promise<void> {
-        await channel.assertQueue(this.QUEUE_NAME, { durable: true });
+
+        await channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
         await channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
-        console.log(`Listening for worker validation requests on ${this.QUEUE_NAME}`);
+        console.log(`✔ WorkerValidationConsumer listening on queue: ${this.REQUEST_QUEUE}`);
 
-        channel.consume(this.QUEUE_NAME, async (msg) => {
+        channel.consume(this.REQUEST_QUEUE, async (msg) => {
             if (!msg) return;
+            
+            const request: WorkerLoginRequest = JSON.parse(msg.content.toString());
 
             try {
-                const request: WorkerLoginRequest = JSON.parse(msg.content.toString());
-                console.log(' Received worker validation request:', request.email);
-
                 const response = await this.validateWorker(request);
 
-                // Send response back
+                // send response to response queue
                 channel.sendToQueue(
                     this.RESPONSE_QUEUE,
                     Buffer.from(JSON.stringify(response)),
@@ -55,17 +57,16 @@ export class WorkerValidationConsumer {
                     }
                 );
 
+                console.log(`=== Sent validation response for: ${request.email}`);
                 channel.ack(msg);
-                console.log('-- Worker validation response sent');
-            } catch (error: any) {
-                console.error('Error processing worker validation:', error);
-                
+            } catch (err: any) {
+                console.error("==== Worker validation error:", err);
+
                 const errorResponse: WorkerLoginResponse = {
                     success: false,
-                    error: error.message
+                    error: err.message || "Internal worker validation error"
                 };
 
-                const request: WorkerLoginRequest = JSON.parse(msg.content.toString());
                 channel.sendToQueue(
                     this.RESPONSE_QUEUE,
                     Buffer.from(JSON.stringify(errorResponse)),
@@ -80,47 +81,41 @@ export class WorkerValidationConsumer {
         });
     }
 
-    private async validateWorker(request: WorkerLoginRequest): Promise<WorkerLoginResponse> {
-        try {
-            const { email, password } = request;
+    private async validateWorker(req: WorkerLoginRequest): Promise<WorkerLoginResponse> {
+        const { email, password } = req;
 
-            const worker = await this.workerRepository.findByEmail(email);
-            
-            if (!worker) {
-                return {
-                    success: false,
-                    error: "Worker does not exist, please apply for worker"
-                };
-            }
+        const worker = await this.workerRepository.findByEmail(email);
 
-            if (!worker.isApproved) {
-                return {
-                    success: false,
-                    error: "Your application is under verification, try after some time"
-                };
-            }
-
-            const validPassword = await this.hashService.compare(password, worker.password);
-            
-            if (!validPassword) {
-                return {
-                    success: false,
-                    error: "Invalid password"
-                };
-            }
-
-            // Return worker data without password
-            const { password: _, ...workerData } = worker;
-
-            return {
-                success: true,
-                data: workerData
-            };
-        } catch (error: any) {
+        if (!worker) {
             return {
                 success: false,
-                error: error.message
+                error: "Worker does not exist. Please apply as a worker."
             };
         }
+
+        // NEW: Using enum status instead of isApproved
+        if (worker.status !== WorkerStatus.APPROVED) {
+            return {
+                success: false,
+                error: "Your application has not been approved yet."
+            };
+        }
+
+        const isPasswordCorrect = await this.hashService.compare(password, worker.password);
+
+        if (!isPasswordCorrect) {
+            return {
+                success: false,
+                error: "Invalid password."
+            };
+        }
+
+        // remove password before sending data
+        const { password: _, ...safeWorkerData } = worker;
+
+        return {
+            success: true,
+            data: safeWorkerData
+        };
     }
 }

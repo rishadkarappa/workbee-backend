@@ -20,5 +20,6 @@ router.post("/post-work",
         { name: 'beforeImage', maxCount: 1 }]),workController.postWork.bind(workController));
 
 router.get("/get-workerscount", workController.getWorkersCount.bind(workController))
+router.patch('/block-worker/:id', workController.blockWorker.bind(workController))
 
 export default router

@@ -17,9 +17,10 @@ import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUs
 
 import { IWorkController } from "../ports/IWorkContoller";
 import { GetWorkersCountUseCase } from "../../application/use-case/GetWorkersCountUseCase";
+import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorkerUseCase";
 
 @injectable()
-export class WorkController implements IWorkController{
+export class WorkController implements IWorkController {
     constructor(
         @inject("ApplyWorkerUseCase") private applyWorkerUseCase: IApplyWorkerUseCase,
         @inject("GetNewAppliersUseCase") private getNewAppliersUseCase: IGetNewAppliersUseCase,
@@ -29,7 +30,8 @@ export class WorkController implements IWorkController{
         @inject("FileUploadService") private fileUploadService: IFileUploadService,
         @inject("GetAllWorksUseCase") private getAllWorksUseCase: IGetAllWorksUseCase,
         @inject("GetWorkersCountUseCase") private getWorkersCountUseCase: GetWorkersCountUseCase,
-    ) {}
+        @inject("BlockWorkerUseCase") private blockWorkerUseCase: IBlockWorkerUseCase,
+    ) { }
 
     async applyWorker(req: Request, res: Response): Promise<void> {
         try {
@@ -59,19 +61,24 @@ export class WorkController implements IWorkController{
         }
     }
 
-    async approveWorker(req: Request, res: Response): Promise<void> {
-        try {
-            const dto: WorkerApproveDto = { email: req.body.email };
-            const result = await this.workerApproveUseCase.execute(dto);
-            res
-                .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result, "Worker approved successfully"));
-        } catch (error: any) {
-            res
-                .status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
-        }
+   async approveWorker(req: Request, res: Response): Promise<void> {
+    try {
+        const dto: WorkerApproveDto = {
+            workerId: req.body.workerId,
+            status: req.body.status
+        };
+        
+        const result = await this.workerApproveUseCase.execute(dto);
+        res
+            .status(HttpStatus.OK)
+            .json(ResponseHelper.success(result, "Worker status updated successfully"));
+    } catch (error: any) {
+        res
+            .status(HttpStatus.BAD_REQUEST)
+            .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
     }
+}
+
 
     async getWorkers(req: Request, res: Response): Promise<void> {
         try {
@@ -154,16 +161,26 @@ export class WorkController implements IWorkController{
         }
     }
 
-    async getWorkersCount(req:Request, res:Response):Promise<void>{
+    async getWorkersCount(req: Request, res: Response): Promise<void> {
         try {
             const count = await this.getWorkersCountUseCase.execute()
             res
                 .status(HttpStatus.OK)
                 .json(ResponseHelper.success(count, "Get workes count"));
-        } catch (error:any) {
+        } catch (error: any) {
             res
                 .status(HttpStatus.BAD_REQUEST)
                 .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    async blockWorker(req: Request, res: Response) {
+        try {
+            const workerId = req.params.id
+            const result = await this.blockWorkerUseCase.execute(workerId)
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "blocked worker"))
+        } catch (error: any) {
+            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
         }
     }
 }

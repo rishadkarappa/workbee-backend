@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { Worker } from "../../domain/entities/Worker";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
 import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
@@ -17,7 +16,7 @@ export class GetNewAppliersUseCase implements IGetNewAppliersUseCase {
     async execute(): Promise<WorkerResponseDto[]> {
         const newAppliers = await this.workerRepository.getNewAppliers();
         if (!newAppliers) {
-            throw new Error(ResponseMessage.WORKER.DONT_GET_APPLIERS);
+            return []
         }
         return WorkerMapper.toResponseDtoList(newAppliers);
     }

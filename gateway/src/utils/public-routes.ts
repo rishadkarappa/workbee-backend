@@ -11,6 +11,7 @@ export const PUBLIC_ROUTES: { method: string; path: string }[] = [
     { method: "POST", path: "/auth/reset-password/:token" },
     { method: "POST", path: "/auth/worker-login" },
     { method: "POST", path: "/auth/admin/login" },
+    
     { method: "POST", path: "/work/apply-worker" },
 
 ];

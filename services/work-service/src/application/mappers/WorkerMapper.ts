@@ -1,4 +1,5 @@
 import { Worker } from "../../domain/entities/Worker";
+import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
 import { ApplyWorkerDto } from "../dtos/WorkerDTO";
 import { WorkerResponseDto } from "../dtos/WorkerDTO";
 
@@ -13,7 +14,7 @@ export class WorkerMapper {
             workType: dto.workType,
             preferredWorks: dto.preferredWorks,
             confirmations: dto.confirmations,
-            isApproved: false,
+            status: WorkerStatus.PENDING,
             isBlocked: false
         };
     }
@@ -29,7 +30,7 @@ export class WorkerMapper {
             workType: entity.workType,
             preferredWorks: entity.preferredWorks,
             confirmations: entity.confirmations,
-            isApproved: entity.isApproved || false,
+            status: entity.status,
             isBlocked: entity.isBlocked || false,
             createdAt: entity.createdAt || new Date(),
             updatedAt: entity.updatedAt || new Date()

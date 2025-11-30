@@ -1,10 +1,13 @@
+
 export interface User {
   id?: string;
   name: string;
   email: string;
   password?: string;
   isVerified?: boolean;
-  role:"user"|"admin";
+  isBlocked?:boolean;
+  role:"user"|"admin"|"worker";
   createdAt?: Date;
   updatedAt?:Date;
 }
+

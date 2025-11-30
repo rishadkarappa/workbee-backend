@@ -1,5 +1,11 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 
+export enum WorkerStatus {
+  PENDING = "pending",
+  APPROVED = "approved", 
+  REJECTED = "rejected"
+}
+
 export interface WorkerDocument extends Document {
   name: string;
   email: string;
@@ -14,7 +20,7 @@ export interface WorkerDocument extends Document {
     termsAccepted: boolean;
   };
   isBlocked:boolean;
-  isApproved: boolean;
+  status:WorkerStatus;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,7 +39,11 @@ const WorkerSchema = new Schema<WorkerDocument>({
     termsAccepted: { type: Boolean, required: true },
   },
   isBlocked:{ type:Boolean, default:false},
-  isApproved: { type:Boolean, default:false}
+  status:{
+    type:String,
+    enum:Object.values(WorkerStatus),
+    default:WorkerStatus.PENDING
+  },
 }, { timestamps: true });
 
 export const WorkerModel = mongoose.model<WorkerDocument>("Worker", WorkerSchema);

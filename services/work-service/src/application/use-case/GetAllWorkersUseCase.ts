@@ -13,7 +13,7 @@ export class GetAllWorkersUseCase implements IGetAllWorkersUseCase {
     async execute(): Promise<WorkerResponseDto[]> {
         const workers = await this.workerRepository.getAllWorkers();
         if (!workers || workers.length === 0) {
-            throw new Error("No approved workers found");
+            return []
         }
         return WorkerMapper.toResponseDtoList(workers);
     }
