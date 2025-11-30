@@ -11,12 +11,14 @@ import { ILoginAdminUseCase } from "../../../application/ports/admin/ILoginAdmin
 import { IGetUsersUseCase } from "../../../application/ports/admin/IGetUsersUseCase";
 
 import { IAdminContoller } from "../../ports/IAdminController";
+import { IBlockUserUseCase } from "../../../application/ports/admin/IBlockUserUseCase";
 
 @injectable()
 export class AdminController implements IAdminContoller{
     constructor(
         @inject("LoginAdminUseCase") private loginAdminUseCase:ILoginAdminUseCase,
-        @inject("GetUsersUseCase") private getUsersUseCase:IGetUsersUseCase
+        @inject("GetUsersUseCase") private getUsersUseCase:IGetUsersUseCase,
+        @inject("BlockUserUseCase") private blockUserUseCase:IBlockUserUseCase,
     ){}
 
     async adminLogin(req:Request, res:Response){
@@ -38,5 +40,17 @@ export class AdminController implements IAdminContoller{
             res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
         }
     }
+
+    async blockUser(req:Request, res:Response){
+         try {
+            const userId = req.params.id
+            const result = await this.blockUserUseCase.execute(userId)
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "ResponseMessage.ADMIN.BLOCKED_USER"))
+        } catch (error:any) {
+            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
+        }
+    }
+
+    
 
 }

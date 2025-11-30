@@ -9,6 +9,7 @@ const adminContoller = container.resolve(AdminController)
 
 router.post('/admin/login', adminContoller.adminLogin.bind(adminContoller))
 router.get('/admin/get-users', adminContoller.getUsers.bind(adminContoller))
+router.patch('/admin/block-user/:id', adminContoller.blockUser.bind(adminContoller))
 
 export default router
 
