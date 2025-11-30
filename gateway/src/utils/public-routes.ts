@@ -11,6 +11,8 @@ export const PUBLIC_ROUTES: { method: string; path: string }[] = [
     { method: "POST", path: "/auth/reset-password/:token" },
     { method: "POST", path: "/auth/worker-login" },
     { method: "POST", path: "/auth/admin/login" },
+    { method: "POST", path: "/work/apply-worker" },
+
 ];
 
 export const isPublic = (req: Request): boolean => {
@@ -18,3 +20,5 @@ export const isPublic = (req: Request): boolean => {
         (request) => request.method === req.method && request.path === req.path
     )
 }
+
+
