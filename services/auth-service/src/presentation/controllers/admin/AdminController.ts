@@ -5,15 +5,18 @@ import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
-import { LoginAdminUseCase } from "../../../application/use-cases/admin/LoginAdminUseCase";
-import { GetUsersUseCase } from "../../../application/use-cases/admin/GetUsersUseCase";
 import { LoginAdminRequestDTO } from "../../../application/dtos/admin/LoginAdminDTO";
 
+import { ILoginAdminUseCase } from "../../../application/ports/admin/ILoginAdminUseCase";
+import { IGetUsersUseCase } from "../../../application/ports/admin/IGetUsersUseCase";
+
+import { IAdminContoller } from "../../ports/IAdminController";
+
 @injectable()
-export class AdminController{
+export class AdminController implements IAdminContoller{
     constructor(
-        @inject(LoginAdminUseCase) private loginAdminUseCase:LoginAdminUseCase,
-        @inject(GetUsersUseCase) private getUsersUseCase:GetUsersUseCase
+        @inject("LoginAdminUseCase") private loginAdminUseCase:ILoginAdminUseCase,
+        @inject("GetUsersUseCase") private getUsersUseCase:IGetUsersUseCase
     ){}
 
     async adminLogin(req:Request, res:Response){

@@ -17,8 +17,8 @@ router.post("/post-work",
     upload.fields([
         { name: 'voiceFile', maxCount: 1 },
         { name: 'videoFile', maxCount: 1 },
-        { name: 'beforeImage', maxCount: 1 }
-    ]),workController.postWork.bind(workController)
-);
+        { name: 'beforeImage', maxCount: 1 }]),workController.postWork.bind(workController));
+
+router.get("/get-workerscount", workController.getWorkersCount.bind(workController))
 
 export default router

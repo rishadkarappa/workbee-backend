@@ -3,15 +3,17 @@ import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 
-import { WorkerLoginUseCase } from "../../../application/use-cases/worker/WorkerLoginUseCase";
 import { WorkerLoginRequestDTO } from "../../../application/dtos/worker/LoginWorkerDTO";
+import { IWorkerLoginUseCase } from "../../../application/ports/worker/IWorkerLoginUseCase";
+
+import { IWorkerController } from "../../ports/IWorkerController";
 
 @injectable()
-export class WorkerController {
+export class WorkerController implements IWorkerController{
     constructor(
-        @inject(WorkerLoginUseCase) private workerLoginUseCase: WorkerLoginUseCase
+        @inject("WorkerLoginUseCase") private workerLoginUseCase: IWorkerLoginUseCase,
 
-    ) { }
+    ){}
 
     async workerLogin(req: Request, res: Response) {
         try {

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 import { ITokenService } from '../../domain/services/ITokenService'
 
-const JWT_SECRET = process.env.JWT_SECRET || "jwtsecretkeys2233"
+const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233'
 
 @injectable()
 export class TokenService implements ITokenService{

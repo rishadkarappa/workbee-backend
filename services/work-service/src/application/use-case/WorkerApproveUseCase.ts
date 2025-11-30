@@ -1,27 +1,11 @@
 import { inject, injectable } from "tsyringe";
 import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
-import { Worker } from "../../domain/entities/Worker";
 import { WorkerApproveDto, WorkerResponseDto } from "../dtos/WorkerDTO";
 import { WorkerMapper } from "../mappers/WorkerMapper";
-
-
-// @injectable()
-// export class WorkerApproveUseCase {
-//     constructor(
-//         @inject("WorkerRepository") private workerRepository:IWorkerRepository
-//     ){}
-
-//     async execute(email:string):Promise<Worker>{
-//         const worker = await this.workerRepository.findByEmail(email)
-//         if(!worker) throw new Error("didnt get worker in usecase leyer")
-//         worker.isApproved = true
-//         const updatedWorker = await this.workerRepository.save(worker)
-//         return updatedWorker
-//     } 
-// }
+import { IWorkerApproveUseCase } from "../ports/worker/IWorkerApproveUseCase";
 
 @injectable()
-export class WorkerApproveUseCase {
+export class WorkerApproveUseCase implements IWorkerApproveUseCase{
     constructor(
         @inject("WorkerRepository") private workerRepository: IWorkerRepository
     ) {}

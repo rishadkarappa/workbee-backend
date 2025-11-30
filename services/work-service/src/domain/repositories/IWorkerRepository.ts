@@ -5,6 +5,7 @@ export interface IWorkerRepository{
     findByEmail(email:string):Promise<Worker|null>;
     getNewAppliers():Promise<Worker []>;
     getAllWorkers():Promise<Worker [] >;
+    getWorkersCount():Promise<number>;
 }
 
 
