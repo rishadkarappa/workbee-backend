@@ -27,7 +27,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     const isMatch = await this.hashService.compare(password, user.password!);
     if (!isMatch) throw new Error(ErrorMessages.USER.INVALID_PASSWORD);
 
-    const token = this.tokenService.generate(user.id!);
+    const token = this.tokenService.generateAccess(user.id!);
 
     return UserMapper.toLoginResponse(user, token);
   }

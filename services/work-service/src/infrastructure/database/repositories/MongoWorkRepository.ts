@@ -20,9 +20,58 @@ export class MongoWorkRepository implements IWorkRepository {
         return works.map(this.mapToEntity);
     }
 
-    async findAll(): Promise<Work[]> {
-        const works = await WorkModel.find().sort({ createdAt: -1 });
-        return works.map(this.mapToEntity);
+    // async findAll(): Promise<Work[]> {
+    //     const works = await WorkModel.find().sort({ createdAt: -1 });
+    //     return works.map(this.mapToEntity);
+    // }
+    async findAll(filters?: {
+        search?: string;
+        status?: string;
+        page?: number;
+        limit?: number;
+    }): Promise<{ works: Work[]; total: number }> {
+        const {
+            search = '',
+            status = 'all',
+            page = 1,
+            limit = 10
+        } = filters || {};
+
+        // Build query
+        const query: any = {};
+
+        // Search filter
+        if (search && search.trim()) {
+            query.$or = [
+                { workTitle: { $regex: search, $options: 'i' } },
+                { workCategory: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } },
+                { manualAddress: { $regex: search, $options: 'i' } },
+                { landmark: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        // Status filter
+        if (status !== 'all') {
+            query.status = status;
+        }
+
+        // Calculate pagination
+        const skip = (page - 1) * limit;
+
+        // Execute query with pagination
+        const [works, total] = await Promise.all([
+            WorkModel.find(query)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit),
+            WorkModel.countDocuments(query)
+        ]);
+
+        return {
+            works: works.map(this.mapToEntity),
+            total
+        };
     }
 
     async update(id: string, WorkData: Partial<Work>): Promise<Work | null> {
@@ -51,11 +100,10 @@ export class MongoWorkRepository implements IWorkRepository {
             videoFile: doc.videoFile,
             duration: doc.duration,
             budget: doc.budget,
-            location:doc.location,
+            location: doc.location,
             currentLocation: doc.currentLocation,
             manualAddress: doc.manualAddress,
             landmark: doc.landmark,
-            place: doc.place,
             contactNumber: doc.contactNumber,
             beforeImage: doc.beforeImage,
             petrolAllowance: doc.petrolAllowance,

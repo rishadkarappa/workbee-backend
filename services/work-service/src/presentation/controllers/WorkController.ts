@@ -61,23 +61,23 @@ export class WorkController implements IWorkController {
         }
     }
 
-   async approveWorker(req: Request, res: Response): Promise<void> {
-    try {
-        const dto: WorkerApproveDto = {
-            workerId: req.body.workerId,
-            status: req.body.status
-        };
-        
-        const result = await this.workerApproveUseCase.execute(dto);
-        res
-            .status(HttpStatus.OK)
-            .json(ResponseHelper.success(result, "Worker status updated successfully"));
-    } catch (error: any) {
-        res
-            .status(HttpStatus.BAD_REQUEST)
-            .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+    async approveWorker(req: Request, res: Response): Promise<void> {
+        try {
+            const dto: WorkerApproveDto = {
+                workerId: req.body.workerId,
+                status: req.body.status
+            };
+
+            const result = await this.workerApproveUseCase.execute(dto);
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(result, "Worker status updated successfully"));
+        } catch (error: any) {
+            res
+                .status(HttpStatus.BAD_REQUEST)
+                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
     }
-}
 
 
     async getWorkers(req: Request, res: Response): Promise<void> {
@@ -148,16 +148,49 @@ export class WorkController implements IWorkController {
         }
     }
 
+    // async getAllWorks(req: Request, res: Response): Promise<void> {
+    //     try {
+    //         const works = await this.getAllWorksUseCase.execute();
+    //         res
+    //             .status(HttpStatus.OK)
+    //             .json(ResponseHelper.success(works, "Get all works"));
+    //     } catch (error: any) {
+    //         res
+    //             .status(HttpStatus.BAD_REQUEST)
+    //             .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+    //     }
+    // }
     async getAllWorks(req: Request, res: Response): Promise<void> {
         try {
-            const works = await this.getAllWorksUseCase.execute();
-            res
-                .status(HttpStatus.OK)
-                .json(ResponseHelper.success(works, "Get all works"));
+            const {
+                search = '',
+                status = 'all',
+                page = '1',
+                limit = '10'
+            } = req.query;
+
+            const result = await this.getAllWorksUseCase.execute({
+                search: search as string,
+                status: status as string,
+                page: parseInt(page as string),
+                limit: parseInt(limit as string)
+            });
+
+            res.status(200).json({
+                success: true,
+                data: result.works,
+                pagination: {
+                    total: result.total,
+                    totalPages: result.totalPages,
+                    currentPage: parseInt(page as string),
+                    limit: parseInt(limit as string)
+                }
+            });
         } catch (error: any) {
-            res
-                .status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+            res.status(500).json({
+                success: false,
+                message: error.message || "Failed to get works"
+            });
         }
     }
 

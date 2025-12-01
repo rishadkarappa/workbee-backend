@@ -42,7 +42,7 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
             user = await this.userRepository.save(newUser)
         }
 
-        const token =  this.tokenSerivice.generate(user.id!);
+        const token =  this.tokenSerivice.generateAccess(user.id!);
         return UserMapper.toGoogleLoginResponse(user, token);
 
     }

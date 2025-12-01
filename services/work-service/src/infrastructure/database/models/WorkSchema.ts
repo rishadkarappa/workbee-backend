@@ -34,7 +34,6 @@ const WorkSchema = new Schema<WorkTocument>(
         currentLocation: { type: String },
         manualAddress: { type: String },
         landmark: { type: String },
-        place: { type: String },
         contactNumber: { type: String, required: true },
         beforeImage: { type: String },
         petrolAllowance: { type: String },

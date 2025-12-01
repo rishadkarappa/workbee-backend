@@ -18,7 +18,7 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase{
     ){}
 
     async execute(token:string, password:string){
-        const payload = this.tokenService.verify(token)
+        const payload = this.tokenService.verifyAccess(token)
         const user = await this.userRepository.findById(payload.id)
         if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
         

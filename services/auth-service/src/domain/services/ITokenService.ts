@@ -1,6 +1,6 @@
 export interface ITokenService{
-    generate(id:string):string;
-    verify(token:string):{id:string}
+    generateAccess(id:string):string;
+    verifyAccess(token:string):{id:string}
 }
 
 // export interface ITokenService {

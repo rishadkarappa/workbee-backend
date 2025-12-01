@@ -20,7 +20,6 @@ export interface Work {
     currentLocation?: string;
     manualAddress?: string;
     landmark?: string;
-    place?: string;
     contactNumber: string;
     beforeImage?: string;
     petrolAllowance?: string;

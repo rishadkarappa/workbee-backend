@@ -19,7 +19,7 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase{
         const user = await this.userRepository.findByEmail(email)
         if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
         // console.log('forgot pass usecase get user')
-        const resetToken = this.tokenService.generate(user.id!)
+        const resetToken = this.tokenService.generateAccess(user.id!)
         const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
         await this.emailService.sendResentPasswordLink(email, resetLink)
 

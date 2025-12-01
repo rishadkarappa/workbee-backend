@@ -15,7 +15,6 @@ export interface PostWorkDto {
     currentLocation?: string;
     manualAddress?: string;
     landmark?: string;
-    place?: string;
     contactNumber: string;
     petrolAllowance?: string;
     extraRequirements?: string;
@@ -46,7 +45,6 @@ export interface WorkResponseDto {
     distance?: number; 
     manualAddress?: string;
     landmark?: string;
-    place?: string;
     contactNumber: string;
     beforeImage?: string;
     petrolAllowance?: string;

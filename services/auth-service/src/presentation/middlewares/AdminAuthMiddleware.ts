@@ -17,7 +17,7 @@ export class AdminAuthMiddleware {
                 return;
             }
             const token = authHeader.split(" ")[1]
-            const payLoad = this.tokenSerivce.verify(token)
+            const payLoad = this.tokenSerivce.verifyAccess(token)
             const user = await this.userRepository.findById(payLoad.id)
             if(!user||user.role !== 'admin'){
                 res.status(403).json({message:'only access admins '})

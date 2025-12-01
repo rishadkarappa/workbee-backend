@@ -17,7 +17,7 @@ export class VerifyUserUseCase implements IVerifyUserUseCase{
         const token = authHeader.split(" ")[1]
         if(!token) throw new Error(ErrorMessages.USER.TOKEN_IS_MISSING)
 
-        const payload = this.tokenService.verify(token)
+        const payload = this.tokenService.verifyAccess(token)
         const user = await this.userRepository.findById(payload.id)
 
         if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);

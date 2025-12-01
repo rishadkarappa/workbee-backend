@@ -32,7 +32,7 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase{
         user.isVerified = true
         await this.userRepository.save(user)
         
-        const token = this.tokenService.generate(user.id!)
+        const token = this.tokenService.generateAccess(user.id!)
 
         return UserMapper.toVerifyOtpResponse(user, token);
 
