@@ -148,33 +148,32 @@ export class WorkController implements IWorkController {
         }
     }
 
-    // async getAllWorks(req: Request, res: Response): Promise<void> {
-    //     try {
-    //         const works = await this.getAllWorksUseCase.execute();
-    //         res
-    //             .status(HttpStatus.OK)
-    //             .json(ResponseHelper.success(works, "Get all works"));
-    //     } catch (error: any) {
-    //         res
-    //             .status(HttpStatus.BAD_REQUEST)
-    //             .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
-    //     }
-    // }
     async getAllWorks(req: Request, res: Response): Promise<void> {
         try {
             const {
                 search = '',
                 status = 'all',
                 page = '1',
-                limit = '10'
+                limit = '10',
+                latitude,
+                longitude,
+                maxDistance
             } = req.query;
 
-            const result = await this.getAllWorksUseCase.execute({
+            const filters: any = {
                 search: search as string,
                 status: status as string,
                 page: parseInt(page as string),
                 limit: parseInt(limit as string)
-            });
+            };
+
+            if (latitude && longitude && maxDistance) {
+                filters.latitude = parseFloat(latitude as string);
+                filters.longitude = parseFloat(longitude as string);
+                filters.maxDistance = parseFloat(maxDistance as string);
+            }
+
+            const result = await this.getAllWorksUseCase.execute(filters);
 
             res.status(200).json({
                 success: true,
@@ -193,6 +192,7 @@ export class WorkController implements IWorkController {
             });
         }
     }
+
 
     async getWorkersCount(req: Request, res: Response): Promise<void> {
         try {

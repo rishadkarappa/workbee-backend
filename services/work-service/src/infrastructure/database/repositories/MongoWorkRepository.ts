@@ -20,24 +20,110 @@ export class MongoWorkRepository implements IWorkRepository {
         return works.map(this.mapToEntity);
     }
 
-    // async findAll(): Promise<Work[]> {
-    //     const works = await WorkModel.find().sort({ createdAt: -1 });
-    //     return works.map(this.mapToEntity);
-    // }
     async findAll(filters?: {
         search?: string;
         status?: string;
         page?: number;
         limit?: number;
+        latitude?: number;
+        longitude?: number;
+        maxDistance?: number;
     }): Promise<{ works: Work[]; total: number }> {
         const {
             search = '',
             status = 'all',
             page = 1,
-            limit = 10
+            limit = 10,
+            latitude,
+            longitude,
+            maxDistance
         } = filters || {};
 
-        // Build query
+        const skip = (page - 1) * limit;
+
+        //  Check if geospatial filtering is requested
+        const hasGeoFilter = latitude !== undefined &&
+            longitude !== undefined &&
+            maxDistance !== undefined;
+
+        if (hasGeoFilter) {
+            //  Use MongoDB $geoNear aggregation for distance-based queries
+            const pipeline: any[] = [
+                {
+                    $geoNear: {
+                        near: {
+                            type: "Point",
+                            coordinates: [longitude, latitude] // [lng, lat]
+                        },
+                        distanceField: "calculatedDistance",
+                        maxDistance: maxDistance! * 1000, // Convert km to meters
+                        spherical: true,
+                        query: {} // Will be populated below
+                    }
+                }
+            ];
+
+            // Build additional filters
+            const matchQuery: any = {};
+
+            // Search filter
+            if (search && search.trim()) {
+                matchQuery.$or = [
+                    { workTitle: { $regex: search, $options: 'i' } },
+                    { workCategory: { $regex: search, $options: 'i' } },
+                    { description: { $regex: search, $options: 'i' } },
+                    { manualAddress: { $regex: search, $options: 'i' } },
+                    { landmark: { $regex: search, $options: 'i' } }
+                ];
+            }
+
+            // Status filter
+            if (status !== 'all') {
+                matchQuery.status = status;
+            }
+
+            // Add match stage if we have additional filters
+            if (Object.keys(matchQuery).length > 0) {
+                pipeline[0].$geoNear.query = matchQuery;
+            }
+
+            // Add pagination stages
+            pipeline.push(
+                { $skip: skip },
+                { $limit: limit }
+            );
+
+            // Execute aggregation
+            const works = await WorkModel.aggregate(pipeline);
+
+            // Get total count for pagination
+            const countPipeline: any[] = [
+                {
+                    $geoNear: {
+                        near: {
+                            type: "Point" as "Point",
+                            coordinates: [longitude, latitude] as [number, number]
+                        },
+                        distanceField: "calculatedDistance",
+                        maxDistance: maxDistance! * 1000,
+                        spherical: true,
+                        query: matchQuery
+                    }
+                },
+                { $count: "total" }
+            ];
+
+
+            const countResult = await WorkModel.aggregate(countPipeline);
+            const total = countResult.length > 0 ? countResult[0].total : 0;
+
+            return {
+                works: works.map(this.mapToEntity),
+                total
+            };
+        }
+
+        //  Regular query without geospatial filtering
         const query: any = {};
 
         // Search filter
@@ -55,9 +141,6 @@ export class MongoWorkRepository implements IWorkRepository {
         if (status !== 'all') {
             query.status = status;
         }
-
-        // Calculate pagination
-        const skip = (page - 1) * limit;
 
         // Execute query with pagination
         const [works, total] = await Promise.all([
