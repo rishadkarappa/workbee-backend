@@ -1,11 +1,5 @@
-export interface ITokenService{
-    generateAccess(id:string):string;
-    verifyAccess(token:string):{id:string}
-}
 
-// export interface ITokenService {
-//   generateAccess(id: string): string;
-//   generateRefresh(id: string): string;
-//   verifyAccess(token: string): { id: string };
-//   verifyRefresh(token: string): { id: string };
-// }
+export interface ITokenService {
+    generateAccess(id: string, role?: "user" | "admin" | "worker"): string;
+    verifyAccess(token: string): { id: string; role?: string };
+}

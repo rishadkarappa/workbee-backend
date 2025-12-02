@@ -34,7 +34,8 @@ export class LoginAdminUseCase implements ILoginAdminUseCase{
         const isAdmin = await this.hashService.compare(password, admin.password!)
         if(!isAdmin) throw new Error(ErrorMessages.ADMIN.WRONG_PASSWORD)
 
-        const token = this.tokenService.generateAccess(admin.id!)
+        // const token = this.tokenService.generateAccess(admin.id!)
+        const token = this.tokenService.generateAccess(admin.id!, "admin");
 
         return AdminMapper.toLoginResponse(admin, token);
     }
