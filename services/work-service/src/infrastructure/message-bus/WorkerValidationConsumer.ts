@@ -1,8 +1,8 @@
-/**
- * worker-service → auth-service communication (login validation)
- * Auth service sends: { email, password, correlationId }
- * Worker service checks worker and responds with: { success, data?, error? }
- */
+// /**
+//  * worker-service → auth-service communication (login validation)
+//  * auth service sends: { email, password, correlationId }
+//  * worker service checks worker and responds with: { success, data?, error? }
+//  */
 
 import { Channel } from "amqplib";
 import { injectable, inject } from "tsyringe";
@@ -18,7 +18,18 @@ interface WorkerLoginRequest {
 
 interface WorkerLoginResponse {
     success: boolean;
-    data?: any;
+    data?: {
+        id: string;
+        _id: string;
+        name: string;
+        email: string;
+        phone: string;
+        role: string;
+        location: string;
+        workType: string;
+        preferredWorks: string[];
+        status: string;
+    };
     error?: string;
 }
 
@@ -33,7 +44,6 @@ export class WorkerValidationConsumer {
     ) {}
 
     async start(channel: Channel): Promise<void> {
-
         await channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
         await channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
@@ -47,7 +57,6 @@ export class WorkerValidationConsumer {
             try {
                 const response = await this.validateWorker(request);
 
-                // send response to response queue
                 channel.sendToQueue(
                     this.RESPONSE_QUEUE,
                     Buffer.from(JSON.stringify(response)),
@@ -57,10 +66,10 @@ export class WorkerValidationConsumer {
                     }
                 );
 
-                console.log(`=== Sent validation response for: ${request.email}`);
+                console.log(`Sent validation response for: ${request.email}`);
                 channel.ack(msg);
             } catch (err: any) {
-                console.error("==== Worker validation error:", err);
+                console.error("Worker validation error:", err);
 
                 const errorResponse: WorkerLoginResponse = {
                     success: false,
@@ -93,7 +102,6 @@ export class WorkerValidationConsumer {
             };
         }
 
-        // NEW: Using enum status instead of isApproved
         if (worker.status !== WorkerStatus.APPROVED) {
             return {
                 success: false,
@@ -110,12 +118,24 @@ export class WorkerValidationConsumer {
             };
         }
 
-        // remove password before sending data
-        const { password: _, ...safeWorkerData } = worker;
+        // get worker ID (MongoDB _id or id)
+        const workerId = (worker as any)._id?.toString() || worker.id;
 
+        // Return worker data 
         return {
             success: true,
-            data: safeWorkerData
+            data: {
+                id: workerId,
+                _id: workerId,
+                name: worker.name,
+                email: worker.email,
+                phone: worker.phone,
+                role: "worker", 
+                location: worker.location,
+                workType: worker.workType,
+                preferredWorks: worker.preferredWorks,
+                status: worker.status
+            }
         };
     }
 }
