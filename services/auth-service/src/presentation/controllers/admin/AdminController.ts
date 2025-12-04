@@ -1,4 +1,3 @@
-
 import { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
@@ -51,6 +50,5 @@ export class AdminController implements IAdminContoller{
         }
     }
 
-    
 
 }

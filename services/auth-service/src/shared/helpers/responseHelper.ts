@@ -5,11 +5,7 @@ import { HttpStatus } from "../enums/HttpStatus";
 export class ResponseHelper{
 
     // if res was sucess
-    static success<T>(
-        data:T,
-        message= "Request successfull",
-        statusCode:number = HttpStatus.OK
-    ):ApiResponse<T>{
+    static success<T>( data:T, message= "Request successfull", statusCode:number = HttpStatus.OK):ApiResponse<T>{
         return {
             success:true,
             statusCode,

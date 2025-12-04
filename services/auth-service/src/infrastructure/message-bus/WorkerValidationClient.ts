@@ -1,16 +1,10 @@
-/**
- * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker is valid or not 
- * so check from auth service is the worker is verified or not
- */
+// /**
+//  * this is when the inter communication bw auth - work sevices when the worker login time want to check the worker is valid or not 
+//  * so check from auth service is the worker is verified or not
+//  */
 
 import { Channel } from 'amqplib';
 import { v4 as uuidv4 } from 'uuid';
-
-interface WorkerLoginRequest {
-    email: string;
-    password: string;
-    correlationId: string;
-}
 
 interface WorkerLoginResponse {
     success: boolean;
@@ -18,123 +12,110 @@ interface WorkerLoginResponse {
     error?: string;
 }
 
-// export class WorkerValidationClient {
-//     private readonly REQUEST_QUEUE = 'worker.validate.request';
-//     private readonly RESPONSE_QUEUE = 'worker.validate.response';
-//     private readonly TIMEOUT = 10000; 
-
-//     constructor(private channel: Channel) {}
-
-//     async validateWorker(email: string, password: string): Promise<WorkerLoginResponse> {
-//         const correlationId = uuidv4();
-
-//         await this.channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
-//         await this.channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
-
-//         return new Promise((resolve, reject) => {
-//             const timeout = setTimeout(() => {
-//                 reject(new Error('Worker validation request timeout'));
-//             }, this.TIMEOUT);
-
-//             // Setup response consumer
-//             this.channel.consume(
-//                 this.RESPONSE_QUEUE,
-//                 (msg) => {
-//                     if (!msg) return;
-
-//                     if (msg.properties.correlationId === correlationId) {
-//                         clearTimeout(timeout);
-//                         const response: WorkerLoginResponse = JSON.parse(msg.content.toString());
-//                         this.channel.ack(msg);
-//                         resolve(response);
-//                     }
-//                 },
-//                 { noAck: false }
-//             );
-
-//             // Send request
-//             const request: WorkerLoginRequest = {
-//                 email,
-//                 password,
-//                 correlationId
-//             };
-
-//             this.channel.sendToQueue(
-//                 this.REQUEST_QUEUE,
-//                 Buffer.from(JSON.stringify(request)),
-//                 {
-//                     correlationId,
-//                     persistent: true
-//                 }
-//             );
-
-//             console.log('Sent worker validation request:', email);
-//         });
-//     }
-// }
-
 export class WorkerValidationClient {
     private readonly REQUEST_QUEUE = 'worker.validate.request';
     private readonly RESPONSE_QUEUE = 'worker.validate.response';
-    private readonly TIMEOUT = 10000;
-
-    private pendingRequests: Map<string, (res: WorkerLoginResponse) => void> = new Map();
-    private initialized = false;
+    private readonly TIMEOUT = 10000; // 10 seconds
 
     constructor(private channel: Channel) {}
 
-    async init() {
-        if (this.initialized) return;
-        this.initialized = true;
-
-        await this.channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
-
-        this.channel.consume(
-            this.RESPONSE_QUEUE,
-            (msg) => {
-                if (!msg) return;
-
-                const correlationId = msg.properties.correlationId;
-                const resolver = this.pendingRequests.get(correlationId);
-
-                if (resolver) {
-                    const response = JSON.parse(msg.content.toString());
-                    resolver(response);
-
-                    this.pendingRequests.delete(correlationId);
-                    this.channel.ack(msg);
-                }
-            },
-            { noAck: false }
-        );
-    }
-
     async validateWorker(email: string, password: string): Promise<WorkerLoginResponse> {
-        await this.init();
-
         const correlationId = uuidv4();
 
-        return new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
-                this.pendingRequests.delete(correlationId);
-                reject(new Error("Worker validation timeout"));
+        return new Promise(async (resolve, reject) => {
+            let consumerTag: string | null = null;
+            let isResolved = false;
+
+            // Timeout handler
+            const timeoutId = setTimeout(() => {
+                if (!isResolved) {
+                    isResolved = true;
+                    console.error(`Timeout for correlation: ${correlationId}`);
+                    
+                    // Cancel consumer on timeout
+                    if (consumerTag) {
+                        this.channel.cancel(consumerTag).catch(err => 
+                            console.error("Error canceling consumer:", err)
+                        );
+                    }
+                    
+                    reject(new Error("Worker validation timeout. Please try again."));
+                }
             }, this.TIMEOUT);
 
-            this.pendingRequests.set(correlationId, (response) => {
-                clearTimeout(timeout);
-                resolve(response);
-            });
+            try {
+                // Assert queues
+                await this.channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
+                await this.channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
-            const req = { email, password, correlationId };
+                // Create a NEW consumer for THIS request only
+                const consumer = await this.channel.consume(
+                    this.RESPONSE_QUEUE,
+                    (msg) => {
+                        if (!msg || isResolved) return;
 
-            this.channel.sendToQueue(
-                this.REQUEST_QUEUE,
-                Buffer.from(JSON.stringify(req)),
-                {
-                    correlationId,
-                    persistent: true
+                        // Only process matching correlationId
+                        if (msg.properties.correlationId === correlationId) {
+                            isResolved = true;
+                            clearTimeout(timeoutId);
+
+                            try {
+                                const response = JSON.parse(msg.content.toString());
+                                
+                                console.log(`Received response for: ${correlationId}`, {
+                                    success: response.success
+                                });
+
+                                // Acknowledge message
+                                this.channel.ack(msg);
+
+                                // Cancel this consumer immediately
+                                this.channel.cancel(consumer.consumerTag).catch(err =>
+                                    console.error("Error canceling consumer:", err)
+                                );
+
+                                resolve(response);
+                            } catch (parseError) {
+                                console.error("Error parsing response:", parseError);
+                                this.channel.ack(msg);
+                                reject(new Error("Invalid response format"));
+                            }
+                        } else {
+                            // Acknowledge but ignore mismatched messages
+                            console.warn(`Ignoring message with wrong correlationId: ${msg.properties.correlationId}`);
+                            this.channel.ack(msg);
+                        }
+                    },
+                    { noAck: false }
+                );
+
+                consumerTag = consumer.consumerTag;
+
+                //  Send request after consumer is set up
+                this.channel.sendToQueue(
+                    this.REQUEST_QUEUE,
+                    Buffer.from(JSON.stringify({ email, password, correlationId })),
+                    {
+                        correlationId: correlationId,
+                        persistent: true
+                    }
+                );
+
+                console.log(`Sent validation request: ${correlationId}`);
+
+            } catch (error) {
+                isResolved = true;
+                clearTimeout(timeoutId);
+                console.error("RabbitMQ error:", error);
+                
+                if (consumerTag) {
+                    this.channel.cancel(consumerTag).catch(err =>
+                        console.error("Error canceling consumer:", err)
+                    );
                 }
-            );
+                
+                reject(error);
+            }
         });
     }
 }

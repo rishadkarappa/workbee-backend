@@ -5,16 +5,16 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { httpLogger } from "./middleware/centralized-logging";
 import { verifyToken } from "./middleware/auth-middleware";
 
-// Env config
+// env config
 dotenv.config();
 
-// Gateway port
+// gateway port
 const PORT = process.env.PORT;
 
-// Create app
+// create app
 const app = express();
 
-// Cors origin policy
+// cors origin policy
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true,
@@ -22,13 +22,13 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// Centerlized logging (mogran, winston)
+// centerlized logging (mogran, winston)
 app.use(httpLogger);
 
-// Autherization before hitting services
+// autherization before hitting services
 app.use(verifyToken);
 
-// Services
+// services
 const services = [
     {
         route: "/auth",
@@ -44,7 +44,7 @@ const services = [
     }
 ];
 
-// Forward routes to services
+// forward routes to services
 services.forEach((service) => {
     app.use(
         `${service.route}`,
@@ -55,5 +55,5 @@ services.forEach((service) => {
     );
 });
 
-// Gateway port litsening
+// gateway port litsening
 app.listen(PORT, () => console.log(`API Gateway running on ${PORT}`));

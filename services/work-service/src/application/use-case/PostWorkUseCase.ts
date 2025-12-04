@@ -48,6 +48,8 @@ export class PostWorkUseCase implements IPostWorkUseCase{
             throw new Error("Description must be at least 3 words");
         }
 
+       
+
         const work = WorkMapper.toEntity(dto);
         const createdWork = await this.workRepository.create(work);
         return WorkMapper.toResponseDto(createdWork);
