@@ -11,13 +11,21 @@ import { IGetNewAppliersUseCase } from "../ports/worker/IGetNewAppliersUseCase";
 export class GetNewAppliersUseCase implements IGetNewAppliersUseCase {
     constructor(
         @inject("WorkerRepository") private workerRepository: IWorkerRepository
-    ) {}
+    ) { }
 
-    async execute(): Promise<WorkerResponseDto[]> {
-        const newAppliers = await this.workerRepository.getNewAppliers();
-        if (!newAppliers) {
-            return []
+    async execute(page: number, limit: number, search: string): Promise<{
+        workers: WorkerResponseDto[];
+        total: number;
+    }> {
+        const result = await this.workerRepository.getNewAppliers(page, limit, search);
+
+        if (!result.workers || result.workers.length === 0) {
+            return { workers: [], total: 0 };
         }
-        return WorkerMapper.toResponseDtoList(newAppliers);
+
+        return {
+            workers: WorkerMapper.toResponseDtoList(result.workers),
+            total: result.total
+        };
     }
 }

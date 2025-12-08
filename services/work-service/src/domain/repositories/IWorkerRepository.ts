@@ -4,8 +4,14 @@ export interface IWorkerRepository{
     save(worker:Worker):Promise<Worker>;
     findByEmail(email:string):Promise<Worker|null>;
     findById(id:string):Promise<Worker|null>;
-    getNewAppliers():Promise<Worker []>;
-    getAllWorkers():Promise<Worker [] >;
+    getNewAppliers(page: number, limit: number, search: string): Promise<{ 
+        workers: Worker[]; 
+        total: number 
+    }>;
+    getAllWorkers(page: number, limit: number, search: string): Promise<{ 
+        workers: Worker[]; 
+        total: number 
+    }>;
     getWorkersCount():Promise<number>;
 }
 

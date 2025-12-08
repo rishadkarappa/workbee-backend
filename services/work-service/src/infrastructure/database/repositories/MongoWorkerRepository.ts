@@ -11,23 +11,23 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
     super(WorkerModel);
   }
 
-protected map(worker: any): Worker {
+  protected map(worker: any): Worker {
     return {
-        id: worker._id?.toString() || worker.id, 
-        name: worker.name,
-        email: worker.email,
-        phone: worker.phone,
-        password: worker.password,
-        location: worker.location,
-        workType: worker.workType,
-        preferredWorks: worker.preferredWorks,
-        confirmations: worker.confirmations,
-        status: worker.status,
-        isBlocked: worker.isBlocked,
-        createdAt: worker.createdAt,
-        updatedAt: worker.updatedAt
+      id: worker._id?.toString() || worker.id,
+      name: worker.name,
+      email: worker.email,
+      phone: worker.phone,
+      password: worker.password,
+      location: worker.location,
+      workType: worker.workType,
+      preferredWorks: worker.preferredWorks,
+      confirmations: worker.confirmations,
+      status: worker.status,
+      isBlocked: worker.isBlocked,
+      createdAt: worker.createdAt,
+      updatedAt: worker.updatedAt
     }
-}
+  }
 
   async save(worker: Worker): Promise<Worker> {
     if (worker.id) {
@@ -53,14 +53,71 @@ protected map(worker: any): Worker {
     return worker ? this.map(worker) : null;
   }
 
-  async getNewAppliers(): Promise<Worker[]> {
-    const newAppliers = await WorkerModel.find({ status: { $in: ["pending", "rejected"] } });
-    return newAppliers.map(w => this.map(w));
+  async getNewAppliers(
+    page: number = 1,
+    limit: number = 10,
+    search: string = ""
+  ): Promise<{ workers: Worker[]; total: number }> {
+    const skip = (page - 1) * limit;
+
+    // Build search query for pending and rejected workers
+    const searchQuery: any = { status: { $in: ["pending", "rejected"] } };
+
+    if (search) {
+      searchQuery.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const [workers, total] = await Promise.all([
+      WorkerModel.find(searchQuery)
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 }) // Latest first
+        .lean(),
+      WorkerModel.countDocuments(searchQuery)
+    ]);
+
+    return {
+      workers: workers.map(w => this.map(w)),
+      total
+    };
   }
 
-  async getAllWorkers(): Promise<Worker[]> {
-    const workers = await WorkerModel.find({ status: "approved" });
-    return workers.map(w => this.map(w));
+  async getAllWorkers(
+    page: number = 1,
+    limit: number = 10,
+    search: string = ""
+  ): Promise<{ workers: Worker[]; total: number }> {
+    const skip = (page - 1) * limit;
+
+    // Build search query for approved workers
+    const searchQuery: any = { status: "approved" };
+
+    if (search) {
+      searchQuery.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const [workers, total] = await Promise.all([
+      WorkerModel.find(searchQuery)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      WorkerModel.countDocuments(searchQuery)
+    ]);
+
+    return {
+      workers: workers.map(w => this.map(w)),
+      total
+    };
   }
 
   async getWorkersCount(): Promise<number> {

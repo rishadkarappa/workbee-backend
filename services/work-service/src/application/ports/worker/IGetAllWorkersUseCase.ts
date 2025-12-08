@@ -1,6 +1,8 @@
 import { WorkerResponseDto } from "../../dtos/WorkerDTO";
 
 export interface IGetAllWorkersUseCase {
-    execute(): Promise<WorkerResponseDto[]>;
+    execute(page: number, limit: number, search: string): Promise<{
+        workers: WorkerResponseDto[];
+        total: number;
+    }>;
 }
-

@@ -48,16 +48,31 @@ export class WorkController implements IWorkController {
         }
     }
 
+
     async getNewAppliers(req: Request, res: Response): Promise<void> {
         try {
-            const appliers = await this.getNewAppliersUseCase.execute();
-            res
-                .status(HttpStatus.OK)
-                .json(ResponseHelper.success(appliers, ResponseMessage.WORKER.GET_ALL_APPLIERS));
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const search = (req.query.search as string) || "";
+
+            const result = await this.getNewAppliersUseCase.execute(page, limit, search);
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(
+                    {
+                        workers: result.workers,
+                        total: result.total,
+                        page,
+                        limit,
+                        totalPages: Math.ceil(result.total / limit)
+                    },
+                    ResponseMessage.WORKER.GET_ALL_APPLIERS
+                )
+            );
         } catch (error: any) {
-            res
-                .status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+            res.status(HttpStatus.BAD_REQUEST).json(
+                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
+            );
         }
     }
 
@@ -79,17 +94,30 @@ export class WorkController implements IWorkController {
         }
     }
 
-
     async getWorkers(req: Request, res: Response): Promise<void> {
         try {
-            const workers = await this.getAllWorkersUseCase.execute();
-            res
-                .status(HttpStatus.OK)
-                .json(ResponseHelper.success(workers, "Get all workers"));
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const search = (req.query.search as string) || "";
+
+            const result = await this.getAllWorkersUseCase.execute(page, limit, search);
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(
+                    {
+                        workers: result.workers,
+                        total: result.total,
+                        page,
+                        limit,
+                        totalPages: Math.ceil(result.total / limit)
+                    },
+                    "Get all workers"
+                )
+            );
         } catch (error: any) {
-            res
-                .status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+            res.status(HttpStatus.BAD_REQUEST).json(
+                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
+            );
         }
     }
 
