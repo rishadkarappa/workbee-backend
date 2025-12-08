@@ -21,16 +21,16 @@ export class LoginAdminUseCase implements ILoginAdminUseCase{
 
     async execute(data:LoginAdminRequestDTO):Promise<LoginAdminResponseDTO>{
         const { email, password} = data
-        console.log('adminusecase illkj')
-        console.log('emil',email);
-        console.log('pln pas',password);
+        // console.log('adminusecase illkj')
+        // console.log('emil',email);
+        // console.log('pln pas',password);
         
         const admin = await this.userRepository.findByEmail(email)
         // console.log('admin found',admin)
-        console.log('admin hash pas',admin?.password)
-
+        // console.log('admin hash pas',admin?.password)
+        // 
         if(!admin||admin.role!==UserRoles.ADMIN) throw new Error(ErrorMessages.ADMIN.ADMIN_NOT_FOUND);
-
+        
         const isAdmin = await this.hashService.compare(password, admin.password!)
         if(!isAdmin) throw new Error(ErrorMessages.ADMIN.WRONG_PASSWORD)
 

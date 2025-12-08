@@ -5,14 +5,14 @@ import { IGetUsersUseCase } from "../../ports/admin/IGetUsersUseCase";
 
 
 @injectable()
-export class GetUsersUseCase implements IGetUsersUseCase{
+export class GetUsersUseCase implements IGetUsersUseCase {
     constructor(
-        @inject("UserRepository") private userRepository:IUserRepository
+        @inject("UserRepository") private userRepository: IUserRepository
     ) {}
 
-    async execute(){
-        const users = await this.userRepository.getUsers()
-        if(!users) throw new Error('users didnt get in getuserusecase')
-        return { users }
+    async execute(page: number, limit: number, search: string) {
+        const result = await this.userRepository.getUsers(page, limit, search);
+        if (!result) throw new Error('users didnt get in getuserusecase');
+        return result; 
     }
 }

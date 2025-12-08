@@ -5,37 +5,64 @@ import { UserModel } from "../models/UserSchema";
 import { MongoBaseRepository } from "./MongoBaseRepository";
 
 @injectable()
-export class MongoUserRepository extends MongoBaseRepository<User, any> implements IUserRepository{
-    constructor(){
+export class MongoUserRepository extends MongoBaseRepository<User, any> implements IUserRepository {
+    constructor() {
         super(UserModel)
     }
 
     protected map(user: any): User {
-        return{
-            id:user.id,
-            name:user.name,
-            email:user.email,
-            password:user.password,
-            role:user.role,
-            isVerified:user.isVerified,
-            isBlocked:user.isBlocked,
-            createdAt:user.createdAt
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            password: user.password,
+            role: user.role,
+            isVerified: user.isVerified,
+            isBlocked: user.isBlocked,
+            createdAt: user.createdAt
         }
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        const user = await UserModel.findOne({email})
-        return user?this.map(user):null
+        const user = await UserModel.findOne({ email })
+        return user ? this.map(user) : null
     }
 
-    async getUsers(): Promise<User[]> {
-        const users = await this.findAll();
-        return users
+
+    async getUsers(
+        page: number = 1,
+        limit: number = 10,
+        search: string = ""
+    ): Promise<{ users: User[], total: number }> {
+        const skip = (page - 1) * limit;
+
+        // Build search query
+        const searchQuery = search
+            ? {
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } }
+                ]
+            }
+            : {};
+
+        const [users, total] = await Promise.all([
+            UserModel.find(searchQuery)
+                .skip(skip)
+                .limit(limit)
+                .lean(),
+            UserModel.countDocuments(searchQuery)
+        ]);
+
+        return {
+            users: users.map(user => this.map(user)),
+            total
+        };
     }
 
     async save(user: User): Promise<User> {
-        if(user.id){
-            const updated = await UserModel.findByIdAndUpdate(user.id, user, {new:true})
+        if (user.id) {
+            const updated = await UserModel.findByIdAndUpdate(user.id, user, { new: true })
             return this.map(updated!)
         } else {
             const newUser = new UserModel(user)

@@ -47,7 +47,7 @@ export class WorkerValidationConsumer {
         await channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
         await channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
-        console.log(`✔ WorkerValidationConsumer listening on queue: ${this.REQUEST_QUEUE}`);
+        console.log(`WorkerValidationConsumer listening on queue: ${this.REQUEST_QUEUE}`);
 
         channel.consume(this.REQUEST_QUEUE, async (msg) => {
             if (!msg) return;

@@ -13,39 +13,57 @@ import { IAdminContoller } from "../../ports/IAdminController";
 import { IBlockUserUseCase } from "../../../application/ports/admin/IBlockUserUseCase";
 
 @injectable()
-export class AdminController implements IAdminContoller{
+export class AdminController implements IAdminContoller {
     constructor(
-        @inject("LoginAdminUseCase") private loginAdminUseCase:ILoginAdminUseCase,
-        @inject("GetUsersUseCase") private getUsersUseCase:IGetUsersUseCase,
-        @inject("BlockUserUseCase") private blockUserUseCase:IBlockUserUseCase,
-    ){}
+        @inject("LoginAdminUseCase") private loginAdminUseCase: ILoginAdminUseCase,
+        @inject("GetUsersUseCase") private getUsersUseCase: IGetUsersUseCase,
+        @inject("BlockUserUseCase") private blockUserUseCase: IBlockUserUseCase,
+    ) { }
 
-    async adminLogin(req:Request, res:Response){
+    async adminLogin(req: Request, res: Response) {
         try {
             // const {email, password} = req.body;
-            const dto:LoginAdminRequestDTO = req.body
+            const dto: LoginAdminRequestDTO = req.body
             const result = await this.loginAdminUseCase.execute(dto)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.LOGINED_SUCCESFULLY))
-        } catch (err:any) {
+        } catch (err: any) {
             res.status(HttpStatus.UNAUTHORIZED).json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))
         }
     }
 
-    async getUsers(req:Request, res:Response){
+    async getUsers(req: Request, res: Response) {
         try {
-            const result = await this.getUsersUseCase.execute()
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.GET_USERS))
-        } catch (error:any) {
-            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const search = (req.query.search as string) || "";
+
+            const result = await this.getUsersUseCase.execute(page, limit, search);
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(
+                    {
+                        users: result.users,
+                        total: result.total,
+                        page,
+                        limit,
+                        totalPages: Math.ceil(result.total / limit)
+                    },
+                    ResponseMessage.ADMIN.GET_USERS
+                )
+            );
+        } catch (error: any) {
+            res.status(HttpStatus.BAD_REQUEST).json(
+                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
+            );
         }
     }
 
-    async blockUser(req:Request, res:Response){
-         try {
+    async blockUser(req: Request, res: Response) {
+        try {
             const userId = req.params.id
             const result = await this.blockUserUseCase.execute(userId)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, "ResponseMessage.ADMIN.BLOCKED_USER"))
-        } catch (error:any) {
+        } catch (error: any) {
             res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
         }
     }
