@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IGetMyWorksUseCase } from "../ports/work/IGetMyWorksUseCase";
+import { IGetMyWorksUseCase } from "../ports/user/IGetMyWorksUseCase";
 import { IWorkRepository } from "../../domain/repositories/IWorkRepository";
 
 @injectable()

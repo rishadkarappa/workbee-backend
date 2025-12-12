@@ -22,5 +22,6 @@ router.post("/post-work",
 router.get("/get-workerscount", workController.getWorkersCount.bind(workController))
 router.patch('/block-worker/:id', workController.blockWorker.bind(workController))
 router.get('/get-my-works', workController.getMyWorks.bind(workController));
+router.put('/update-work/:workId', workController.updateWork.bind(workController))
 
 export default router

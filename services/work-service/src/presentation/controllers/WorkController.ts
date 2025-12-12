@@ -4,7 +4,7 @@ import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
-import { PostWorkDto } from "../../application/dtos/WorkDTO";
+import { PostWorkDto, UpdateWorkDto } from "../../application/dtos/WorkDTO";
 import { ApplyWorkerDto, WorkerApproveDto } from "../../application/dtos/WorkerDTO";
 
 import { IApplyWorkerUseCase } from "../../application/ports/worker/IApplyWorkerUseCase";
@@ -18,7 +18,8 @@ import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUs
 import { IWorkController } from "../ports/IWorkContoller";
 import { GetWorkersCountUseCase } from "../../application/use-case/GetWorkersCountUseCase";
 import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorkerUseCase";
-import { IGetMyWorksUseCase } from "../../application/ports/work/IGetMyWorksUseCase";
+import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseCase";
+import { IUpdateWorkUseCase } from "../../application/ports/user/IUpdateWorkUseCase";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -33,6 +34,7 @@ export class WorkController implements IWorkController {
         @inject("GetWorkersCountUseCase") private getWorkersCountUseCase: GetWorkersCountUseCase,
         @inject("BlockWorkerUseCase") private blockWorkerUseCase: IBlockWorkerUseCase,
         @inject("GetMyWorksUseCase") private getMyWorksUseCase: IGetMyWorksUseCase,
+        @inject("UpdateWorkUseCase") private updateWorkUseCase: IUpdateWorkUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response): Promise<void> {
@@ -248,20 +250,51 @@ export class WorkController implements IWorkController {
     }
 
     async getMyWorks(req: Request, res: Response) {
+        try {
+            const userId = req.headers['x-user-id'] as string;
+
+            if (!userId) {
+                return res.status(HttpStatus.UNAUTHORIZED).json(
+                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+                );
+            }
+
+            const result = await this.getMyWorksUseCase.execute(userId);
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(result, "Successfully retrieved user works")
+            );
+        } catch (error: any) {
+            res.status(HttpStatus.BAD_REQUEST).json(
+                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
+            );
+        }
+    }
+
+    async updateWork(req: Request, res: Response) {
     try {
+        const workId = req.params.workId; 
         const userId = req.headers['x-user-id'] as string;
-        
+        const updateData = req.body;
+
         if (!userId) {
             return res.status(HttpStatus.UNAUTHORIZED).json(
                 ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
             );
         }
 
-        const result = await this.getMyWorksUseCase.execute(userId);
+        const dto: UpdateWorkDto = {
+            workId,
+            userId,
+            ...updateData
+        };
+
+        const updatedWork = await this.updateWorkUseCase.execute(dto);
+
         res.status(HttpStatus.OK).json(
-            ResponseHelper.success(result, "Successfully retrieved user works")
+            ResponseHelper.success(updatedWork, "Work updated successfully")
         );
     } catch (error: any) {
+        console.error('Update work error:', error);
         res.status(HttpStatus.BAD_REQUEST).json(
             ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
         );
