@@ -24,6 +24,8 @@ import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseC
 import { GetMyWorksUseCase } from "../../application/use-case/GetMyWorksUseCase";
 import { IUpdateWorkUseCase } from "../../application/ports/user/IUpdateWorkUseCase";
 import { UpdateWorkUseCase } from "../../application/use-case/UpdateWorkUseCase";
+import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWorkUseCase";
+import { DeleteMyWorkUseCase } from "../../application/use-case/DeleteMyWorkUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -38,4 +40,5 @@ container.registerSingleton<IPostWorkUseCase>("PostWorkUseCase", PostWorkUseCase
 container.registerSingleton<IGetAllWorksUseCase>("GetAllWorksUseCase", GetAllWorksUseCase);
 container.registerSingleton<IGetMyWorksUseCase>("GetMyWorksUseCase", GetMyWorksUseCase);
 container.registerSingleton<IUpdateWorkUseCase>("UpdateWorkUseCase", UpdateWorkUseCase);
+container.registerSingleton<IDeleteMyWorkUseCase>("DeleteMyWorkUseCase", DeleteMyWorkUseCase);
 

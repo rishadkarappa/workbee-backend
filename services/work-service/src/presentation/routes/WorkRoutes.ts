@@ -23,5 +23,6 @@ router.get("/get-workerscount", workController.getWorkersCount.bind(workControll
 router.patch('/block-worker/:id', workController.blockWorker.bind(workController))
 router.get('/get-my-works', workController.getMyWorks.bind(workController));
 router.put('/update-work/:workId', workController.updateWork.bind(workController))
+router.delete('/delete-my-work/:workId', workController.deleteMyWork.bind(workController))
 
 export default router

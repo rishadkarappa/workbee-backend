@@ -4,7 +4,7 @@ import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
-import { PostWorkDto, UpdateWorkDto } from "../../application/dtos/WorkDTO";
+import { DeleteWorkDto, PostWorkDto, UpdateWorkDto } from "../../application/dtos/WorkDTO";
 import { ApplyWorkerDto, WorkerApproveDto } from "../../application/dtos/WorkerDTO";
 
 import { IApplyWorkerUseCase } from "../../application/ports/worker/IApplyWorkerUseCase";
@@ -20,6 +20,7 @@ import { GetWorkersCountUseCase } from "../../application/use-case/GetWorkersCou
 import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorkerUseCase";
 import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseCase";
 import { IUpdateWorkUseCase } from "../../application/ports/user/IUpdateWorkUseCase";
+import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWorkUseCase";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -35,6 +36,7 @@ export class WorkController implements IWorkController {
         @inject("BlockWorkerUseCase") private blockWorkerUseCase: IBlockWorkerUseCase,
         @inject("GetMyWorksUseCase") private getMyWorksUseCase: IGetMyWorksUseCase,
         @inject("UpdateWorkUseCase") private updateWorkUseCase: IUpdateWorkUseCase,
+        @inject("DeleteMyWorkUseCase") private deleteMyWorkUseCase: IDeleteMyWorkUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response): Promise<void> {
@@ -271,33 +273,62 @@ export class WorkController implements IWorkController {
     }
 
     async updateWork(req: Request, res: Response) {
-    try {
-        const workId = req.params.workId; 
-        const userId = req.headers['x-user-id'] as string;
-        const updateData = req.body;
+        try {
+            const workId = req.params.workId;
+            const userId = req.headers['x-user-id'] as string;
+            const updateData = req.body;
 
-        if (!userId) {
-            return res.status(HttpStatus.UNAUTHORIZED).json(
-                ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+            if (!userId) {
+                return res.status(HttpStatus.UNAUTHORIZED).json(
+                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+                );
+            }
+
+            const dto: UpdateWorkDto = {
+                workId,
+                userId,
+                ...updateData
+            };
+
+            const updatedWork = await this.updateWorkUseCase.execute(dto);
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(updatedWork, "Work updated successfully")
+            );
+        } catch (error: any) {
+            // console.error('update work error', error);
+            res.status(HttpStatus.BAD_REQUEST).json(
+                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
             );
         }
-
-        const dto: UpdateWorkDto = {
-            workId,
-            userId,
-            ...updateData
-        };
-
-        const updatedWork = await this.updateWorkUseCase.execute(dto);
-
-        res.status(HttpStatus.OK).json(
-            ResponseHelper.success(updatedWork, "Work updated successfully")
-        );
-    } catch (error: any) {
-        console.error('Update work error:', error);
-        res.status(HttpStatus.BAD_REQUEST).json(
-            ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
-        );
     }
-}
+
+    async deleteMyWork(req: Request, res: Response) {
+        try {
+            const userId = req.headers["x-user-id"] as string;
+
+            if (!userId) {
+                return res.status(401).json(
+                    ResponseHelper.error("Unauthorized", 401)
+                );
+            }
+
+            const dto: DeleteWorkDto = {
+                workId: req.params.workId,
+                userId
+            };
+
+            const result = await this.deleteMyWorkUseCase.execute(dto);
+
+            res.status(200).json(
+                ResponseHelper.success(result, "Work deleted successfully")
+            );
+
+        } catch (error: any) {
+            res.status(400).json(
+                ResponseHelper.error(error.message, 400)
+            );
+        }
+    }
+
 }

@@ -76,3 +76,8 @@ export interface UpdateWorkDto {
     anythingElse?: string;
     status?: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'cancelled';
 }
+
+export interface DeleteWorkDto {
+    workId: string;
+    userId: string;
+}
