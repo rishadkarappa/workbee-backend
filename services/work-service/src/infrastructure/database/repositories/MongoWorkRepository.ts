@@ -167,6 +167,13 @@ export class MongoWorkRepository implements IWorkRepository {
         return !!result;
     }
 
+    async getMyWorks(userId: string): Promise<{ works: Work[] | null }> {
+        const works = await WorkModel.find({ userId: userId }).sort({ createdAt: -1 });
+        return {
+            works: works.length > 0 ? works.map(this.mapToEntity) : null
+        };
+    }
+
     private mapToEntity(doc: any): Work {
         return {
             id: doc._id.toString(),

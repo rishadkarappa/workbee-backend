@@ -15,4 +15,5 @@ export interface IWorkRepository{
         longitude?: number; 
         maxDistance?: number;
     }): Promise<{ works: Work[]; total: number }>;
+    getMyWorks(id:string):Promise<{works:Work[]|null}>;
 }

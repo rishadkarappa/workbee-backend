@@ -20,6 +20,8 @@ import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUs
 import { GetWorkersCountUseCase } from "../../application/use-case/GetWorkersCountUseCase";
 import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorkerUseCase";
 import { BlockWorkerUseCase } from "../../application/use-case/BlockWorkerUseCase";
+import { IGetMyWorksUseCase } from "../../application/ports/work/IGetMyWorksUseCase";
+import { GetMyWorksUseCase } from "../../application/use-case/GetMyWorksUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -32,4 +34,5 @@ container.registerSingleton("GetWorkersCountUseCase",GetWorkersCountUseCase)
 // register work usecase
 container.registerSingleton<IPostWorkUseCase>("PostWorkUseCase", PostWorkUseCase);
 container.registerSingleton<IGetAllWorksUseCase>("GetAllWorksUseCase", GetAllWorksUseCase);
+container.registerSingleton<IGetMyWorksUseCase>("GetMyWorksUseCase", GetMyWorksUseCase);
 

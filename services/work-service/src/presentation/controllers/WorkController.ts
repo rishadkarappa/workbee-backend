@@ -18,6 +18,7 @@ import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUs
 import { IWorkController } from "../ports/IWorkContoller";
 import { GetWorkersCountUseCase } from "../../application/use-case/GetWorkersCountUseCase";
 import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorkerUseCase";
+import { IGetMyWorksUseCase } from "../../application/ports/work/IGetMyWorksUseCase";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -31,6 +32,7 @@ export class WorkController implements IWorkController {
         @inject("GetAllWorksUseCase") private getAllWorksUseCase: IGetAllWorksUseCase,
         @inject("GetWorkersCountUseCase") private getWorkersCountUseCase: GetWorkersCountUseCase,
         @inject("BlockWorkerUseCase") private blockWorkerUseCase: IBlockWorkerUseCase,
+        @inject("GetMyWorksUseCase") private getMyWorksUseCase: IGetMyWorksUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response): Promise<void> {
@@ -244,4 +246,25 @@ export class WorkController implements IWorkController {
             res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
         }
     }
+
+    async getMyWorks(req: Request, res: Response) {
+    try {
+        const userId = req.headers['x-user-id'] as string;
+        
+        if (!userId) {
+            return res.status(HttpStatus.UNAUTHORIZED).json(
+                ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+            );
+        }
+
+        const result = await this.getMyWorksUseCase.execute(userId);
+        res.status(HttpStatus.OK).json(
+            ResponseHelper.success(result, "Successfully retrieved user works")
+        );
+    } catch (error: any) {
+        res.status(HttpStatus.BAD_REQUEST).json(
+            ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
+        );
+    }
+}
 }
