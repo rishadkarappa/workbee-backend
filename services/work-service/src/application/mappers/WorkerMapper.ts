@@ -1,7 +1,7 @@
 import { Worker } from "../../domain/entities/Worker";
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
-import { ApplyWorkerDto } from "../dtos/WorkerDTO";
-import { WorkerResponseDto } from "../dtos/WorkerDTO";
+import { ApplyWorkerDto } from "../dtos/worker/WorkerDTO";
+import { WorkerResponseDto } from "../dtos/worker/WorkerDTO";
 
 export class WorkerMapper {
     static toEntity(dto: ApplyWorkerDto): Worker {
@@ -15,7 +15,8 @@ export class WorkerMapper {
             preferredWorks: dto.preferredWorks,
             confirmations: dto.confirmations,
             status: WorkerStatus.PENDING,
-            isBlocked: false
+            isBlocked: false,
+            canReapply: true
         };
     }
 
@@ -32,6 +33,9 @@ export class WorkerMapper {
             confirmations: entity.confirmations,
             status: entity.status,
             isBlocked: entity.isBlocked || false,
+            rejectionReason: entity.rejectionReason,
+            rejectedAt: entity.rejectedAt,
+            canReapply: entity.canReapply,
             createdAt: entity.createdAt || new Date(),
             updatedAt: entity.updatedAt || new Date()
         };

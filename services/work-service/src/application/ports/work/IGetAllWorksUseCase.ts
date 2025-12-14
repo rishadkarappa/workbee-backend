@@ -1,4 +1,4 @@
-import { WorkResponseDto } from "../../dtos/WorkDTO";
+import { WorkResponseDto } from "../../dtos/work/WorkDTO";
 
 export interface IGetAllWorksUseCase {
     execute(filters?: {

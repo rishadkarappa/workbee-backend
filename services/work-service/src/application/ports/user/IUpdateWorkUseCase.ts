@@ -1,4 +1,4 @@
-import { UpdateWorkDto, WorkResponseDto } from "../../dtos/WorkDTO";
+import { UpdateWorkDto, WorkResponseDto } from "../../dtos/work/WorkDTO";
 
 
 export interface IUpdateWorkUseCase{

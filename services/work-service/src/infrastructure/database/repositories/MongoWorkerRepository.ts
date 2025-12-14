@@ -24,6 +24,9 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
       confirmations: worker.confirmations,
       status: worker.status,
       isBlocked: worker.isBlocked,
+      rejectionReason: worker.rejectionReason,
+      rejectedAt: worker.rejectedAt,
+      canReapply: worker.canReapply,
       createdAt: worker.createdAt,
       updatedAt: worker.updatedAt
     }

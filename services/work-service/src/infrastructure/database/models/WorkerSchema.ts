@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 export enum WorkerStatus {
   PENDING = "pending",
@@ -21,6 +21,9 @@ export interface WorkerDocument extends Document {
   };
   isBlocked:boolean;
   status:WorkerStatus;
+  rejectionReason?: string; 
+  rejectedAt?: Date; 
+  canReapply?: boolean; 
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +47,9 @@ const WorkerSchema = new Schema<WorkerDocument>({
     enum:Object.values(WorkerStatus),
     default:WorkerStatus.PENDING
   },
+  rejectionReason: { type: String },
+  rejectedAt: { type: Date },
+  canReapply: { type: Boolean, default: true }
 }, { timestamps: true });
 
 export const WorkerModel = mongoose.model<WorkerDocument>("Worker", WorkerSchema);

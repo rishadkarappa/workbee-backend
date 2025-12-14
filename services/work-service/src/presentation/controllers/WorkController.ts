@@ -4,8 +4,8 @@ import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
-import { DeleteWorkDto, PostWorkDto, UpdateWorkDto } from "../../application/dtos/WorkDTO";
-import { ApplyWorkerDto, WorkerApproveDto } from "../../application/dtos/WorkerDTO";
+import { DeleteWorkDto, PostWorkDto, UpdateWorkDto } from "../../application/dtos/work/WorkDTO";
+import { ApplyWorkerDto, WorkerApproveDto } from "../../application/dtos/worker/WorkerDTO";
 
 import { IApplyWorkerUseCase } from "../../application/ports/worker/IApplyWorkerUseCase";
 import { IGetNewAppliersUseCase } from "../../application/ports/worker/IGetNewAppliersUseCase";
@@ -83,22 +83,24 @@ export class WorkController implements IWorkController {
     }
 
     async approveWorker(req: Request, res: Response): Promise<void> {
-        try {
-            const dto: WorkerApproveDto = {
-                workerId: req.body.workerId,
-                status: req.body.status
-            };
+    try {
+        const dto: WorkerApproveDto = {
+            workerId: req.body.workerId,
+            status: req.body.status,
+            rejectionReason: req.body.rejectionReason 
+        };
 
-            const result = await this.workerApproveUseCase.execute(dto);
-            res
-                .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result, "Worker status updated successfully"));
-        } catch (error: any) {
-            res
-                .status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
-        }
+        const result = await this.workerApproveUseCase.execute(dto);
+        res
+            .status(HttpStatus.OK)
+            .json(ResponseHelper.success(result, "Worker status updated successfully"));
+    } catch (error: any) {
+        res
+            .status(HttpStatus.BAD_REQUEST)
+            .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
     }
+}
+
 
     async getWorkers(req: Request, res: Response): Promise<void> {
         try {

@@ -29,12 +29,15 @@ export interface WorkerResponseDto {
     };
     status: "pending" | "approved" | "rejected";
     isBlocked: boolean;
+    rejectionReason?: string;
+    rejectedAt?: Date;
+    canReapply?: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
 
-
 export interface WorkerApproveDto {
     workerId: string;
     status: "approved" | "rejected";
+    rejectionReason?: string;
 }

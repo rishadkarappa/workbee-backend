@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
 import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
-import { WorkerResponseDto } from "../dtos/WorkerDTO";
+import { WorkerResponseDto } from "../dtos/worker/WorkerDTO";
 import { WorkerMapper } from "../mappers/WorkerMapper";
 
 import { IGetNewAppliersUseCase } from "../ports/worker/IGetNewAppliersUseCase";

@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IWorkRepository } from "../../domain/repositories/IWorkRepository";
 
 import { WorkMapper } from "../mappers/WorkMapper";
-import { PostWorkDto, WorkResponseDto } from "../dtos/WorkDTO";
+import { PostWorkDto, WorkResponseDto } from "../dtos/work/WorkDTO";
 
 import { IPostWorkUseCase } from "../ports/work/IPostWorkUseCase";
 

@@ -1,6 +1,6 @@
 import { Work } from "../../domain/entities/Work";
-import { PostWorkDto } from "../dtos/WorkDTO";
-import { WorkResponseDto } from "../dtos/WorkDTO";
+import { PostWorkDto } from "../dtos/work/WorkDTO";
+import { WorkResponseDto } from "../dtos/work/WorkDTO";
 
 export class WorkMapper {
     static toEntity(dto: PostWorkDto): Work {

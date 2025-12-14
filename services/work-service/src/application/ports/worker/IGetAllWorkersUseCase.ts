@@ -1,4 +1,4 @@
-import { WorkerResponseDto } from "../../dtos/WorkerDTO";
+import { WorkerResponseDto } from "../../dtos/worker/WorkerDTO";
 
 export interface IGetAllWorkersUseCase {
     execute(page: number, limit: number, search: string): Promise<{
