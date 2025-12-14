@@ -1,13 +1,10 @@
 import { injectable, inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-
 import { LoginUserRequestDTO, LoginUserResponseDTO } from "../../dtos/user/LoginUserDTO";
-
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IHashService } from "../../../domain/services/IHashService";
 import { UserMapper } from "../../mappers/UserMapper";
-
 import { ILoginUserUseCase } from "../../ports/user/ILoginUserUseCase";
 
 @injectable()
@@ -27,8 +24,13 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     const isMatch = await this.hashService.compare(password, user.password!);
     if (!isMatch) throw new Error(ErrorMessages.USER.INVALID_PASSWORD);
 
-    const token = this.tokenService.generateAccess(user.id!, "user");
+    // Generate both tokens
+    const accessToken = this.tokenService.generateAccess(user.id!, user.role as "user" | "admin" | "worker");
+    const refreshToken = this.tokenService.generateRefresh(user.id!, user.role as "user" | "admin" | "worker");
 
-    return UserMapper.toLoginResponse(user, token);
+    // Store refresh token in Redis
+    await this.tokenService.storeRefreshToken(user.id!, refreshToken);
+
+    return UserMapper.toLoginResponse(user, accessToken, refreshToken);
   }
 }

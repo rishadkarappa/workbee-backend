@@ -11,6 +11,7 @@ import { RabbitMQClient } from "./infrastructure/message-bus";
 import UserRoutes from './presentation/routes/user/UserRoutes'
 import AdminRoutes from './presentation/routes/admin/AdminRoutes'
 import WorkerRoutes from './presentation/routes/worker/WorkerRoutes'
+import RedisClient from "./infrastructure/config/RedisClient";
 
 const PORT = process.env.PORT
 
@@ -28,6 +29,9 @@ const startServer = async () => {
         
         await RabbitMQClient.initialize();
         console.log('RabbitMQ initialized');
+
+        RedisClient.getInstance();
+        console.log('Redis initialized');
         
         app.listen(PORT, () => console.log(`Auth Service running on port ${PORT}`));
     } catch (error) {

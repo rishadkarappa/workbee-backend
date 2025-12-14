@@ -29,6 +29,10 @@ import { IWorkerLoginUseCase } from "../../application/ports/worker/IWorkerLogin
 import { WorkerLoginUseCase } from "../../application/use-cases/worker/WorkerLoginUseCase";
 import { IBlockUserUseCase } from "../../application/ports/admin/IBlockUserUseCase";
 import { BlockUserUseCase } from "../../application/use-cases/admin/BlockUserUseCase";
+import { RefreshTokenUseCase } from "../../application/use-cases/user/RefreshTokenUseCase";
+import { LogoutUserUseCase } from "../../application/use-cases/user/LogoutUserUseCase";
+import { IRefreshTokenUseCase } from "../../application/ports/user/IRefreshTokenUseCase";
+import { ILogoutUserUseCase } from "../../application/ports/user/ILogoutUserUseCase";
 
 
 //usecases will injected by auto via @inject
@@ -41,6 +45,8 @@ container.registerSingleton<IGoogleLoginUserUseCase>("GoogleLoginUserUseCase",Go
 container.registerSingleton<IForgotPasswordUseCase>("ForgotPasswordUseCase",ForgotPasswordUseCase)
 container.registerSingleton<IResetPasswordUseCase>("ResetPasswordUseCase",ResetPasswordUseCase)
 container.registerSingleton<IVerifyOtpUseCase>("VerifyOtpUseCase",VerifyOtpUseCase)
+container.register<IRefreshTokenUseCase>("RefreshTokenUseCase", RefreshTokenUseCase);
+container.register<ILogoutUserUseCase>("LogoutUserUseCase", LogoutUserUseCase);
 
 //admin
 container.registerSingleton<ILoginAdminUseCase>("LoginAdminUseCase",LoginAdminUseCase)

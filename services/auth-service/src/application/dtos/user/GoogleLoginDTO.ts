@@ -4,5 +4,6 @@ export interface GoogleLoginRequestDTO {
 
 export interface GoogleLoginResponseDTO {
   user: any;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }

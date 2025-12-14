@@ -19,10 +19,11 @@ export class UserMapper {
     };
   }
 
-  static toLoginResponse(user: User, token: string): LoginUserResponseDTO {
+  static toLoginResponse(user: User, accessToken: string, refreshToken: string): LoginUserResponseDTO {
     return {
       user: UserMapper.toSafeUser(user),
-      token
+      accessToken,
+      refreshToken
     };
   }
 
@@ -33,17 +34,19 @@ export class UserMapper {
     };
   }
 
-  static toGoogleLoginResponse(user: User, token: string): GoogleLoginResponseDTO {
+  static toGoogleLoginResponse(user: User, accessToken: string, refreshToken: string): GoogleLoginResponseDTO {
     return {
       user: UserMapper.toSafeUser(user),
-      token
+      accessToken,
+      refreshToken
     };
   }
 
-  static toVerifyOtpResponse(user: User, token: string): VerifyOtpResponseDTO {
+  static toVerifyOtpResponse(user: User, accessToken: string, refreshToken: string): VerifyOtpResponseDTO {
     return {
       user: UserMapper.toSafeUser(user),
-      token
+      accessToken,
+      refreshToken
     };
   }
 }

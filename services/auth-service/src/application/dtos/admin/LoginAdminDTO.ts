@@ -13,5 +13,6 @@ export interface LoginAdminResponseDTO {
     email: string;
     role: string;
   };
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }

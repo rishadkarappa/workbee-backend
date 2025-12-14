@@ -14,7 +14,9 @@ export const ErrorMessages = {
     AUTH:{
         TOKEN_EXPIRED:"Authentication token expired",
         UNAUTHORIZED:"Unauthorized access",
-        ATUH_HEADER_IS_MISSING:"Authorization header is missing"
+        ATUH_HEADER_IS_MISSING:"Authorization header is missing",
+        INVALID_REFRESH_TOKEN:"invalid refresh token",
+        REFRESH_TOKEN_NOT_FOUND:"refresh token not fond"
     },
 
     ADMIN:{

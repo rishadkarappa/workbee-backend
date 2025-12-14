@@ -13,38 +13,42 @@ const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 @injectable()
 export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
     constructor(
-        @inject("UserRepository") private userRepository:IUserRepository,
-        @inject("TokenService") private tokenSerivice:ITokenService
+        @inject("UserRepository") private userRepository: IUserRepository,
+        @inject("TokenService") private tokenService: ITokenService
     ){}
 
-    async execute(data:GoogleLoginRequestDTO):Promise<GoogleLoginResponseDTO>{
-        const { credential } = data
+    async execute(data: GoogleLoginRequestDTO): Promise<GoogleLoginResponseDTO>{
+        const { credential } = data;
         const ticket = await clientId.verifyIdToken({
-            idToken:credential,
-            audience:process.env.GOOGLE_CLIENT_ID
-        })
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
 
         const payload = ticket.getPayload();
-        if(!payload) throw new Error('invalid google credential')
+        if(!payload) throw new Error('Invalid google credential');
 
-        const { email, name, sub } = payload
+        const { email, name, sub } = payload;
 
-        let user = await this.userRepository.findByEmail(email!)
+        let user = await this.userRepository.findByEmail(email!);
 
         if(!user){
-            const newUser:User = {
-                id:undefined,
-                name:name||'Google Auth User',
-                email:email!,
-                isVerified:true,
-                role:'user'
-            }
-            user = await this.userRepository.save(newUser)
+            const newUser: User = {
+                id: undefined,
+                name: name || 'Google Auth User',
+                email: email!,
+                isVerified: true,
+                role: 'user'
+            };
+            user = await this.userRepository.save(newUser);
         }
 
-        const token =  this.tokenSerivice.generateAccess(user.id!);
-        return UserMapper.toGoogleLoginResponse(user, token);
+        // Generate both access and refresh tokens
+        const accessToken = this.tokenService.generateAccess(user.id!, user.role as "user" | "admin" | "worker");
+        const refreshToken = this.tokenService.generateRefresh(user.id!, user.role as "user" | "admin" | "worker");
 
+        // Store refresh token in Redis
+        await this.tokenService.storeRefreshToken(user.id!, refreshToken);
+
+        return UserMapper.toGoogleLoginResponse(user, accessToken, refreshToken);
     }
-
 }

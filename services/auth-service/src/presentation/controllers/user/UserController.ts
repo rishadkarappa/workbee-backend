@@ -17,9 +17,12 @@ import { IGoogleLoginUserUseCase } from "../../../application/ports/user/IGoogle
 import { IForgotPasswordUseCase } from "../../../application/ports/user/IForgotPasswordUseCase";
 import { IResetPasswordUseCase } from "../../../application/ports/user/IResetPasswordUseCase";
 import { IUserController } from "../../ports/IUserContoller";
+import { RefreshTokenRequestDTO } from "../../../application/dtos/user/RefreshTokenDTO";
+import { RefreshTokenUseCase } from "../../../application/use-cases/user/RefreshTokenUseCase";
+import { LogoutUserUseCase } from "../../../application/use-cases/user/LogoutUserUseCase";
 
 @injectable()
-export class UserController implements IUserController{
+export class UserController implements IUserController {
   constructor(
     @inject("RegisterUserUseCase") private registerUserUseCase: IRegisterUserUseCase,
     @inject("LoginUserUseCase") private loginUserUseCase: ILoginUserUseCase,
@@ -27,8 +30,10 @@ export class UserController implements IUserController{
     @inject("VerifyUserUseCase") private verifyUserUseCase: IVerifyUserUseCase,
     @inject("GoogleLoginUserUseCase") private googleLoginUserUseCase: IGoogleLoginUserUseCase,
     @inject("ForgotPasswordUseCase") private forgotPasswordUseCase: IForgotPasswordUseCase,
-    @inject("ResetPasswordUseCase") private resetPasswordUseCase: IResetPasswordUseCase
-  ) {}
+    @inject("ResetPasswordUseCase") private resetPasswordUseCase: IResetPasswordUseCase,
+    @inject("RefreshTokenUseCase") private refreshTokenUseCase: RefreshTokenUseCase,
+    @inject("LogoutUserUseCase") private logoutUserUseCase: LogoutUserUseCase,
+  ) { }
 
   async register(req: Request, res: Response) {
     try {
@@ -48,12 +53,12 @@ export class UserController implements IUserController{
 
   async verifyOtp(req: Request, res: Response) {
     try {
-      const dto:VerifyOtpRequestDTO = req.body
-      const { user, token } = await this.verifyOtpUseCase.execute(dto);
+      const dto: VerifyOtpRequestDTO = req.body;
+      const result = await this.verifyOtpUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success({ user, token }, ResponseMessage.OTP.VERIFIED , HttpStatus.OK));
+        .json(ResponseHelper.success(result, ResponseMessage.OTP.VERIFIED, HttpStatus.OK));
     } catch (err: any) {
       res
         .status(HttpStatus.BAD_REQUEST)
@@ -63,14 +68,13 @@ export class UserController implements IUserController{
 
   async login(req: Request, res: Response) {
     try {
-      
-      const dto:LoginUserRequestDTO = req.body
+      const dto: LoginUserRequestDTO = req.body;
 
-      const { user, token } = await this.loginUserUseCase.execute(dto);
+      const result = await this.loginUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success({ user, token }, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK));
+        .json(ResponseHelper.success(result, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK));
     } catch (err: any) {
       res
         .status(HttpStatus.BAD_REQUEST)
@@ -92,54 +96,101 @@ export class UserController implements IUserController{
     }
   }
 
-  async googleLogin(req:Request, res:Response){
+  async googleLogin(req: Request, res: Response) {
     try {
-      const dto:GoogleLoginRequestDTO = req.body
-      const { user, token } = await this.googleLoginUserUseCase.execute(dto)
+      const dto: GoogleLoginRequestDTO = req.body;
+      const result = await this.googleLoginUserUseCase.execute(dto);
+
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success({user, token}, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK))
-
-    } catch (err:any) {
+        .json(ResponseHelper.success(result, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK));
+    } catch (err: any) {
       res
         .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))
+        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
     }
   }
 
-  async forgotPassword(req:Request, res:Response) {
+  async forgotPassword(req: Request, res: Response) {
     try {
       console.log('hited contoller forgot passs')
       const { email } = req.body;
 
       const result = await this.forgotPasswordUseCase.execute(email)
-      console.log('rrrrrrr',result)
+      console.log('rrrrrrr', result)
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success({result},ResponseMessage.USER.SENT_RESET_LINK, HttpStatus.OK))
-    } catch (error:any) {
-      res 
+        .json(ResponseHelper.success({ result }, ResponseMessage.USER.SENT_RESET_LINK, HttpStatus.OK))
+    } catch (error: any) {
+      res
         .status(HttpStatus.BAD_REQUEST)
         .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
     }
   }
-  
-  async resetPassword(req:Request, res:Response){
+
+  async resetPassword(req: Request, res: Response) {
     try {
-      console.log("bodycontets",req.body)
-      const { token} = req.params
-      const { password} = req.body
+      console.log("bodycontets", req.body)
+      const { token } = req.params
+      const { password } = req.body
       console.log(password)
-      console.log('passssss',req.body.passoword)
+      console.log('passssss', req.body.passoword)
 
       const result = await this.resetPasswordUseCase.execute(token, password)
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success({result}, ResponseMessage.USER.PASSOWORD_UPDATED, HttpStatus.OK))
-    } catch (error:any) {
-        res
+        .json(ResponseHelper.success({ result }, ResponseMessage.USER.PASSOWORD_UPDATED, HttpStatus.OK))
+    } catch (error: any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+    }
+  }
+
+  async refreshToken(req: Request, res: Response) {
+    try {
+      const dto: RefreshTokenRequestDTO = req.body;
+
+      if (!dto.refreshToken) {
+        return res
           .status(HttpStatus.BAD_REQUEST)
-          .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+          .json(ResponseHelper.error("Refresh token is required", HttpStatus.BAD_REQUEST));
+      }
+
+      const result = await this.refreshTokenUseCase.execute(dto);
+
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(result, "Token refreshed successfully", HttpStatus.OK));
+    } catch (error: any) {
+      console.error("RefreshTokenController Error:", error);
+      res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json(ResponseHelper.error(error.message || "Failed to refresh token", HttpStatus.UNAUTHORIZED));
+    }
+  }
+
+  async userLogout(req: Request, res: Response) {
+    try {
+      // Get userId from JWT payload (set by gateway middleware)
+      const userId = req.headers['x-user-id'] as string;
+
+      if (!userId) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json(ResponseHelper.error("User not authenticated", HttpStatus.UNAUTHORIZED));
+      }
+
+      await this.logoutUserUseCase.execute(userId);
+
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(null, "Logged out successfully", HttpStatus.OK));
+    } catch (error: any) {
+      console.error("LogoutController Error:", error);
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json(ResponseHelper.error(error.message || "Failed to logout", HttpStatus.INTERNAL_SERVER_ERROR));
     }
   }
 }

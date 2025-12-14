@@ -5,5 +5,6 @@ export interface VerifyOtpRequestDTO {
 
 export interface VerifyOtpResponseDTO {
   user: any;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }

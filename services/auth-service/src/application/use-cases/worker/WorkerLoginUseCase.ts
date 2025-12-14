@@ -12,12 +12,12 @@ import {
 import { WorkerValidationClient, RabbitMQConnection } from "../../../infrastructure/message-bus";
 import { WorkerMapper } from "../../mappers/WorkerMapper";
 import { IWorkerLoginUseCase } from "../../ports/worker/IWorkerLoginUseCase";
-import { ITokenService } from "../../../domain/services/ITokenService"; 
+import { ITokenService } from "../../../domain/services/ITokenService";
 
 @injectable()
 export class WorkerLoginUseCase implements IWorkerLoginUseCase {
     constructor(
-        @inject("TokenService") private tokenService: ITokenService 
+        @inject("TokenService") private tokenService: ITokenService
     ) {}
 
     async execute(data: WorkerLoginRequestDTO): Promise<WorkerLoginResponseDTO> {
@@ -27,16 +27,22 @@ export class WorkerLoginUseCase implements IWorkerLoginUseCase {
         const client = new WorkerValidationClient(channel);
 
         const response: WorkerLoginResponseRMQDTO = await client.validateWorker(email, password);
-        // console.log("ress",response)
+
         if (!response.success) {
             throw new Error(response.error || "Worker validation failed");
         }
 
-        const token = this.tokenService.generateAccess(response.data.id, "worker");
+        // Generate  access and refresh tokens
+        const accessToken = this.tokenService.generateAccess(response.data.id, "worker");
+        const refreshToken = this.tokenService.generateRefresh(response.data.id, "worker");
+
+        // Store refresh token in Redis
+        await this.tokenService.storeRefreshToken(response.data.id, refreshToken);
 
         return WorkerMapper.toLoginResponse({
             ...response.data,
-            token: token
+            accessToken,
+            refreshToken
         });
     }
 }

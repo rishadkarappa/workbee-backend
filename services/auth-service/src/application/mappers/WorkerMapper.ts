@@ -15,7 +15,8 @@ export class WorkerMapper {
         preferredWorks: data.preferredWorks,
         status: data.status
       },
-      token: data.token 
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken
     };
   }
 }

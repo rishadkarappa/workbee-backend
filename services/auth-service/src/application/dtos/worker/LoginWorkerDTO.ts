@@ -16,5 +16,7 @@ export interface WorkerLoginResponseDTO {
     preferredWorks: string[];
     status: string;
   };
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
+

@@ -3,6 +3,7 @@ export interface WorkerLoginRequestRMQDTO {
   password: string;
   correlationId: string;
 }
+
 export interface WorkerLoginResponseRMQDTO {
   success: boolean;
   data?: any; 
