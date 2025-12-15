@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
-import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
-import { ResponseMessage } from "../../shared/constants/ResponseMessages";
-import { IHashService } from "../../domain/services/IHashService";
-import { ApplyWorkerDto, WorkerResponseDto } from "../dtos/worker/WorkerDTO";
-import { WorkerMapper } from "../mappers/WorkerMapper";
-import { IApplyWorkerUseCase } from "../ports/worker/IApplyWorkerUseCase";
+import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
+import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
+import { IHashService } from "../../../domain/services/IHashService";
+import { ApplyWorkerDto, WorkerResponseDto } from "../../dtos/worker/WorkerDTO";
+import { WorkerMapper } from "../../mappers/WorkerMapper";
+import { IApplyWorkerUseCase } from "../../ports/worker/IApplyWorkerUseCase";
 
 @injectable()
 export class ApplyWorkerUseCase implements IApplyWorkerUseCase{

@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { IDeleteMyWorkUseCase } from "../ports/user/IDeleteMyWorkUseCase";
-import { IWorkRepository } from "../../domain/repositories/IWorkRepository";
-import { DeleteWorkDto } from "../dtos/work/WorkDTO";
+import { IDeleteMyWorkUseCase } from "../../ports/user/IDeleteMyWorkUseCase";
+import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
+import { DeleteWorkDto } from "../../dtos/work/WorkDTO";
 
 @injectable()
 export class DeleteMyWorkUseCase implements IDeleteMyWorkUseCase {

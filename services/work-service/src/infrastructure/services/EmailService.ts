@@ -24,7 +24,7 @@ export class EmailService implements IEmailService {
 
     async sendApprovalEmail(email: string, name: string): Promise<void> {
         if (!this.transporter) {
-            console.log("📧 [SIMULATED] Approval email to:", email);
+            console.log("[SIMULATED] Approval email to:", email);
             return;
         }
 
@@ -80,16 +80,16 @@ export class EmailService implements IEmailService {
             };
 
             await this.transporter.sendMail(mailOptions);
-            console.log("✅ Approval email sent to:", email);
+            console.log("Approval email sent to:", email);
         } catch (error) {
-            console.error("❌ Failed to send approval email:", error);
+            console.error("Failed to send approval email:", error);
             // Don't throw error - allow the approval to succeed even if email fails
         }
     }
 
     async sendRejectionEmail(email: string, name: string, reason: string): Promise<void> {
         if (!this.transporter) {
-            console.log("📧 [SIMULATED] Rejection email to:", email);
+            console.log("[SIMULATED] Rejection email to:", email);
             console.log("Reason:", reason);
             return;
         }
@@ -158,9 +158,9 @@ export class EmailService implements IEmailService {
             };
 
             await this.transporter.sendMail(mailOptions);
-            console.log("✅ Rejection email sent to:", email);
+            console.log("Rejection email sent to:", email);
         } catch (error) {
-            console.error("❌ Failed to send rejection email:", error);
+            console.error("Failed to send rejection email:", error);
             // Don't throw error - allow the rejection to succeed even if email fails
         }
     }

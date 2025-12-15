@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { IUpdateWorkUseCase } from "../ports/user/IUpdateWorkUseCase";
-import { IWorkRepository } from "../../domain/repositories/IWorkRepository";
-import { UpdateWorkDto, WorkResponseDto } from "../dtos/work/WorkDTO";
-import { WorkMapper } from "../mappers/WorkMapper";
+import { IUpdateWorkUseCase } from "../../ports/user/IUpdateWorkUseCase";
+import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
+import { UpdateWorkDto, WorkResponseDto } from "../../dtos/work/WorkDTO";
+import { WorkMapper } from "../../mappers/WorkMapper";
 
 @injectable()
 export class UpdateWorkUseCase implements IUpdateWorkUseCase {

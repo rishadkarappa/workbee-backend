@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { IBlockWorkerUseCase } from "../ports/worker/IBlockWorkerUseCase";
-import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
-import { Worker } from "../../domain/entities/Worker";
+import { IBlockWorkerUseCase } from "../../ports/worker/IBlockWorkerUseCase";
+import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
+import { Worker } from "../../../domain/entities/Worker";
 
 @injectable()
 export class BlockWorkerUseCase implements IBlockWorkerUseCase{

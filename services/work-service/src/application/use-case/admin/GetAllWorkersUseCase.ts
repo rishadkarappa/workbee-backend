@@ -1,24 +1,22 @@
 import { inject, injectable } from "tsyringe";
-import { ResponseMessage } from "../../shared/constants/ResponseMessages";
+import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
+import { WorkerResponseDto } from "../../dtos/worker/WorkerDTO";
+import { WorkerMapper } from "../../mappers/WorkerMapper";
+import { IGetAllWorkersUseCase } from "../../ports/worker/IGetAllWorkersUseCase";
 
-import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
-import { WorkerResponseDto } from "../dtos/worker/WorkerDTO";
-import { WorkerMapper } from "../mappers/WorkerMapper";
-
-import { IGetNewAppliersUseCase } from "../ports/worker/IGetNewAppliersUseCase";
 
 @injectable()
-export class GetNewAppliersUseCase implements IGetNewAppliersUseCase {
+export class GetAllWorkersUseCase implements IGetAllWorkersUseCase {
     constructor(
         @inject("WorkerRepository") private workerRepository: IWorkerRepository
-    ) { }
+    ) {}
 
     async execute(page: number, limit: number, search: string): Promise<{
         workers: WorkerResponseDto[];
         total: number;
     }> {
-        const result = await this.workerRepository.getNewAppliers(page, limit, search);
-
+        const result = await this.workerRepository.getAllWorkers(page, limit, search);
+        
         if (!result.workers || result.workers.length === 0) {
             return { workers: [], total: 0 };
         }
@@ -29,3 +27,4 @@ export class GetNewAppliersUseCase implements IGetNewAppliersUseCase {
         };
     }
 }
+

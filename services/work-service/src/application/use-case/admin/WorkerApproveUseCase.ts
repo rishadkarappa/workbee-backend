@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
-import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
-import { IEmailService } from "../../domain/services/IEmailService";
-import { WorkerApproveDto, WorkerResponseDto } from "../dtos/worker/WorkerDTO";
-import { WorkerMapper } from "../mappers/WorkerMapper";
-import { IWorkerApproveUseCase } from "../ports/worker/IWorkerApproveUseCase";
-import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
+import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
+import { IEmailService } from "../../../domain/services/IEmailService";
+import { WorkerApproveDto, WorkerResponseDto } from "../../dtos/worker/WorkerDTO";
+import { WorkerMapper } from "../../mappers/WorkerMapper";
+import { IWorkerApproveUseCase } from "../../ports/worker/IWorkerApproveUseCase";
+import { WorkerStatus } from "../../../infrastructure/database/models/WorkerSchema";
 
 @injectable()
 export class WorkerApproveUseCase implements IWorkerApproveUseCase {

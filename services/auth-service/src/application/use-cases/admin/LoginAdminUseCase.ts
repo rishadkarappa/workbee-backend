@@ -33,11 +33,11 @@ export class LoginAdminUseCase implements ILoginAdminUseCase {
             throw new Error(ErrorMessages.ADMIN.WRONG_PASSWORD);
         }
 
-        // ✅ Generate both access and refresh tokens
+        // Generate both access and refresh tokens
         const accessToken = this.tokenService.generateAccess(admin.id!, "admin");
         const refreshToken = this.tokenService.generateRefresh(admin.id!, "admin");
 
-        // ✅ Store refresh token in Redis
+        // Store refresh token in Redis
         await this.tokenService.storeRefreshToken(admin.id!, refreshToken);
 
         return AdminMapper.toLoginResponse(admin, accessToken, refreshToken);

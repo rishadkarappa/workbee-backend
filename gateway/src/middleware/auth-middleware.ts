@@ -13,12 +13,16 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        console.log(`No token provided for ${req.method} ${req.path}`);
         return res.status(401).json({ error: "Access denied. No token provided." });
     }
 
     try {
         const token = authHeader.split(" ")[1];
         const payload = jwt.verify(token, JWT_SECRET) as any;
+
+        // Log successful verification
+        console.log(`Token verified for user ${payload.id || payload.userId} - ${req.method} ${req.path}`);
 
         // Only set headers if values exist (not undefined)
         if (payload.userId || payload.id) {
@@ -37,7 +41,8 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
         return next();
 
-    } catch (e) {
-        return res.status(403).json({ error: "Invalid token" });
+    } catch (e: any) {
+        console.log(`Token verification failed for ${req.method} ${req.path}:`, e.message);
+        return res.status(403).json({ error: "Invalid or expired token" });
     }
 };
