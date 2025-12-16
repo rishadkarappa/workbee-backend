@@ -22,7 +22,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
         const payload = jwt.verify(token, JWT_SECRET) as any;
 
         // Log successful verification
-        console.log(`Token verified for user ${payload.id || payload.userId} - ${req.method} ${req.path}`);
+        // console.log(`token verified for user ${payload.id || payload.userId} - ${req.method} ${req.path}`);
 
         // Only set headers if values exist (not undefined)
         if (payload.userId || payload.id) {

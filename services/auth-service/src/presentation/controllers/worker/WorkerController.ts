@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
@@ -15,7 +15,7 @@ export class WorkerController implements IWorkerController{
 
     ){}
 
-    async workerLogin(req: Request, res: Response) {
+    async workerLogin(req: Request, res: Response, next:NextFunction):Promise<void> {
         try {
             const dto: WorkerLoginRequestDTO = req.body;
 
@@ -23,9 +23,8 @@ export class WorkerController implements IWorkerController{
 
             res.status(HttpStatus.OK)
                 .json(ResponseHelper.success(worker, "Worker logged in successfully"));
-        } catch (err: any) {
-            res.status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
+        } catch (err) {
+            next(err)
         }
     }
 

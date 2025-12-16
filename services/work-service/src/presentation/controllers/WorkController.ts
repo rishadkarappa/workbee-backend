@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
@@ -37,7 +37,7 @@ export class WorkController implements IWorkController {
         @inject("DeleteMyWorkUseCase") private _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
     ) { }
 
-    async applyWorker(req: Request, res: Response): Promise<void> {
+    async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const dto: ApplyWorkerDto = req.body;
             const result = await this._applyWorkerUseCase.execute(dto);
@@ -45,15 +45,13 @@ export class WorkController implements IWorkController {
             res
                 .status(HttpStatus.OK)
                 .json(ResponseHelper.success(result, ResponseMessage.WORKER.APPLIED));
-        } catch (error: any) {
-            res
-                .status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        } catch (err) {
+            next(err);
         }
     }
 
 
-    async getNewAppliers(req: Request, res: Response): Promise<void> {
+    async getNewAppliers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
@@ -73,34 +71,29 @@ export class WorkController implements IWorkController {
                     ResponseMessage.WORKER.GET_ALL_APPLIERS
                 )
             );
-        } catch (error: any) {
-            res.status(HttpStatus.BAD_REQUEST).json(
-                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
-            );
+        } catch (err) {
+            next(err);
         }
     }
 
-    async approveWorker(req: Request, res: Response): Promise<void> {
-    try {
-        const dto: WorkerApproveDto = {
-            workerId: req.body.workerId,
-            status: req.body.status,
-            rejectionReason: req.body.rejectionReason 
-        };
+    async approveWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const dto: WorkerApproveDto = {
+                workerId: req.body.workerId,
+                status: req.body.status,
+                rejectionReason: req.body.rejectionReason
+            };
 
-        const result = await this._workerApproveUseCase.execute(dto);
-        res
-            .status(HttpStatus.OK)
-            .json(ResponseHelper.success(result, "Worker status updated successfully"));
-    } catch (error: any) {
-        res
-            .status(HttpStatus.BAD_REQUEST)
-            .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+            const result = await this._workerApproveUseCase.execute(dto);
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(result, "Worker status updated successfully"));
+        } catch (err) {
+            next(err);
+        }
     }
-}
 
-
-    async getWorkers(req: Request, res: Response): Promise<void> {
+    async getWorkers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
@@ -120,14 +113,12 @@ export class WorkController implements IWorkController {
                     "Get all workers"
                 )
             );
-        } catch (error: any) {
-            res.status(HttpStatus.BAD_REQUEST).json(
-                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
-            );
+        } catch (err) {
+            next(err);
         }
     }
 
-    async postWork(req: Request, res: Response): Promise<void> {
+    async postWork(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const rawData = req.body;
             const files = req.files as any;
@@ -165,7 +156,7 @@ export class WorkController implements IWorkController {
                 termsAccepted
             };
 
-            console.log("einal WorkData", JSON.stringify(dto, null, 2));
+            console.log("Final WorkData", JSON.stringify(dto, null, 2));
             console.log("calling PostWorkUseCase;;;;");
 
             const result = await this._postWorkUseCase.execute(dto);
@@ -175,14 +166,12 @@ export class WorkController implements IWorkController {
             res
                 .status(HttpStatus.OK)
                 .json(ResponseHelper.success(result, "Task booked successfully"));
-        } catch (error: any) {
-            res
-                .status(HttpStatus.BAD_REQUEST)
-                .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        } catch (err) {
+            next(err);
         }
     }
 
-    async getAllWorks(req: Request, res: Response): Promise<void> {
+    async getAllWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 search = '',
@@ -209,65 +198,66 @@ export class WorkController implements IWorkController {
 
             const result = await this._getAllWorksUseCase.execute(filters);
 
-            res.status(200).json({
-                success: true,
-                data: result.works,
-                pagination: {
-                    total: result.total,
-                    totalPages: result.totalPages,
-                    currentPage: parseInt(page as string),
-                    limit: parseInt(limit as string)
-                }
-            });
-        } catch (error: any) {
-            res.status(500).json({
-                success: false,
-                message: error.message || "Failed to get works"
-            });
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(
+                    {
+                        works: result.works,
+                        pagination: {
+                            total: result.total,
+                            totalPages: result.totalPages,
+                            currentPage: parseInt(page as string),
+                            limit: parseInt(limit as string)
+                        }
+                    },
+                    "Successfully retrieved works"
+                )
+            );
+        } catch (err) {
+            next(err);
         }
     }
 
-    async blockWorker(req: Request, res: Response) {
+    async blockWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const workerId = req.params.id
-            const result = await this._blockWorkerUseCase.execute(workerId)
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "blocked worker"))
-        } catch (error: any) {
-            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
+            const workerId = req.params.id;
+            const result = await this._blockWorkerUseCase.execute(workerId);
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Blocked worker"));
+        } catch (err) {
+            next(err);
         }
     }
 
-    async getMyWorks(req: Request, res: Response) {
+    async getMyWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.headers['x-user-id'] as string;
 
             if (!userId) {
-                return res.status(HttpStatus.UNAUTHORIZED).json(
+                res.status(HttpStatus.UNAUTHORIZED).json(
                     ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
                 );
+                return;
             }
 
             const result = await this._getMyWorksUseCase.execute(userId);
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(result, "Successfully retrieved user works")
             );
-        } catch (error: any) {
-            res.status(HttpStatus.BAD_REQUEST).json(
-                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
-            );
+        } catch (err) {
+            next(err);
         }
     }
 
-    async updateWork(req: Request, res: Response) {
+    async updateWork(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const workId = req.params.workId;
             const userId = req.headers['x-user-id'] as string;
             const updateData = req.body;
 
             if (!userId) {
-                return res.status(HttpStatus.UNAUTHORIZED).json(
+                res.status(HttpStatus.UNAUTHORIZED).json(
                     ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
                 );
+                return;
             }
 
             const dto: UpdateWorkDto = {
@@ -281,22 +271,20 @@ export class WorkController implements IWorkController {
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(updatedWork, "Work updated successfully")
             );
-        } catch (error: any) {
-            // console.error('update work error', error);
-            res.status(HttpStatus.BAD_REQUEST).json(
-                ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
-            );
+        } catch (err) {
+            next(err);
         }
     }
 
-    async deleteMyWork(req: Request, res: Response) {
+    async deleteMyWork(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.headers["x-user-id"] as string;
 
             if (!userId) {
-                return res.status(401).json(
-                    ResponseHelper.error("Unauthorized", 401)
+                res.status(HttpStatus.UNAUTHORIZED).json(
+                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
                 );
+                return;
             }
 
             const dto: DeleteWorkDto = {
@@ -306,15 +294,12 @@ export class WorkController implements IWorkController {
 
             const result = await this._deleteMyWorkUseCase.execute(dto);
 
-            res.status(200).json(
+            res.status(HttpStatus.OK).json(
                 ResponseHelper.success(result, "Work deleted successfully")
             );
 
-        } catch (error: any) {
-            res.status(400).json(
-                ResponseHelper.error(error.message, 400)
-            );
+        } catch (err) {
+            next(err);
         }
     }
-
 }

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
@@ -38,7 +38,7 @@ export class UserController implements IUserController {
     @inject("LogoutUserUseCase") private _logoutUserUseCase: LogoutUserUseCase,
   ) { }
 
-  async register(req: Request, res: Response) {
+  async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const dto: RegisterUserRequestDTO = req.body;
 
@@ -47,14 +47,12 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.CREATED)
         .json(ResponseHelper.success(result, ResponseMessage.OTP.SENT, HttpStatus.CREATED));
-    } catch (err: any) {
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
+    } catch (err) {
+      next(err)
     }
   }
 
-  async verifyOtp(req: Request, res: Response) {
+  async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const dto: VerifyOtpRequestDTO = req.body;
       const result = await this._verifyOtpUseCase.execute(dto);
@@ -62,14 +60,12 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(result, ResponseMessage.OTP.VERIFIED, HttpStatus.OK));
-    } catch (err: any) {
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
+    } catch (err) {
+      next(err)
     }
   }
 
-  async resendOtp(req: Request, res: Response) {
+  async resendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const dto: ResendOtpRequestDTO = req.body;
 
@@ -78,16 +74,14 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(result, "ResponseMessage.OTP.RESENT", HttpStatus.OK));
-    } catch (err: any) {
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
+    } catch (err) {
+      next(err)
     }
   }
 
 
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const dto: LoginUserRequestDTO = req.body;
 
@@ -96,28 +90,24 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(result, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK));
-    } catch (err: any) {
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
+    } catch (err) {
+      next(err)
     }
   }
 
-  async verify(req: Request, res: Response) {
+  async verify(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = await this._verifyUserUseCase.execute(req.headers.authorization);
 
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(user, ResponseMessage.USER.VERFIFIED, HttpStatus.OK));
-    } catch (err: any) {
-      res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json(ResponseHelper.error(err.message, HttpStatus.UNAUTHORIZED));
+    } catch (err) {
+      next(err)
     }
   }
 
-  async googleLogin(req: Request, res: Response) {
+  async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const dto: GoogleLoginRequestDTO = req.body;
       const result = await this._googleLoginUserUseCase.execute(dto);
@@ -125,14 +115,12 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(result, ResponseMessage.USER.LOGINED_SUCCESFULLY, HttpStatus.OK));
-    } catch (err: any) {
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
+    } catch (err) {
+      next(err)
     }
   }
 
-  async forgotPassword(req: Request, res: Response) {
+  async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       console.log('hited contoller forgot passs')
       const { email } = req.body;
@@ -143,13 +131,11 @@ export class UserController implements IUserController {
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({ result }, ResponseMessage.USER.SENT_RESET_LINK, HttpStatus.OK))
     } catch (error: any) {
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+      next(error)
     }
   }
 
-  async resetPassword(req: Request, res: Response) {
+  async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       console.log("bodycontets", req.body)
       const { token } = req.params
@@ -161,21 +147,63 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({ result }, ResponseMessage.USER.PASSOWORD_UPDATED, HttpStatus.OK))
-    } catch (error: any) {
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST))
+    } catch (error) {
+      next(error)
     }
   }
 
-  async refreshToken(req: Request, res: Response) {
+  // async refreshToken(req: Request, res: Response, next:NextFunction) {
+  //   try {
+  //     const dto: RefreshTokenRequestDTO = req.body;
+
+  //     if (!dto.refreshToken) {
+  //       return res
+  //         .status(HttpStatus.BAD_REQUEST)
+  //         .json(ResponseHelper.error("Refresh token is required", HttpStatus.BAD_REQUEST));
+  //     }
+
+  //     const result = await this._refreshTokenUseCase.execute(dto);
+
+  //     res
+  //       .status(HttpStatus.OK)
+  //       .json(ResponseHelper.success(result, "Token refreshed successfully", HttpStatus.OK));
+  //   } catch (error) {
+  //     console.error("RefreshTokenController Error:", error);
+  //     next(error)
+  //   }
+  // }
+
+  // async userLogout(req:Request, res:Response, next:NextFunction) {
+  //   try {
+  //     // Get userId from JWT payload (set by gateway middleware)
+  //     const userId = req.headers['x-user-id'] as string;
+
+  //     if (!userId) {
+  //       return res
+  //         .status(HttpStatus.UNAUTHORIZED)
+  //         .json(ResponseHelper.error("User not authenticated", HttpStatus.UNAUTHORIZED));
+  //     }
+
+  //     await this._logoutUserUseCase.execute(userId);
+
+  //     res
+  //       .status(HttpStatus.OK)
+  //       .json(ResponseHelper.success(null, "Logged out successfully", HttpStatus.OK));
+  //   } catch (error) {
+  //     console.error("LogoutController Error:", error);
+  //     next(error)
+  //   }
+  // }
+
+  async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const dto: RefreshTokenRequestDTO = req.body;
 
       if (!dto.refreshToken) {
-        return res
+        res
           .status(HttpStatus.BAD_REQUEST)
           .json(ResponseHelper.error("Refresh token is required", HttpStatus.BAD_REQUEST));
+        return;
       }
 
       const result = await this._refreshTokenUseCase.execute(dto);
@@ -183,23 +211,22 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(result, "Token refreshed successfully", HttpStatus.OK));
-    } catch (error: any) {
+    } catch (error) {
       console.error("RefreshTokenController Error:", error);
-      res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json(ResponseHelper.error(error.message || "Failed to refresh token", HttpStatus.UNAUTHORIZED));
+      next(error);
     }
   }
 
-  async userLogout(req: Request, res: Response) {
+  async userLogout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // Get userId from JWT payload (set by gateway middleware)
       const userId = req.headers['x-user-id'] as string;
 
       if (!userId) {
-        return res
+        res
           .status(HttpStatus.UNAUTHORIZED)
           .json(ResponseHelper.error("User not authenticated", HttpStatus.UNAUTHORIZED));
+        return;
       }
 
       await this._logoutUserUseCase.execute(userId);
@@ -207,11 +234,9 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(null, "Logged out successfully", HttpStatus.OK));
-    } catch (error: any) {
+    } catch (error) {
       console.error("LogoutController Error:", error);
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json(ResponseHelper.error(error.message || "Failed to logout", HttpStatus.INTERNAL_SERVER_ERROR));
+      next(error);
     }
   }
 }

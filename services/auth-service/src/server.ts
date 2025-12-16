@@ -13,6 +13,8 @@ import AdminRoutes from './presentation/routes/admin/AdminRoutes'
 import WorkerRoutes from './presentation/routes/worker/WorkerRoutes'
 import RedisClient from "./infrastructure/config/RedisClient";
 
+import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
+
 const PORT = process.env.PORT
 
 const app = express();
@@ -21,6 +23,8 @@ app.use(express.json());
 app.use("/", UserRoutes)
 app.use("/", AdminRoutes)
 app.use("/", WorkerRoutes)
+
+app.use(errorHandler)
 
 const startServer = async () => {
     try {
