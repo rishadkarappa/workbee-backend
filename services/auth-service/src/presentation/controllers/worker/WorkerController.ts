@@ -23,7 +23,7 @@ export class WorkerController implements IWorkerController{
 
             res.status(HttpStatus.OK)
                 .json(ResponseHelper.success(worker, "Worker logged in successfully"));
-        } catch (err) {
+        } catch (err: any) {
             next(err)
         }
     }
