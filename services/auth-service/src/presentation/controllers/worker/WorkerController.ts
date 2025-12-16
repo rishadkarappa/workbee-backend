@@ -11,7 +11,7 @@ import { IWorkerController } from "../../ports/IWorkerController";
 @injectable()
 export class WorkerController implements IWorkerController{
     constructor(
-        @inject("WorkerLoginUseCase") private workerLoginUseCase: IWorkerLoginUseCase,
+        @inject("WorkerLoginUseCase") private _workerLoginUseCase: IWorkerLoginUseCase,
 
     ){}
 
@@ -19,7 +19,7 @@ export class WorkerController implements IWorkerController{
         try {
             const dto: WorkerLoginRequestDTO = req.body;
 
-            const worker = await this.workerLoginUseCase.execute(dto);
+            const worker = await this._workerLoginUseCase.execute(dto);
 
             res.status(HttpStatus.OK)
                 .json(ResponseHelper.success(worker, "Worker logged in successfully"));

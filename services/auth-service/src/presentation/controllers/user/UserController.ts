@@ -24,22 +24,22 @@ import { LogoutUserUseCase } from "../../../application/use-cases/user/LogoutUse
 @injectable()
 export class UserController implements IUserController {
   constructor(
-    @inject("RegisterUserUseCase") private registerUserUseCase: IRegisterUserUseCase,
-    @inject("LoginUserUseCase") private loginUserUseCase: ILoginUserUseCase,
-    @inject("VerifyOtpUseCase") private verifyOtpUseCase: IVerifyOtpUseCase,
-    @inject("VerifyUserUseCase") private verifyUserUseCase: IVerifyUserUseCase,
-    @inject("GoogleLoginUserUseCase") private googleLoginUserUseCase: IGoogleLoginUserUseCase,
-    @inject("ForgotPasswordUseCase") private forgotPasswordUseCase: IForgotPasswordUseCase,
-    @inject("ResetPasswordUseCase") private resetPasswordUseCase: IResetPasswordUseCase,
-    @inject("RefreshTokenUseCase") private refreshTokenUseCase: RefreshTokenUseCase,
-    @inject("LogoutUserUseCase") private logoutUserUseCase: LogoutUserUseCase,
+    @inject("RegisterUserUseCase") private _registerUserUseCase: IRegisterUserUseCase,
+    @inject("LoginUserUseCase") private _loginUserUseCase: ILoginUserUseCase,
+    @inject("VerifyOtpUseCase") private _verifyOtpUseCase: IVerifyOtpUseCase,
+    @inject("VerifyUserUseCase") private _verifyUserUseCase: IVerifyUserUseCase,
+    @inject("GoogleLoginUserUseCase") private _googleLoginUserUseCase: IGoogleLoginUserUseCase,
+    @inject("ForgotPasswordUseCase") private _forgotPasswordUseCase: IForgotPasswordUseCase,
+    @inject("ResetPasswordUseCase") private _resetPasswordUseCase: IResetPasswordUseCase,
+    @inject("RefreshTokenUseCase") private _refreshTokenUseCase: RefreshTokenUseCase,
+    @inject("LogoutUserUseCase") private _logoutUserUseCase: LogoutUserUseCase,
   ) { }
 
   async register(req: Request, res: Response) {
     try {
       const dto: RegisterUserRequestDTO = req.body;
 
-      const result = await this.registerUserUseCase.execute(dto);
+      const result = await this._registerUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.CREATED)
@@ -54,7 +54,7 @@ export class UserController implements IUserController {
   async verifyOtp(req: Request, res: Response) {
     try {
       const dto: VerifyOtpRequestDTO = req.body;
-      const result = await this.verifyOtpUseCase.execute(dto);
+      const result = await this._verifyOtpUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -70,7 +70,7 @@ export class UserController implements IUserController {
     try {
       const dto: LoginUserRequestDTO = req.body;
 
-      const result = await this.loginUserUseCase.execute(dto);
+      const result = await this._loginUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -84,7 +84,7 @@ export class UserController implements IUserController {
 
   async verify(req: Request, res: Response) {
     try {
-      const user = await this.verifyUserUseCase.execute(req.headers.authorization);
+      const user = await this._verifyUserUseCase.execute(req.headers.authorization);
 
       res
         .status(HttpStatus.OK)
@@ -99,7 +99,7 @@ export class UserController implements IUserController {
   async googleLogin(req: Request, res: Response) {
     try {
       const dto: GoogleLoginRequestDTO = req.body;
-      const result = await this.googleLoginUserUseCase.execute(dto);
+      const result = await this._googleLoginUserUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -116,7 +116,7 @@ export class UserController implements IUserController {
       console.log('hited contoller forgot passs')
       const { email } = req.body;
 
-      const result = await this.forgotPasswordUseCase.execute(email)
+      const result = await this._forgotPasswordUseCase.execute(email)
       console.log('rrrrrrr', result)
       res
         .status(HttpStatus.OK)
@@ -136,7 +136,7 @@ export class UserController implements IUserController {
       console.log(password)
       console.log('passssss', req.body.passoword)
 
-      const result = await this.resetPasswordUseCase.execute(token, password)
+      const result = await this._resetPasswordUseCase.execute(token, password)
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({ result }, ResponseMessage.USER.PASSOWORD_UPDATED, HttpStatus.OK))
@@ -157,7 +157,7 @@ export class UserController implements IUserController {
           .json(ResponseHelper.error("Refresh token is required", HttpStatus.BAD_REQUEST));
       }
 
-      const result = await this.refreshTokenUseCase.execute(dto);
+      const result = await this._refreshTokenUseCase.execute(dto);
 
       res
         .status(HttpStatus.OK)
@@ -181,7 +181,7 @@ export class UserController implements IUserController {
           .json(ResponseHelper.error("User not authenticated", HttpStatus.UNAUTHORIZED));
       }
 
-      await this.logoutUserUseCase.execute(userId);
+      await this._logoutUserUseCase.execute(userId);
 
       res
         .status(HttpStatus.OK)

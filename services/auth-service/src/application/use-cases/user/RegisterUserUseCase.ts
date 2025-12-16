@@ -15,20 +15,20 @@ import { IRegisterUserUseCase } from "../../ports/user/IRegisterUserUseCase";
 @injectable()
 export class RegisterUserUseCase implements IRegisterUserUseCase{
   constructor(
-    @inject("UserRepository") private userRepository:IUserRepository,
-    @inject("OtpRepository") private otpRepository:IOtpRepository,
-    @inject("HashService") private hashService:IHashService,
-    @inject("OtpService") private otpService:IOtpService,
-    @inject("EmailService") private emailService:IEmailService
+    @inject("UserRepository") private _userRepository:IUserRepository,
+    @inject("OtpRepository") private _otpRepository:IOtpRepository,
+    @inject("HashService") private _hashService:IHashService,
+    @inject("OtpService") private _otpService:IOtpService,
+    @inject("EmailService") private _emailService:IEmailService
   ){}
 
   async execute(data:RegisterUserRequestDTO):Promise<RegisterUserResponseDTO> {
     // console.log('hited apl leyer')
     const { name, email, password } = data;
-    const existing = await this.userRepository.findByEmail(email);
+    const existing = await this._userRepository.findByEmail(email);
     if(existing&&existing.isVerified) throw new Error(ErrorMessages.USER.ALREADY_EXISTS);
 
-    const hashed = await this.hashService.hash(password);
+    const hashed = await this._hashService.hash(password);
 
     const user:User = {
       id:undefined,
@@ -39,18 +39,18 @@ export class RegisterUserUseCase implements IRegisterUserUseCase{
       isVerified:false,
     };
     // console.log(user)
-    const savedUser = await this.userRepository.save(user)
+    const savedUser = await this._userRepository.save(user)
     
-    const otp = this.otpService.generateOtp().toString()
+    const otp = this._otpService.generateOtp().toString()
     console.log(otp)
     const expiresAt = new Date(Date.now() +5*60*1000);
-    await this.otpRepository.save({
+    await this._otpRepository.save({
       userId:savedUser.id!,
       otp,
       expiresAt
     });
     // console.log(savedUser,'nnnnnnnnn');
-    await this.emailService.sendOtp(email, otp)
+    await this._emailService.sendOtp(email, otp)
     
     return UserMapper.toRegisterResponse(savedUser.id!);
 

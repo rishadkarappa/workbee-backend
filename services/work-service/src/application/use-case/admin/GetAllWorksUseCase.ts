@@ -7,7 +7,7 @@ import { IGetAllWorksUseCase } from "../../ports/work/IGetAllWorksUseCase";
 @injectable()
 export class GetAllWorksUseCase implements IGetAllWorksUseCase {
     constructor(
-        @inject("WorkRepository") private workRepository: IWorkRepository
+        @inject("WorkRepository") private _workRepository: IWorkRepository
     ) {}
 
     async execute(filters?: {
@@ -19,7 +19,7 @@ export class GetAllWorksUseCase implements IGetAllWorksUseCase {
         longitude?: number;
         maxDistance?: number;
     }): Promise<{ works: WorkResponseDto[]; total: number; totalPages: number }> {
-        const { works, total } = await this.workRepository.findAll(filters);
+        const { works, total } = await this._workRepository.findAll(filters);
         
         if (!works) {
             throw new Error("Failed to retrieve works");

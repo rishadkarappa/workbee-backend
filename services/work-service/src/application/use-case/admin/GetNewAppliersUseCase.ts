@@ -10,14 +10,14 @@ import { IGetNewAppliersUseCase } from "../../ports/worker/IGetNewAppliersUseCas
 @injectable()
 export class GetNewAppliersUseCase implements IGetNewAppliersUseCase {
     constructor(
-        @inject("WorkerRepository") private workerRepository: IWorkerRepository
+        @inject("WorkerRepository") private _workerRepository: IWorkerRepository
     ) { }
 
     async execute(page: number, limit: number, search: string): Promise<{
         workers: WorkerResponseDto[];
         total: number;
     }> {
-        const result = await this.workerRepository.getNewAppliers(page, limit, search);
+        const result = await this._workerRepository.getNewAppliers(page, limit, search);
 
         if (!result.workers || result.workers.length === 0) {
             return { workers: [], total: 0 };

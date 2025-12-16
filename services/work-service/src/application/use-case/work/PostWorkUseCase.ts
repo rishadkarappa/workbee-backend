@@ -9,7 +9,7 @@ import { IPostWorkUseCase } from "../../ports/work/IPostWorkUseCase";
 @injectable()
 export class PostWorkUseCase implements IPostWorkUseCase{
     constructor(
-        @inject("WorkRepository") private workRepository: IWorkRepository
+        @inject("WorkRepository") private _workRepository: IWorkRepository
     ) {}
 
     async execute(dto: PostWorkDto): Promise<WorkResponseDto> {
@@ -51,7 +51,7 @@ export class PostWorkUseCase implements IPostWorkUseCase{
        
 
         const work = WorkMapper.toEntity(dto);
-        const createdWork = await this.workRepository.create(work);
+        const createdWork = await this._workRepository.create(work);
         return WorkMapper.toResponseDto(createdWork);
     }
 }

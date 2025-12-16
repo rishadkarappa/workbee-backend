@@ -6,13 +6,13 @@ import { Worker } from "../../../domain/entities/Worker";
 @injectable()
 export class BlockWorkerUseCase implements IBlockWorkerUseCase{
     constructor(
-        @inject("WorkerRepository") private workerRepository:IWorkerRepository
+        @inject("WorkerRepository") private _workerRepository:IWorkerRepository
     ){}
 
     async execute(workerId: string): Promise<Worker> {
-        const worker = await this.workerRepository.findById(workerId)
+        const worker = await this._workerRepository.findById(workerId)
         if(!worker) throw new Error("dont get worker to block");
         worker.isBlocked = !worker.isBlocked
-        return this.workerRepository.save(worker)
+        return this._workerRepository.save(worker)
     }
 }

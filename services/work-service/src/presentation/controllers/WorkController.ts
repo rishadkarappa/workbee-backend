@@ -24,23 +24,23 @@ import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWork
 @injectable()
 export class WorkController implements IWorkController {
     constructor(
-        @inject("ApplyWorkerUseCase") private applyWorkerUseCase: IApplyWorkerUseCase,
-        @inject("GetNewAppliersUseCase") private getNewAppliersUseCase: IGetNewAppliersUseCase,
-        @inject("WorkerApproveUseCase") private workerApproveUseCase: IWorkerApproveUseCase,
-        @inject("GetAllWorkersUseCase") private getAllWorkersUseCase: IGetAllWorkersUseCase,
-        @inject("PostWorkUseCase") private postWorkUseCase: IPostWorkUseCase,
-        @inject("FileUploadService") private fileUploadService: IFileUploadService,
-        @inject("GetAllWorksUseCase") private getAllWorksUseCase: IGetAllWorksUseCase,
-        @inject("BlockWorkerUseCase") private blockWorkerUseCase: IBlockWorkerUseCase,
-        @inject("GetMyWorksUseCase") private getMyWorksUseCase: IGetMyWorksUseCase,
-        @inject("UpdateWorkUseCase") private updateWorkUseCase: IUpdateWorkUseCase,
-        @inject("DeleteMyWorkUseCase") private deleteMyWorkUseCase: IDeleteMyWorkUseCase,
+        @inject("ApplyWorkerUseCase") private _applyWorkerUseCase: IApplyWorkerUseCase,
+        @inject("GetNewAppliersUseCase") private _getNewAppliersUseCase: IGetNewAppliersUseCase,
+        @inject("WorkerApproveUseCase") private _workerApproveUseCase: IWorkerApproveUseCase,
+        @inject("GetAllWorkersUseCase") private _getAllWorkersUseCase: IGetAllWorkersUseCase,
+        @inject("PostWorkUseCase") private _postWorkUseCase: IPostWorkUseCase,
+        @inject("FileUploadService") private _fileUploadService: IFileUploadService,
+        @inject("GetAllWorksUseCase") private _getAllWorksUseCase: IGetAllWorksUseCase,
+        @inject("BlockWorkerUseCase") private _blockWorkerUseCase: IBlockWorkerUseCase,
+        @inject("GetMyWorksUseCase") private _getMyWorksUseCase: IGetMyWorksUseCase,
+        @inject("UpdateWorkUseCase") private _updateWorkUseCase: IUpdateWorkUseCase,
+        @inject("DeleteMyWorkUseCase") private _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response): Promise<void> {
         try {
             const dto: ApplyWorkerDto = req.body;
-            const result = await this.applyWorkerUseCase.execute(dto);
+            const result = await this._applyWorkerUseCase.execute(dto);
 
             res
                 .status(HttpStatus.OK)
@@ -59,7 +59,7 @@ export class WorkController implements IWorkController {
             const limit = parseInt(req.query.limit as string) || 10;
             const search = (req.query.search as string) || "";
 
-            const result = await this.getNewAppliersUseCase.execute(page, limit, search);
+            const result = await this._getNewAppliersUseCase.execute(page, limit, search);
 
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(
@@ -88,7 +88,7 @@ export class WorkController implements IWorkController {
             rejectionReason: req.body.rejectionReason 
         };
 
-        const result = await this.workerApproveUseCase.execute(dto);
+        const result = await this._workerApproveUseCase.execute(dto);
         res
             .status(HttpStatus.OK)
             .json(ResponseHelper.success(result, "Worker status updated successfully"));
@@ -106,7 +106,7 @@ export class WorkController implements IWorkController {
             const limit = parseInt(req.query.limit as string) || 10;
             const search = (req.query.search as string) || "";
 
-            const result = await this.getAllWorkersUseCase.execute(page, limit, search);
+            const result = await this._getAllWorkersUseCase.execute(page, limit, search);
 
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(
@@ -136,21 +136,21 @@ export class WorkController implements IWorkController {
             if (files) {
                 console.log("Processing files...");
                 if (files.voiceFile) {
-                    rawData.voiceFile = await this.fileUploadService.saveFile(
+                    rawData.voiceFile = await this._fileUploadService.saveFile(
                         files.voiceFile[0],
                         'voice'
                     );
                     console.log("Voice file saved:", rawData.voiceFile);
                 }
                 if (files.videoFile) {
-                    rawData.videoFile = await this.fileUploadService.saveFile(
+                    rawData.videoFile = await this._fileUploadService.saveFile(
                         files.videoFile[0],
                         'video'
                     );
                     console.log("Video file saved:", rawData.videoFile);
                 }
                 if (files.beforeImage) {
-                    rawData.beforeImage = await this.fileUploadService.saveFile(
+                    rawData.beforeImage = await this._fileUploadService.saveFile(
                         files.beforeImage[0],
                         'images'
                     );
@@ -168,7 +168,7 @@ export class WorkController implements IWorkController {
             console.log("einal WorkData", JSON.stringify(dto, null, 2));
             console.log("calling PostWorkUseCase;;;;");
 
-            const result = await this.postWorkUseCase.execute(dto);
+            const result = await this._postWorkUseCase.execute(dto);
 
             console.log("work posted successfully=", result);
 
@@ -207,7 +207,7 @@ export class WorkController implements IWorkController {
                 filters.maxDistance = parseFloat(maxDistance as string);
             }
 
-            const result = await this.getAllWorksUseCase.execute(filters);
+            const result = await this._getAllWorksUseCase.execute(filters);
 
             res.status(200).json({
                 success: true,
@@ -230,7 +230,7 @@ export class WorkController implements IWorkController {
     async blockWorker(req: Request, res: Response) {
         try {
             const workerId = req.params.id
-            const result = await this.blockWorkerUseCase.execute(workerId)
+            const result = await this._blockWorkerUseCase.execute(workerId)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, "blocked worker"))
         } catch (error: any) {
             res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))
@@ -247,7 +247,7 @@ export class WorkController implements IWorkController {
                 );
             }
 
-            const result = await this.getMyWorksUseCase.execute(userId);
+            const result = await this._getMyWorksUseCase.execute(userId);
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(result, "Successfully retrieved user works")
             );
@@ -276,7 +276,7 @@ export class WorkController implements IWorkController {
                 ...updateData
             };
 
-            const updatedWork = await this.updateWorkUseCase.execute(dto);
+            const updatedWork = await this._updateWorkUseCase.execute(dto);
 
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(updatedWork, "Work updated successfully")
@@ -304,7 +304,7 @@ export class WorkController implements IWorkController {
                 userId
             };
 
-            const result = await this.deleteMyWorkUseCase.execute(dto);
+            const result = await this._deleteMyWorkUseCase.execute(dto);
 
             res.status(200).json(
                 ResponseHelper.success(result, "Work deleted successfully")

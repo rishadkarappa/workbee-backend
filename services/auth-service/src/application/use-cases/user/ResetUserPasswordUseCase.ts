@@ -12,21 +12,21 @@ import { IResetPasswordUseCase } from "../../ports/user/IResetPasswordUseCase";
 @injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase{
     constructor(
-        @inject("UserRepository") private userRepository:IUserRepository,
-        @inject("TokenService") private tokenService:ITokenService,
-        @inject("HashService") private hashService:IHashService
+        @inject("UserRepository") private _userRepository:IUserRepository,
+        @inject("TokenService") private _tokenService:ITokenService,
+        @inject("HashService") private _hashService:IHashService
     ){}
 
     async execute(token:string, password:string){
-        const payload = this.tokenService.verifyAccess(token)
-        const user = await this.userRepository.findById(payload.id)
+        const payload = this._tokenService.verifyAccess(token)
+        const user = await this._userRepository.findById(payload.id)
         if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
         
-        const hashed = await this.hashService.hash(password)
+        const hashed = await this._hashService.hash(password)
         console.log('hased pas',hashed)
         user.password = hashed
 
-        await this.userRepository.save(user)
+        await this._userRepository.save(user)
         return { message:ResponseMessage.USER.PASSOWORD_UPDATED}
     }
 }

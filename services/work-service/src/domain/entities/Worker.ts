@@ -15,8 +15,8 @@ export interface Worker {
         termsAccepted: boolean;
     };
     status:WorkerStatus;
-    rejectionReason?: string; // ✅ Add this
-    rejectedAt?: Date; // ✅ Add this
+    rejectionReason?: string;
+    rejectedAt?: Date;
     canReapply?: boolean; 
     isBlocked?: boolean;
     createdAt?: Date;

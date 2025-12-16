@@ -15,16 +15,16 @@ import { IBlockUserUseCase } from "../../../application/ports/admin/IBlockUserUs
 @injectable()
 export class AdminController implements IAdminContoller {
     constructor(
-        @inject("LoginAdminUseCase") private loginAdminUseCase: ILoginAdminUseCase,
-        @inject("GetUsersUseCase") private getUsersUseCase: IGetUsersUseCase,
-        @inject("BlockUserUseCase") private blockUserUseCase: IBlockUserUseCase,
+        @inject("LoginAdminUseCase") private _loginAdminUseCase: ILoginAdminUseCase,
+        @inject("GetUsersUseCase") private _getUsersUseCase: IGetUsersUseCase,
+        @inject("BlockUserUseCase") private _blockUserUseCase: IBlockUserUseCase,
     ) { }
 
     async adminLogin(req: Request, res: Response) {
         try {
             // const {email, password} = req.body;
             const dto: LoginAdminRequestDTO = req.body
-            const result = await this.loginAdminUseCase.execute(dto)
+            const result = await this._loginAdminUseCase.execute(dto)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.LOGINED_SUCCESFULLY))
         } catch (err: any) {
             res.status(HttpStatus.UNAUTHORIZED).json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST))
@@ -37,7 +37,7 @@ export class AdminController implements IAdminContoller {
             const limit = parseInt(req.query.limit as string) || 10;
             const search = (req.query.search as string) || "";
 
-            const result = await this.getUsersUseCase.execute(page, limit, search);
+            const result = await this._getUsersUseCase.execute(page, limit, search);
 
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(
@@ -61,7 +61,7 @@ export class AdminController implements IAdminContoller {
     async blockUser(req: Request, res: Response) {
         try {
             const userId = req.params.id
-            const result = await this.blockUserUseCase.execute(userId)
+            const result = await this._blockUserUseCase.execute(userId)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, "ResponseMessage.ADMIN.BLOCKED_USER"))
         } catch (error: any) {
             res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND))

@@ -157,11 +157,6 @@ export class MongoWorkRepository implements IWorkRepository {
         };
     }
 
-    // async update(id: string, WorkData: Partial<Work>): Promise<Work | null> {
-    //     const updated = await WorkModel.findByIdAndUpdate(id, WorkData, { new: true });
-    //     return updated ? this.mapToEntity(updated) : null;
-    // }
-
     async update(id: string, workData: Partial<Work>): Promise<Work | null> {
         const updated = await WorkModel.findByIdAndUpdate(
             id,

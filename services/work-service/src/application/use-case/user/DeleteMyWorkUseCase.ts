@@ -6,11 +6,11 @@ import { DeleteWorkDto } from "../../dtos/work/WorkDTO";
 @injectable()
 export class DeleteMyWorkUseCase implements IDeleteMyWorkUseCase {
     constructor(
-        @inject("WorkRepository") private workRepository: IWorkRepository
+        @inject("WorkRepository") private _workRepository: IWorkRepository
     ) { }
 
     async execute(dto: DeleteWorkDto): Promise<boolean> {
-        const work = await this.workRepository.findById(dto.workId);
+        const work = await this._workRepository.findById(dto.workId);
 
         if (!work) {
             throw new Error("Work not found");
@@ -20,7 +20,7 @@ export class DeleteMyWorkUseCase implements IDeleteMyWorkUseCase {
             throw new Error("Unauthorized to delete this work");
         }
 
-        const deleted = await this.workRepository.delete(dto.workId);
+        const deleted = await this._workRepository.delete(dto.workId);
 
         if (!deleted) {
             throw new Error("Delete failed");

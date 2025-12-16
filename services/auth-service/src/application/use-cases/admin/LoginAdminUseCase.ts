@@ -14,31 +14,31 @@ import { ILoginAdminUseCase } from "../../ports/admin/ILoginAdminUseCase";
 @injectable()
 export class LoginAdminUseCase implements ILoginAdminUseCase {
     constructor(
-        @inject("UserRepository") private userRepository: IUserRepository,
-        @inject("HashService") private hashService: IHashService,
-        @inject("TokenService") private tokenService: ITokenService
+        @inject("UserRepository") private _userRepository: IUserRepository,
+        @inject("HashService") private _hashService: IHashService,
+        @inject("TokenService") private _tokenService: ITokenService
     ) {}
 
     async execute(data: LoginAdminRequestDTO): Promise<LoginAdminResponseDTO> {
         const { email, password } = data;
 
-        const admin = await this.userRepository.findByEmail(email);
+        const admin = await this._userRepository.findByEmail(email);
         
         if (!admin || admin.role !== UserRoles.ADMIN) {
             throw new Error(ErrorMessages.ADMIN.ADMIN_NOT_FOUND);
         }
 
-        const isPasswordValid = await this.hashService.compare(password, admin.password!);
+        const isPasswordValid = await this._hashService.compare(password, admin.password!);
         if (!isPasswordValid) {
             throw new Error(ErrorMessages.ADMIN.WRONG_PASSWORD);
         }
 
         // Generate both access and refresh tokens
-        const accessToken = this.tokenService.generateAccess(admin.id!, "admin");
-        const refreshToken = this.tokenService.generateRefresh(admin.id!, "admin");
+        const accessToken = this._tokenService.generateAccess(admin.id!, "admin");
+        const refreshToken = this._tokenService.generateRefresh(admin.id!, "admin");
 
         // Store refresh token in Redis
-        await this.tokenService.storeRefreshToken(admin.id!, refreshToken);
+        await this._tokenService.storeRefreshToken(admin.id!, refreshToken);
 
         return AdminMapper.toLoginResponse(admin, accessToken, refreshToken);
     }

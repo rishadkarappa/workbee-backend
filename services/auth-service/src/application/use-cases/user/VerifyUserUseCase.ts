@@ -8,8 +8,8 @@ import { IVerifyUserUseCase } from "../../ports/user/IVerifyUserUseCase";
 @injectable()
 export class VerifyUserUseCase implements IVerifyUserUseCase{
     constructor(
-        @inject("UserRepository") private userRepository:IUserRepository,
-        @inject("TokenService") private tokenService:ITokenService
+        @inject("UserRepository") private _userRepository:IUserRepository,
+        @inject("TokenService") private _tokenService:ITokenService
     ){}
     async execute(authHeader?:string){
         if(!authHeader) throw new Error(ErrorMessages.AUTH.ATUH_HEADER_IS_MISSING)
@@ -17,8 +17,8 @@ export class VerifyUserUseCase implements IVerifyUserUseCase{
         const token = authHeader.split(" ")[1]
         if(!token) throw new Error(ErrorMessages.USER.TOKEN_IS_MISSING)
 
-        const payload = this.tokenService.verifyAccess(token)
-        const user = await this.userRepository.findById(payload.id)
+        const payload = this._tokenService.verifyAccess(token)
+        const user = await this._userRepository.findById(payload.id)
 
         if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
         return user;

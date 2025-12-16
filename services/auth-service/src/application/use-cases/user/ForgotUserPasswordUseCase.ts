@@ -10,18 +10,18 @@ import { IForgotPasswordUseCase } from "../../ports/user/IForgotPasswordUseCase"
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase{
     constructor(
-        @inject("UserRepository") private userRepository:IUserRepository,
-        @inject("TokenService") private tokenService:ITokenService,
-        @inject("EmailService") private emailService:IEmailService
+        @inject("UserRepository") private _userRepository:IUserRepository,
+        @inject("TokenService") private _tokenService:ITokenService,
+        @inject("EmailService") private _emailService:IEmailService
     ){}
 
     async execute(email:string){
-        const user = await this.userRepository.findByEmail(email)
+        const user = await this._userRepository.findByEmail(email)
         if(!user) throw new Error(ErrorMessages.USER.NOT_FOUND)
         // console.log('forgot pass usecase get user')
-        const resetToken = this.tokenService.generateAccess(user.id!)
+        const resetToken = this._tokenService.generateAccess(user.id!)
         const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
-        await this.emailService.sendResentPasswordLink(email, resetLink)
+        await this._emailService.sendResentPasswordLink(email, resetLink)
 
         return { message: ResponseMessage.USER.SENT_RESET_LINK}
     }

@@ -7,11 +7,11 @@ import { WorkMapper } from "../../mappers/WorkMapper";
 @injectable()
 export class UpdateWorkUseCase implements IUpdateWorkUseCase {
     constructor(
-        @inject("WorkRepository") private workRepository: IWorkRepository
+        @inject("WorkRepository") private _workRepository: IWorkRepository
     ) {}
 
     async execute(dto: UpdateWorkDto): Promise<WorkResponseDto> {
-        const existingWork = await this.workRepository.findById(dto.workId);
+        const existingWork = await this._workRepository.findById(dto.workId);
         
         if (!existingWork) {
             throw new Error('Work not found');
@@ -23,7 +23,7 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
 
         const { workId, userId, ...updateData } = dto;
 
-        const updatedWork = await this.workRepository.update(workId, updateData);
+        const updatedWork = await this._workRepository.update(workId, updateData);
         
         if (!updatedWork) {
             throw new Error('Failed to update work');

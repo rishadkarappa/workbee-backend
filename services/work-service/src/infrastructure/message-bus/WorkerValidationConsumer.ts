@@ -41,7 +41,7 @@ export class WorkerValidationConsumer {
     constructor(
         @inject("WorkerRepository") private workerRepository: IWorkerRepository,
         @inject("HashService") private hashService: IHashService
-    ) {}
+    ) { }
 
     async start(channel: Channel): Promise<void> {
         await channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
@@ -51,7 +51,7 @@ export class WorkerValidationConsumer {
 
         channel.consume(this.REQUEST_QUEUE, async (msg) => {
             if (!msg) return;
-            
+
             const request: WorkerLoginRequest = JSON.parse(msg.content.toString());
 
             try {
@@ -102,10 +102,24 @@ export class WorkerValidationConsumer {
             };
         }
 
+        if (worker.status === WorkerStatus.REJECTED) {
+            return {
+                success: false,
+                error: "Your application has been rejected. Check your email for the reason."
+            };
+        }
+
+        if (worker.isBlocked) {
+            return {
+                success: false,
+                error: "Your have blocked, contact with WorkBee team for assistance"
+            };
+        }
+
         if (worker.status !== WorkerStatus.APPROVED) {
             return {
                 success: false,
-                error: "Your application has not been approved yet."
+                error: "Your application has not been approved yet. Check your email for updates"
             };
         }
 
@@ -130,7 +144,7 @@ export class WorkerValidationConsumer {
                 name: worker.name,
                 email: worker.email,
                 phone: worker.phone,
-                role: "worker", 
+                role: "worker",
                 location: worker.location,
                 workType: worker.workType,
                 preferredWorks: worker.preferredWorks,

@@ -12,7 +12,8 @@ export class MongoUserRepository extends MongoBaseRepository<User, any> implemen
 
     protected map(user: any): User {
         return {
-            id: user.id,
+            // id: user.id,
+            id: user._id?.toString() || user.id?.toString(),
             name: user.name,
             email: user.email,
             password: user.password,

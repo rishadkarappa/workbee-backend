@@ -13,8 +13,8 @@ const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 @injectable()
 export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
     constructor(
-        @inject("UserRepository") private userRepository: IUserRepository,
-        @inject("TokenService") private tokenService: ITokenService
+        @inject("UserRepository") private _userRepository: IUserRepository,
+        @inject("TokenService") private _tokenService: ITokenService
     ){}
 
     async execute(data: GoogleLoginRequestDTO): Promise<GoogleLoginResponseDTO>{
@@ -29,7 +29,7 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
 
         const { email, name, sub } = payload;
 
-        let user = await this.userRepository.findByEmail(email!);
+        let user = await this._userRepository.findByEmail(email!);
 
         if(!user){
             const newUser: User = {
@@ -39,15 +39,15 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
                 isVerified: true,
                 role: 'user'
             };
-            user = await this.userRepository.save(newUser);
+            user = await this._userRepository.save(newUser);
         }
 
         // Generate both access and refresh tokens
-        const accessToken = this.tokenService.generateAccess(user.id!, user.role as "user" | "admin" | "worker");
-        const refreshToken = this.tokenService.generateRefresh(user.id!, user.role as "user" | "admin" | "worker");
+        const accessToken = this._tokenService.generateAccess(user.id!, user.role as "user" | "admin" | "worker");
+        const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as "user" | "admin" | "worker");
 
         // Store refresh token in Redis
-        await this.tokenService.storeRefreshToken(user.id!, refreshToken);
+        await this._tokenService.storeRefreshToken(user.id!, refreshToken);
 
         return UserMapper.toGoogleLoginResponse(user, accessToken, refreshToken);
     }

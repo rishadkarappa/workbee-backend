@@ -17,7 +17,7 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 @injectable()
 export class WorkerLoginUseCase implements IWorkerLoginUseCase {
     constructor(
-        @inject("TokenService") private tokenService: ITokenService
+        @inject("TokenService") private _tokenService: ITokenService
     ) {}
 
     async execute(data: WorkerLoginRequestDTO): Promise<WorkerLoginResponseDTO> {
@@ -33,11 +33,11 @@ export class WorkerLoginUseCase implements IWorkerLoginUseCase {
         }
 
         // Generate  access and refresh tokens
-        const accessToken = this.tokenService.generateAccess(response.data.id, "worker");
-        const refreshToken = this.tokenService.generateRefresh(response.data.id, "worker");
+        const accessToken = this._tokenService.generateAccess(response.data.id, "worker");
+        const refreshToken = this._tokenService.generateRefresh(response.data.id, "worker");
 
         // Store refresh token in Redis
-        await this.tokenService.storeRefreshToken(response.data.id, refreshToken);
+        await this._tokenService.storeRefreshToken(response.data.id, refreshToken);
 
         return WorkerMapper.toLoginResponse({
             ...response.data,

@@ -4,7 +4,6 @@ export interface IWorkRepository{
     create(work:Work):Promise<Work>;
     findById(id:string):Promise<Work|null>;
     findByUserId(userId:string):Promise<Work[]>;
-    // update(id:string, work:Partial<Work>):Promise<Work|null>;
     update(id: string, workData: Partial<Work>): Promise<Work | null>;
     delete(id:string):Promise<boolean>;
     findAll(filters?: {

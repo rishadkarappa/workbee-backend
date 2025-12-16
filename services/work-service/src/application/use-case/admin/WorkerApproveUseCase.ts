@@ -9,8 +9,8 @@ import { WorkerStatus } from "../../../infrastructure/database/models/WorkerSche
 @injectable()
 export class WorkerApproveUseCase implements IWorkerApproveUseCase {
     constructor(
-        @inject("WorkerRepository") private workerRepository: IWorkerRepository,
-        @inject("EmailService") private emailService: IEmailService
+        @inject("WorkerRepository") private _workerRepository: IWorkerRepository,
+        @inject("EmailService") private _emailService: IEmailService
     ) {}
 
     async execute(dto: WorkerApproveDto): Promise<WorkerResponseDto> {
@@ -22,7 +22,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
             throw new Error("Valid status (approved or rejected) is required");
         }
 
-        const worker = await this.workerRepository.findById(dto.workerId);
+        const worker = await this._workerRepository.findById(dto.workerId);
 
         if (!worker) {
             throw new Error("Worker not found with ID: " + dto.workerId);
@@ -37,7 +37,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
             worker.rejectedAt = undefined;
 
             // Send approval email
-            await this.emailService.sendApprovalEmail(worker.email, worker.name);
+            await this._emailService.sendApprovalEmail(worker.email, worker.name);
             
         } else if (dto.status === "rejected") {
             if (!dto.rejectionReason || dto.rejectionReason.trim().length === 0) {
@@ -50,7 +50,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
             worker.canReapply = true;
 
             // Send rejection email with reason
-            await this.emailService.sendRejectionEmail(
+            await this._emailService.sendRejectionEmail(
                 worker.email,
                 worker.name,
                 dto.rejectionReason
@@ -59,7 +59,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
 
         console.log("WorkerApproveUseCase - Updating worker status to:", worker.status);
 
-        const updatedWorker = await this.workerRepository.save(worker);
+        const updatedWorker = await this._workerRepository.save(worker);
 
         return WorkerMapper.toResponseDto(updatedWorker);
     }
