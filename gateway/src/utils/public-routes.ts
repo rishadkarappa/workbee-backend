@@ -3,6 +3,7 @@ import { Request } from "express"
 export const PUBLIC_ROUTES: { method: string; path: string }[] = [
     { method: "POST", path: "/auth/register" },
     { method: "POST", path: "/auth/verifyOtp" },
+    { method: "POST", path: "/auth/resend-otp" },
     { method: "POST", path: "/auth/login" },
     { method: "GET",  path: "/auth/verify" },
     { method: "POST", path: "/auth/google-login" },

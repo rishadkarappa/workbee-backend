@@ -33,6 +33,8 @@ import { RefreshTokenUseCase } from "../../application/use-cases/user/RefreshTok
 import { LogoutUserUseCase } from "../../application/use-cases/user/LogoutUserUseCase";
 import { IRefreshTokenUseCase } from "../../application/ports/user/IRefreshTokenUseCase";
 import { ILogoutUserUseCase } from "../../application/ports/user/ILogoutUserUseCase";
+import { ResendOtpUseCase } from "../../application/use-cases/user/ResendOtpUseCase";
+import { IResendOtpUseCase } from "../../application/ports/user/IResendOtpUseCase";
 
 
 //usecases will injected by auto via @inject
@@ -45,6 +47,7 @@ container.registerSingleton<IGoogleLoginUserUseCase>("GoogleLoginUserUseCase",Go
 container.registerSingleton<IForgotPasswordUseCase>("ForgotPasswordUseCase",ForgotPasswordUseCase)
 container.registerSingleton<IResetPasswordUseCase>("ResetPasswordUseCase",ResetPasswordUseCase)
 container.registerSingleton<IVerifyOtpUseCase>("VerifyOtpUseCase",VerifyOtpUseCase)
+container.registerSingleton<IResendOtpUseCase>("ResendOtpUseCase",ResendOtpUseCase)
 container.register<IRefreshTokenUseCase>("RefreshTokenUseCase", RefreshTokenUseCase);
 container.register<ILogoutUserUseCase>("LogoutUserUseCase", LogoutUserUseCase);
 

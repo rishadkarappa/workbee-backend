@@ -8,6 +8,7 @@ const userController = container.resolve(UserController);
 
 router.post("/register", userController.register.bind(userController));
 router.post("/verifyOtp", userController.verifyOtp.bind(userController));
+router.post("/resend-otp", userController.resendOtp.bind(userController));
 router.post("/login", userController.login.bind(userController));
 router.get("/verify", userController.verify.bind(userController))
 router.post("/google-login", userController.googleLogin.bind(userController))

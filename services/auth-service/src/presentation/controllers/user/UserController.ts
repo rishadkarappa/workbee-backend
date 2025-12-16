@@ -20,6 +20,8 @@ import { IUserController } from "../../ports/IUserContoller";
 import { RefreshTokenRequestDTO } from "../../../application/dtos/user/RefreshTokenDTO";
 import { RefreshTokenUseCase } from "../../../application/use-cases/user/RefreshTokenUseCase";
 import { LogoutUserUseCase } from "../../../application/use-cases/user/LogoutUserUseCase";
+import { IResendOtpUseCase } from "../../../application/ports/user/IResendOtpUseCase";
+import { ResendOtpRequestDTO } from "../../../application/dtos/user/ResendOtpDTO";
 
 @injectable()
 export class UserController implements IUserController {
@@ -27,6 +29,7 @@ export class UserController implements IUserController {
     @inject("RegisterUserUseCase") private _registerUserUseCase: IRegisterUserUseCase,
     @inject("LoginUserUseCase") private _loginUserUseCase: ILoginUserUseCase,
     @inject("VerifyOtpUseCase") private _verifyOtpUseCase: IVerifyOtpUseCase,
+    @inject("ResendOtpUseCase") private _resendOtpUseCase: IResendOtpUseCase,
     @inject("VerifyUserUseCase") private _verifyUserUseCase: IVerifyUserUseCase,
     @inject("GoogleLoginUserUseCase") private _googleLoginUserUseCase: IGoogleLoginUserUseCase,
     @inject("ForgotPasswordUseCase") private _forgotPasswordUseCase: IForgotPasswordUseCase,
@@ -65,6 +68,24 @@ export class UserController implements IUserController {
         .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
     }
   }
+
+  async resendOtp(req: Request, res: Response) {
+    try {
+      const dto: ResendOtpRequestDTO = req.body;
+
+      const result = await this._resendOtpUseCase.execute(dto);
+
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(result, "ResponseMessage.OTP.RESENT", HttpStatus.OK));
+    } catch (err: any) {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(ResponseHelper.error(err.message, HttpStatus.BAD_REQUEST));
+    }
+  }
+
+
 
   async login(req: Request, res: Response) {
     try {
