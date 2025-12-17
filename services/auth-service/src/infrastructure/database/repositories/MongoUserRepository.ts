@@ -29,30 +29,36 @@ export class MongoUserRepository extends MongoBaseRepository<User, any> implemen
         return user ? this.map(user) : null
     }
 
-
     async getUsers(
         page: number = 1,
         limit: number = 10,
-        search: string = ""
+        search: string = "",
+        status: string = "all"
     ): Promise<{ users: User[], total: number }> {
         const skip = (page - 1) * limit;
 
-        // Build search query
-        const searchQuery = search
-            ? {
-                $or: [
-                    { name: { $regex: search, $options: 'i' } },
-                    { email: { $regex: search, $options: 'i' } }
-                ]
-            }
-            : {};
+        // Build query object
+        const query: any = {};
+
+        // Search filter
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        // Status filter
+        if (status !== "all") {
+            query.isBlocked = status === "blocked";
+        }
 
         const [users, total] = await Promise.all([
-            UserModel.find(searchQuery)
+            UserModel.find(query)
                 .skip(skip)
                 .limit(limit)
                 .lean(),
-            UserModel.countDocuments(searchQuery)
+            UserModel.countDocuments(query)
         ]);
 
         return {

@@ -32,29 +32,30 @@ export class AdminController implements IAdminContoller {
     }
 
     async getUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
-            const search = (req.query.search as string) || "";
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const search = (req.query.search as string) || "";
+        const status = (req.query.status as string) || "all";
 
-            const result = await this._getUsersUseCase.execute(page, limit, search);
+        const result = await this._getUsersUseCase.execute(page, limit, search, status);
 
-            res.status(HttpStatus.OK).json(
-                ResponseHelper.success(
-                    {
-                        users: result.users,
-                        total: result.total,
-                        page,
-                        limit,
-                        totalPages: Math.ceil(result.total / limit)
-                    },
-                    ResponseMessage.ADMIN.GET_USERS
-                )
-            );
-        } catch (error) {
-            next(error)
-        }
+        res.status(HttpStatus.OK).json(
+            ResponseHelper.success(
+                {
+                    users: result.users,
+                    total: result.total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(result.total / limit)
+                },
+                ResponseMessage.ADMIN.GET_USERS
+            )
+        );
+    } catch (error) {
+        next(error)
     }
+}
 
     async blockUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {

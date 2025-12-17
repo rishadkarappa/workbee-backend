@@ -98,8 +98,9 @@ export class WorkController implements IWorkController {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
             const search = (req.query.search as string) || "";
+            const status = (req.query.status as string) || "all";
 
-            const result = await this._getAllWorkersUseCase.execute(page, limit, search);
+            const result = await this._getAllWorkersUseCase.execute(page, limit, search, status);
 
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(

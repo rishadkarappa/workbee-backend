@@ -152,49 +152,6 @@ export class UserController implements IUserController {
     }
   }
 
-  // async refreshToken(req: Request, res: Response, next:NextFunction) {
-  //   try {
-  //     const dto: RefreshTokenRequestDTO = req.body;
-
-  //     if (!dto.refreshToken) {
-  //       return res
-  //         .status(HttpStatus.BAD_REQUEST)
-  //         .json(ResponseHelper.error("Refresh token is required", HttpStatus.BAD_REQUEST));
-  //     }
-
-  //     const result = await this._refreshTokenUseCase.execute(dto);
-
-  //     res
-  //       .status(HttpStatus.OK)
-  //       .json(ResponseHelper.success(result, "Token refreshed successfully", HttpStatus.OK));
-  //   } catch (error) {
-  //     console.error("RefreshTokenController Error:", error);
-  //     next(error)
-  //   }
-  // }
-
-  // async userLogout(req:Request, res:Response, next:NextFunction) {
-  //   try {
-  //     // Get userId from JWT payload (set by gateway middleware)
-  //     const userId = req.headers['x-user-id'] as string;
-
-  //     if (!userId) {
-  //       return res
-  //         .status(HttpStatus.UNAUTHORIZED)
-  //         .json(ResponseHelper.error("User not authenticated", HttpStatus.UNAUTHORIZED));
-  //     }
-
-  //     await this._logoutUserUseCase.execute(userId);
-
-  //     res
-  //       .status(HttpStatus.OK)
-  //       .json(ResponseHelper.success(null, "Logged out successfully", HttpStatus.OK));
-  //   } catch (error) {
-  //     console.error("LogoutController Error:", error);
-  //     next(error)
-  //   }
-  // }
-
   async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const dto: RefreshTokenRequestDTO = req.body;

@@ -4,18 +4,17 @@ import { WorkerResponseDto } from "../../dtos/worker/WorkerDTO";
 import { WorkerMapper } from "../../mappers/WorkerMapper";
 import { IGetAllWorkersUseCase } from "../../ports/worker/IGetAllWorkersUseCase";
 
-
 @injectable()
 export class GetAllWorkersUseCase implements IGetAllWorkersUseCase {
     constructor(
         @inject("WorkerRepository") private _workerRepository: IWorkerRepository
     ) {}
 
-    async execute(page: number, limit: number, search: string): Promise<{
+    async execute(page: number, limit: number, search: string, status: string = "all"): Promise<{
         workers: WorkerResponseDto[];
         total: number;
     }> {
-        const result = await this._workerRepository.getAllWorkers(page, limit, search);
+        const result = await this._workerRepository.getAllWorkers(page, limit, search, status);
         
         if (!result.workers || result.workers.length === 0) {
             return { workers: [], total: 0 };
@@ -27,4 +26,3 @@ export class GetAllWorkersUseCase implements IGetAllWorkersUseCase {
         };
     }
 }
-

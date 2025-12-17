@@ -8,10 +8,8 @@ export interface IWorkerRepository{
         workers: Worker[]; 
         total: number 
     }>;
-    getAllWorkers(page: number, limit: number, search: string): Promise<{ 
-        workers: Worker[]; 
-        total: number 
-    }>;
+    getAllWorkers(page: number, limit: number, search: string, status?: string): Promise<{ workers: Worker[]; total: number }>;
+
     getWorkersCount():Promise<number>;
 }
 

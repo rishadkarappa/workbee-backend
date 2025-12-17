@@ -93,13 +93,15 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
   async getAllWorkers(
     page: number = 1,
     limit: number = 10,
-    search: string = ""
+    search: string = "",
+    status: string = "all"
   ): Promise<{ workers: Worker[]; total: number }> {
     const skip = (page - 1) * limit;
 
     // Build search query for approved workers
     const searchQuery: any = { status: "approved" };
 
+    // Search filter
     if (search) {
       searchQuery.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -107,6 +109,11 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
         { phone: { $regex: search, $options: 'i' } },
         { location: { $regex: search, $options: 'i' } }
       ];
+    }
+
+    // Status filter (isBlocked)
+    if (status !== "all") {
+      searchQuery.isBlocked = status === "blocked";
     }
 
     const [workers, total] = await Promise.all([
