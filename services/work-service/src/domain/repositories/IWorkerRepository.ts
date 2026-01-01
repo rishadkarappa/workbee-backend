@@ -11,6 +11,8 @@ export interface IWorkerRepository{
     getAllWorkers(page: number, limit: number, search: string, status?: string): Promise<{ workers: Worker[]; total: number }>;
 
     getWorkersCount():Promise<number>;
+    //findByIds(ids: string[]): Promise<Worker[]>;
+
 }
 
 

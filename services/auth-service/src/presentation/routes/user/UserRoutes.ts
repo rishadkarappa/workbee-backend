@@ -17,4 +17,8 @@ router.post("/reset-password/:token", userController.resetPassword.bind(userCont
 router.post("/refresh-token", userController.refreshToken.bind(userController));
 router.post("/logout", userController.userLogout.bind(userController));
 
+//inter serv comm
+// router.get('/users/:userId', userController.getUserProfile.bind(userController));
+// router.post('/users/batch', userController.getUserProfilesBatch.bind(userController));
+
 export default router;

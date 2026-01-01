@@ -303,4 +303,34 @@ export class WorkController implements IWorkController {
             next(err);
         }
     }
+
+
+    // inter ser comm with chat
+
+//     async getWorkerProfile(req: Request, res: Response) {
+//     try {
+//       const { workerId } = req.params;
+//       const profile = await this.getWorkerProfileUseCase.execute(workerId);
+//       res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'Worker profile retrieved'));
+//     } catch (error: any) {
+//       res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
+//     }
+//   }
+
+//   async getWorkerProfilesBatch(req: Request, res: Response) {
+//     try {
+//       const { workerIds } = req.body;
+      
+//       if (!Array.isArray(workerIds)) {
+//         return res.status(HttpStatus.BAD_REQUEST).json(
+//           ResponseHelper.error('workerIds must be an array', HttpStatus.BAD_REQUEST)
+//         );
+//       }
+
+//       const profiles = await this.getWorkerProfilesBatchUseCase.execute(workerIds);
+//       res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'Worker profiles retrieved'));
+//     } catch (error: any) {
+//       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+//     }
+//   }
 }

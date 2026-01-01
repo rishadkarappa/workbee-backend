@@ -196,5 +196,35 @@ export class UserController implements IUserController {
       next(error);
     }
   }
+
+
+  // chat inter service communication ====================
+  
+  // async getUserProfile(req: Request, res: Response) {
+  //   try {
+  //     const { userId } = req.params;
+  //     const profile = await this.getUserProfileUseCase.execute(userId);
+  //     res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'User profile retrieved'));
+  //   } catch (error: any) {
+  //     res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
+  //   }
+  // }
+
+  // async getUserProfilesBatch(req: Request, res: Response) {
+  //   try {
+  //     const { userIds } = req.body;
+      
+  //     if (!Array.isArray(userIds)) {
+  //       return res.status(HttpStatus.BAD_REQUEST).json(
+  //         ResponseHelper.error('userIds must be an array', HttpStatus.BAD_REQUEST)
+  //       );
+  //     }
+
+  //     const profiles = await this.getUserProfilesBatchUseCase.execute(userIds);
+  //     res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'User profiles retrieved'));
+  //   } catch (error: any) {
+  //     res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+  //   }
+  // }
 }
 

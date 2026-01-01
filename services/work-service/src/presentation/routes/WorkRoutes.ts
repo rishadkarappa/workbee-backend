@@ -24,4 +24,7 @@ router.get('/get-my-works', workController.getMyWorks.bind(workController));
 router.put('/update-work/:workId', workController.updateWork.bind(workController))
 router.delete('/delete-my-work/:workId', workController.deleteMyWork.bind(workController))
 
+// router.get('/workers/:workerId', workController.getWorkerProfile.bind(workController));
+// router.post('/workers/batch', workController.getWorkerProfilesBatch.bind(workController));
+
 export default router

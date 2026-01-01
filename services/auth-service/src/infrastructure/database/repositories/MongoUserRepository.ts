@@ -67,6 +67,14 @@ export class MongoUserRepository extends MongoBaseRepository<User, any> implemen
         };
     }
 
+    // async findByIds(ids: string[]): Promise<User[]> {
+    //     const users = await UserModel.find({
+    //         _id: { $in: ids }
+    //     }).select('-password');
+
+    //     return this.map(users);
+    // }
+
     async save(user: User): Promise<User> {
         if (user.id) {
             const updated = await UserModel.findByIdAndUpdate(user.id, user, { new: true })
