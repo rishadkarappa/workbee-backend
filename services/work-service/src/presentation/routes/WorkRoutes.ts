@@ -25,7 +25,7 @@ router.put('/update-work/:workId', workController.updateWork.bind(workController
 router.delete('/delete-my-work/:workId', workController.deleteMyWork.bind(workController))
 
 // inter ser comm
-// router.get('/workers/:workerId', workController.getWorkerProfile.bind(workController));
-// router.post('/workers/batch', workController.getWorkerProfilesBatch.bind(workController));
+router.get('/get-worker-profile/:workerId', workController.getWorkerProfile.bind(workController));
+router.post('/get-worker-profile/batch', workController.getWorkerProfilesBatch.bind(workController));
 
 export default router

@@ -21,6 +21,9 @@ import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseC
 import { IUpdateWorkUseCase } from "../../application/ports/user/IUpdateWorkUseCase";
 import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWorkUseCase";
 
+import { GetWorkerProfileUseCase } from "../../application/use-case/isc/GetWorkerProfileUseCase";
+import { GetWorkerProfilesBatchUseCase } from "../../application/use-case/isc/GetWorkerProfilesBatchUseCase";
+
 @injectable()
 export class WorkController implements IWorkController {
     constructor(
@@ -35,6 +38,8 @@ export class WorkController implements IWorkController {
         @inject("GetMyWorksUseCase") private _getMyWorksUseCase: IGetMyWorksUseCase,
         @inject("UpdateWorkUseCase") private _updateWorkUseCase: IUpdateWorkUseCase,
         @inject("DeleteMyWorkUseCase") private _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
+        @inject("GetWorkerProfileUseCase") private _getWorkerProfileUseCase: GetWorkerProfileUseCase,
+        @inject("GetWorkerProfilesBatchUseCase") private _getWorkerProfilesBatchUseCase: GetWorkerProfilesBatchUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -307,30 +312,30 @@ export class WorkController implements IWorkController {
 
     // inter ser comm with chat
 
-//     async getWorkerProfile(req: Request, res: Response) {
-//     try {
-//       const { workerId } = req.params;
-//       const profile = await this.getWorkerProfileUseCase.execute(workerId);
-//       res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'Worker profile retrieved'));
-//     } catch (error: any) {
-//       res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
-//     }
-//   }
+    async getWorkerProfile(req: Request, res: Response) {
+    try {
+      const { workerId } = req.params;
+      const profile = await this._getWorkerProfileUseCase.execute(workerId);
+      res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'Worker profile retrieved'));
+    } catch (error: any) {
+      res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
+    }
+  }
 
-//   async getWorkerProfilesBatch(req: Request, res: Response) {
-//     try {
-//       const { workerIds } = req.body;
+  async getWorkerProfilesBatch(req: Request, res: Response) {
+    try {
+      const { workerIds } = req.body;
       
-//       if (!Array.isArray(workerIds)) {
-//         return res.status(HttpStatus.BAD_REQUEST).json(
-//           ResponseHelper.error('workerIds must be an array', HttpStatus.BAD_REQUEST)
-//         );
-//       }
+      if (!Array.isArray(workerIds)) {
+        return res.status(HttpStatus.BAD_REQUEST).json(
+          ResponseHelper.error('workerIds must be an array', HttpStatus.BAD_REQUEST)
+        );
+      }
 
-//       const profiles = await this.getWorkerProfilesBatchUseCase.execute(workerIds);
-//       res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'Worker profiles retrieved'));
-//     } catch (error: any) {
-//       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
-//     }
-//   }
+      const profiles = await this._getWorkerProfilesBatchUseCase.execute(workerIds);
+      res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'Worker profiles retrieved'));
+    } catch (error: any) {
+      res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+    }
+  }
 }

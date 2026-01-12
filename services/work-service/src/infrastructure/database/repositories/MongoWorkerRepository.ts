@@ -130,13 +130,14 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
     };
   }
 
-  // async findByIds(ids: string[]): Promise<Worker[]> {
-  //   const workers = await WorkerModel.find({
-  //     _id: { $in: ids }
-  //   }).select('-password');
-    
-  //   return workers.map(worker => this.toEntity(worker));
-  // }
+  async findByIds(ids: string[]): Promise<Worker[]> {
+  const workers = await WorkerModel.find({
+    _id: { $in: ids }
+  }).select('-password').lean();
+  
+
+  return workers.map(worker => this.map(worker));
+}
 
   async getWorkersCount(): Promise<number> {
     const count = await WorkerModel.countDocuments({ status: "approved" });

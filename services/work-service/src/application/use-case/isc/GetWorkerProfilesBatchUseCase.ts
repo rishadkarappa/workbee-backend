@@ -12,16 +12,14 @@ export class GetWorkerProfilesBatchUseCase {
       return [];
     }
 
-    // const workers = await this.workerRepository.findByIds(workerIds);
+    const workers = await this.workerRepository.findByIds(workerIds);
     
-    // return workers.map(worker => ({
-    //   id: worker.id || worker._id,
-    //   name: worker.name,
-    //   email: worker.email,
-    //   role: 'worker',
-    //   skills: worker.skills,
-    //   phone: worker.phone,
-    //   rating: worker.rating
-    // }));
+    return workers.map(worker => ({
+  id: worker.id,
+  name: worker.name,
+  email: worker.email,
+  role: 'worker',
+}));
+
   }
 }
