@@ -16,14 +16,14 @@
 // User entity in domain layer
 export interface User {
   id?: string;
-  _id?: any;  // ✅ Add _id for MongoDB compatibility
+  _id?: any; 
   name: string;
   email: string;
   password?: string;
   isVerified?: boolean;
   isBlocked?: boolean;
   role: "user" | "admin" | "worker";
-  phone?: string;  // ✅ Add optional fields
+  phone?: string; 
   countofpost?: number;
   numberOfComplaints?: number;
   createdAt?: Date;

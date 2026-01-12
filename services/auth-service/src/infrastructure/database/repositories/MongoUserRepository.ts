@@ -67,13 +67,13 @@ export class MongoUserRepository extends MongoBaseRepository<User, any> implemen
         };
     }
 
-    // async findByIds(ids: string[]): Promise<User[]> {
-    //     const users = await UserModel.find({
-    //         _id: { $in: ids }
-    //     }).select('-password');
+    async findByIds(ids: string[]): Promise<User[]> {
+        const users = await UserModel.find({
+            _id: { $in: ids }
+        }).select('-password');
+        return users.map(user => this.map(user));
+    }
 
-    //     return this.map(users);
-    // }
 
     async save(user: User): Promise<User> {
         if (user.id) {

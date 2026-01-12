@@ -19,7 +19,6 @@ export class GetUserChatsUseCase {
       chats = await this.chatRepository.findByWorkerId(userId);
     }
 
-    // Enrich chats with participant details
     const enrichedChats = await Promise.all(
       chats.map(async (chat) => {
         const userProfile = await this.cacheService.getUserProfile(chat.participants.userId);

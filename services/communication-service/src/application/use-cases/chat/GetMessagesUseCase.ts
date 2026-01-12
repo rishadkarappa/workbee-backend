@@ -18,7 +18,6 @@ export class GetMessagesUseCase {
       data.offset
     );
 
-    // Enrich messages with sender details
     const enrichedMessages = await Promise.all(
       messages.map(async (message) => {
         let senderProfile;

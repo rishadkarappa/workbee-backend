@@ -14,7 +14,6 @@ export class ChatController {
     @inject(GetMessagesUseCase) private getMessagesUseCase: GetMessagesUseCase
   ) {}
 
-  // Create or get existing chat
   async createChat(req: Request, res: Response) {
     try {
       const { userId, workerId } = req.body;
@@ -25,10 +24,9 @@ export class ChatController {
     }
   }
 
-  // Get all chats for a user
   async getUserChats(req: Request, res: Response) {
     try {
-      const user = (req as any).user; // From JWT middleware
+      const user = (req as any).user; 
       const chats = await this.getUserChatsUseCase.execute(user.id, user.role);
       res.status(HttpStatus.OK).json(ResponseHelper.success(chats, 'Chats retrieved successfully'));
     } catch (error: any) {
@@ -36,7 +34,6 @@ export class ChatController {
     }
   }
 
-  // Get messages for a chat
   async getMessages(req: Request, res: Response) {
     try {
       const { chatId } = req.params;

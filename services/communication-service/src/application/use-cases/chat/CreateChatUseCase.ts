@@ -12,14 +12,12 @@ export class CreateChatUseCase {
   ) {}
 
   async execute(data: CreateChatDTO): Promise<Chat> {
-    // Check if chat already exists
     const existingChat = await this.chatRepository.findByParticipants(
       data.userId,
       data.workerId
     );
 
     if (existingChat) {
-      // Enrich with participant details
       const userProfile = await this.cacheService.getUserProfile(data.userId);
       const workerProfile = await this.cacheService.getWorkerProfile(data.workerId);
 
@@ -40,7 +38,6 @@ export class CreateChatUseCase {
       };
     }
 
-    // Create new chat
     const chat: Chat = {
       participants: {
         userId: data.userId,
@@ -50,7 +47,6 @@ export class CreateChatUseCase {
 
     const createdChat = await this.chatRepository.create(chat);
 
-    // Fetch and attach participant details
     const userProfile = await this.cacheService.getUserProfile(data.userId);
     const workerProfile = await this.cacheService.getWorkerProfile(data.workerId);
 

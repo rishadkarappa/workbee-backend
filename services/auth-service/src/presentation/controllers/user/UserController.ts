@@ -22,6 +22,8 @@ import { RefreshTokenUseCase } from "../../../application/use-cases/user/Refresh
 import { LogoutUserUseCase } from "../../../application/use-cases/user/LogoutUserUseCase";
 import { IResendOtpUseCase } from "../../../application/ports/user/IResendOtpUseCase";
 import { ResendOtpRequestDTO } from "../../../application/dtos/user/ResendOtpDTO";
+import { GetUserProfileUseCase } from "../../../application/use-cases/isc/chat/GetUserProfileUseCase";
+import { GetUserProfilesBatchUseCase } from "../../../application/use-cases/isc/chat/GetUserProfilesBatchUseCase";
 
 @injectable()
 export class UserController implements IUserController {
@@ -36,6 +38,8 @@ export class UserController implements IUserController {
     @inject("ResetPasswordUseCase") private _resetPasswordUseCase: IResetPasswordUseCase,
     @inject("RefreshTokenUseCase") private _refreshTokenUseCase: RefreshTokenUseCase,
     @inject("LogoutUserUseCase") private _logoutUserUseCase: LogoutUserUseCase,
+    @inject("GetUserProfileUseCase") private _getUserProfileUseCase: GetUserProfileUseCase,
+    @inject("GetUserProfilesBatchUseCase") private _getUserProfilesBatchUseCase: GetUserProfilesBatchUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -192,39 +196,43 @@ export class UserController implements IUserController {
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(null, "Logged out successfully", HttpStatus.OK));
     } catch (error) {
-      console.error("LogoutController Error:", error);
       next(error);
     }
   }
 
 
-  // chat inter service communication ====================
+  // ------- 
+  /**
+   * chat inter service communication 
+   * 
+   * 
+   */
   
-  // async getUserProfile(req: Request, res: Response) {
-  //   try {
-  //     const { userId } = req.params;
-  //     const profile = await this.getUserProfileUseCase.execute(userId);
-  //     res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'User profile retrieved'));
-  //   } catch (error: any) {
-  //     res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
-  //   }
-  // }
+  async getUserProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const profile = await this._getUserProfileUseCase.execute(userId);
+      res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'User profile retrieved'));
+    } catch (error: any) {
+     next(error);
+    }
+  }
 
-  // async getUserProfilesBatch(req: Request, res: Response) {
-  //   try {
-  //     const { userIds } = req.body;
+  async getUserProfilesBatch(req: Request, res: Response, next: NextFunction): Promise<any> {
+    try {
+      const { userIds } = req.body;
       
-  //     if (!Array.isArray(userIds)) {
-  //       return res.status(HttpStatus.BAD_REQUEST).json(
-  //         ResponseHelper.error('userIds must be an array', HttpStatus.BAD_REQUEST)
-  //       );
-  //     }
+      if (!Array.isArray(userIds)) {
+        return res.status(HttpStatus.BAD_REQUEST).json(
+          ResponseHelper.error('userIds must be an array', HttpStatus.BAD_REQUEST)
+        );
+      }
 
-  //     const profiles = await this.getUserProfilesBatchUseCase.execute(userIds);
-  //     res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'User profiles retrieved'));
-  //   } catch (error: any) {
-  //     res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
-  //   }
-  // }
+      const profiles = await this._getUserProfilesBatchUseCase.execute(userIds);
+      res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'User profiles retrieved'));
+    } catch (error: any) {
+     next(error);
+    }
+  }
 }
 

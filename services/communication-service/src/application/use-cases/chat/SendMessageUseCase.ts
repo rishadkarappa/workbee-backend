@@ -24,7 +24,6 @@ export class SendMessageUseCase {
 
     const savedMessage = await this.messageRepository.create(message);
 
-    // Update chat's last message
     await this.chatRepository.updateLastMessage(data.chatId, data.content);
 
     return savedMessage;
