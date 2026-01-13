@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { injectable } from 'tsyringe';
 
 export interface UserProfile {
   id: string;
@@ -17,6 +18,7 @@ export interface WorkerProfile {
   skills?: string[];
 }
 
+@injectable()
 export class HttpClientService {
   private authServiceClient: AxiosInstance;
   private workServiceClient: AxiosInstance;
@@ -35,7 +37,7 @@ export class HttpClientService {
 
   async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
-      const response = await this.authServiceClient.get(`/auth/get-user-profile/${userId}`);
+      const response = await this.authServiceClient.get(`/get-user-profile/${userId}`);
       return response.data.data || response.data;
     } catch (error: any) {
       console.error(`Failed to fetch user profile for ${userId}:`, error.message);
@@ -45,7 +47,7 @@ export class HttpClientService {
 
   async getWorkerProfile(workerId: string): Promise<WorkerProfile | null> {
     try {
-      const response = await this.workServiceClient.get(`/work/get-worker-profile/${workerId}`);
+      const response = await this.workServiceClient.get(`/get-worker-profile/${workerId}`);
       return response.data.data || response.data;
     } catch (error: any) {
       console.error(`Failed to fetch worker profile for ${workerId}:`, error.message);
@@ -55,7 +57,7 @@ export class HttpClientService {
 
   async getUserProfiles(userIds: string[]): Promise<UserProfile[]> {
     try {
-      const response = await this.authServiceClient.post('/auth/get-user-profile/batch', { userIds });
+      const response = await this.authServiceClient.post('/get-user-profile/batch', { userIds });
       return response.data.data || response.data;
     } catch (error: any) {
       console.error('Failed to fetch user profiles batch:', error.message);
@@ -65,7 +67,7 @@ export class HttpClientService {
 
   async getWorkerProfiles(workerIds: string[]): Promise<WorkerProfile[]> {
     try {
-      const response = await this.workServiceClient.post('/work/get-worker-profile/batch', { workerIds });
+      const response = await this.workServiceClient.post('/get-worker-profile/batch', { workerIds });
       return response.data.data || response.data;
     } catch (error: any) {
       console.error('Failed to fetch worker profiles batch:', error.message);

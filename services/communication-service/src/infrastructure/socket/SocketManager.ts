@@ -26,7 +26,9 @@ export class SocketManager {
       }
     });
 
-    this.cacheService = new CacheService();
+    // Resolve from DI container
+    this.cacheService = container.resolve(CacheService);
+    
     this.setupMiddleware();
     this.setupEventHandlers();
   }
@@ -76,11 +78,16 @@ export class SocketManager {
         type?: 'text' | 'image' | 'file';
       }) => {
         try {
+          if (!socket.userId || !socket.userRole) {
+            socket.emit('error', { message: 'User not authenticated' });
+            return;
+          }
+
           const sendMessageUseCase = container.resolve(SendMessageUseCase);
 
           const message = await sendMessageUseCase.execute({
             chatId: data.chatId,
-            senderId: socket.userId!,
+            senderId: socket.userId,
             senderRole: socket.userRole as "user" | "worker",
             content: data.content,
             type: data.type
@@ -89,9 +96,9 @@ export class SocketManager {
           // Fetch sender details
           let senderProfile;
           if (socket.userRole === 'user') {
-            senderProfile = await this.cacheService.getUserProfile(socket.userId!);
+            senderProfile = await this.cacheService.getUserProfile(socket.userId);
           } else {
-            senderProfile = await this.cacheService.getWorkerProfile(socket.userId!);
+            senderProfile = await this.cacheService.getWorkerProfile(socket.userId);
           }
 
           const enrichedMessage = {
@@ -102,9 +109,11 @@ export class SocketManager {
             } : undefined
           };
 
+          // Emit to all users in the chat room
           this.io.to(`chat:${data.chatId}`).emit('new_message', enrichedMessage);
 
         } catch (error: any) {
+          console.error('Error sending message:', error);
           socket.emit('error', { message: error.message });
         }
       });

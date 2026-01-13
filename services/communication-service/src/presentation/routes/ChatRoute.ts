@@ -5,8 +5,8 @@ import { ChatController } from '../controllers/ChatController';
 const router = Router();
 const chatController = container.resolve(ChatController);
 
-router.post('/create',chatController.createChat.bind(chatController));
-router.get('/my-chats', chatController.getUserChats.bind(chatController));
-router.get('/:chatId/messages', chatController.getMessages.bind(chatController));
+router.post('/chat/create',chatController.createChat.bind(chatController));
+router.get('/chat/my-chats', chatController.getUserChats.bind(chatController));
+router.get('/chat/:chatId/messages', chatController.getMessages.bind(chatController));
 
 export default router;

@@ -13,7 +13,7 @@ export class MessageRepository implements IMessageRepository {
 
   async findByChatId(chatId: string, limit: number = 50, offset: number = 0): Promise<Message[]> {
     const messages = await MessageModel.find({ chatId })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .limit(limit)
       .skip(offset);
     return messages.map(msg => this.toEntity(msg));

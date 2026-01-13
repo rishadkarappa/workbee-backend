@@ -18,7 +18,7 @@ router.post("/refresh-token", userController.refreshToken.bind(userController));
 router.post("/logout", userController.userLogout.bind(userController));
 
 //inter serv comm
-// router.get('/get-user-profile/:userId', userController.getUserProfile.bind(userController));
-// router.post('/get-user-profile/batch', userController.getUserProfilesBatch.bind(userController));
+router.get('/get-user-profile/:userId', userController.getUserProfile.bind(userController));
+router.post('/get-user-profile/batch', userController.getUserProfilesBatch.bind(userController));
 
 export default router;

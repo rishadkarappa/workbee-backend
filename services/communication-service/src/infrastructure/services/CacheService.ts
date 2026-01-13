@@ -1,14 +1,16 @@
 import NodeCache from 'node-cache';
+import { inject, injectable } from 'tsyringe';
 import { HttpClientService, UserProfile, WorkerProfile } from '../http/HttpClientService';
 
+@injectable()
 export class CacheService {
   private cache: NodeCache;
-  private httpClient: HttpClientService;
 
-  constructor() {
+  constructor(
+    @inject('HttpClientService') private httpClient: HttpClientService
+  ) {
     // Cache with 1 hour TTL
     this.cache = new NodeCache({ stdTTL: 3600, checkperiod: 120 });
-    this.httpClient = new HttpClientService();
   }
 
   async getUserProfile(userId: string): Promise<UserProfile | null> {
