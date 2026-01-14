@@ -1,24 +1,27 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'tsyringe';
-import { CreateChatUseCase } from '../../application/use-cases/chat/CreateChatUseCase';
-import { GetUserChatsUseCase } from '../../application/use-cases/chat/GetUserChatsUseCase';
-import { GetMessagesUseCase } from '../../application/use-cases/chat/GetMessagesUseCase';
 import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/responseHelper';
 
+import { IChatController } from '../ports/IChatController';
+
+import { ICreateChatUseCase } from '../../application/ports/chat/ICreateChatUseCase';
+import { IGetUserChatsUseCase } from '../../application/ports/chat/IGetUserChatsUseCase';
+import { IGetMessagesUseCase } from '../../application/ports/chat/IGetMessagesUseCase';
+
 @injectable()
-export class ChatController {
+export class ChatController implements IChatController{
   constructor(
-    @inject(CreateChatUseCase) private createChatUseCase: CreateChatUseCase,
-    @inject(GetUserChatsUseCase) private getUserChatsUseCase: GetUserChatsUseCase,
-    @inject(GetMessagesUseCase) private getMessagesUseCase: GetMessagesUseCase
+    @inject("CreateChatUseCase") private _createChatUseCase: ICreateChatUseCase,
+    @inject("GetUserChatsUseCase") private _getUserChatsUseCase: IGetUserChatsUseCase,
+    @inject("GetMessagesUseCase") private _getMessagesUseCase: IGetMessagesUseCase
   ) { }
 
   async createChat(req: Request, res: Response) {
     try {
       const { userId, workerId } = req.body;
       console.log('Create chat request:', { userId, workerId });
-      const chat = await this.createChatUseCase.execute({ userId, workerId });
+      const chat = await this._createChatUseCase.execute({ userId, workerId });
       res.status(HttpStatus.OK).json(ResponseHelper.success(chat, 'Chat created/retrieved successfully'));
     } catch (error: any) {
       console.error('Create chat error:', error);
@@ -43,7 +46,7 @@ export class ChatController {
       }
 
       // const chats = await this.getUserChatsUseCase.execute(user.id, user.role);
-      const chats = await this.getUserChatsUseCase.execute({
+      const chats = await this._getUserChatsUseCase.execute({
         userId: user.id,
         role: user.role
       });
@@ -61,9 +64,9 @@ export class ChatController {
       const { chatId } = req.params;
       const { limit, offset } = req.query;
 
-      console.log('Get messages request:', { chatId, limit, offset });
+      console.log('get msg in getmes',{ chatId, limit, offset });
 
-      const messages = await this.getMessagesUseCase.execute({
+      const messages = await this._getMessagesUseCase.execute({
         chatId,
         limit: limit ? parseInt(limit as string) : undefined,
         offset: offset ? parseInt(offset as string) : undefined
