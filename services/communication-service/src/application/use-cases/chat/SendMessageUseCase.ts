@@ -3,9 +3,10 @@ import { IMessageRepository } from '../../../domain/repositories/IMessageReposit
 import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { SendMessageDTO } from '../../dtos/chat/ChatDTO';
 import { Message } from '../../../domain/entities/Message';
+import { ISendMessageUseCase } from '../../ports/chat/ISendMessageUseCase';
 
 @injectable()
-export class SendMessageUseCase {
+export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
     @inject("MessageRepository") private messageRepository: IMessageRepository,
     @inject("ChatRepository") private chatRepository: IChatRepository

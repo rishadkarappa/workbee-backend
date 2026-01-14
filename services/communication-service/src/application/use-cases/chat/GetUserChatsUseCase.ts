@@ -2,9 +2,10 @@ import { inject, injectable } from 'tsyringe';
 import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { Chat } from '../../../domain/entities/Chat';
 import { CacheService } from '../../../infrastructure/services/CacheService';
+import { IGetUserChatsUseCase } from '../../ports/chat/IGetUserChatsUseCase';
 
 @injectable()
-export class GetUserChatsUseCase {
+export class GetUserChatsUseCase implements IGetUserChatsUseCase {
   constructor(
     @inject("ChatRepository") private chatRepository: IChatRepository,
     @inject("CacheService") private cacheService: CacheService

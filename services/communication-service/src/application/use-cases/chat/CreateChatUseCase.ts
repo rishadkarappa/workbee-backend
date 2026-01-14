@@ -3,9 +3,10 @@ import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { CreateChatDTO } from '../../dtos/chat/ChatDTO';
 import { Chat } from '../../../domain/entities/Chat';
 import { CacheService } from '../../../infrastructure/services/CacheService';
+import { ICreateChatUseCase } from '../../ports/chat/ICreateChatUseCase';
 
 @injectable()
-export class CreateChatUseCase {
+export class CreateChatUseCase implements ICreateChatUseCase {
   constructor(
     @inject("ChatRepository") private chatRepository: IChatRepository,
     @inject("CacheService") private cacheService: CacheService

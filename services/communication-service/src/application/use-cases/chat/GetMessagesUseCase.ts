@@ -3,9 +3,10 @@ import { IMessageRepository } from '../../../domain/repositories/IMessageReposit
 import { GetMessagesDTO } from '../../dtos/chat/ChatDTO';
 import { Message } from '../../../domain/entities/Message';
 import { CacheService } from '../../../infrastructure/services/CacheService';
+import { IGetMessagesUseCase } from '../../ports/chat/IGetMessagesUseCase';
 
 @injectable()
-export class GetMessagesUseCase {
+export class GetMessagesUseCase implements IGetMessagesUseCase {
   constructor(
     @inject("MessageRepository") private messageRepository: IMessageRepository,
     @inject("CacheService") private cacheService: CacheService
