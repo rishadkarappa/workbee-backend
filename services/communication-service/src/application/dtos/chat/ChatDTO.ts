@@ -16,3 +16,8 @@ export interface GetMessagesDTO {
   limit?: number;
   offset?: number;
 }
+
+export interface GetUserChatsDTO {
+  userId: string;
+  role: "user" | "worker";
+}
