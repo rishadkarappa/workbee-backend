@@ -1,22 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { injectable } from 'tsyringe';
+import { UserProfile, WorkerProfile } from "../../domain/entities/Profile";
 
-export interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: 'user';
-}
-
-export interface WorkerProfile {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: 'worker';
-  skills?: string[];
-}
 
 @injectable()
 export class HttpClientService {

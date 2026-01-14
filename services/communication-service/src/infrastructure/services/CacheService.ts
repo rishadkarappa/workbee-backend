@@ -1,15 +1,16 @@
-import NodeCache from 'node-cache';
-import { inject, injectable } from 'tsyringe';
-import { HttpClientService, UserProfile, WorkerProfile } from '../http/HttpClientService';
+import NodeCache from "node-cache";
+import { inject, injectable } from "tsyringe";
+import { HttpClientService } from "../http/HttpClientService";
+import { ICacheService } from "../../domain/services/ICacheService";
+import { UserProfile, WorkerProfile } from "../../domain/entities/Profile";
 
 @injectable()
-export class CacheService {
+export class CacheService implements ICacheService {
   private cache: NodeCache;
 
   constructor(
-    @inject('HttpClientService') private httpClient: HttpClientService
+    @inject("HttpClientService") private httpClient: HttpClientService
   ) {
-    // Cache with 1 hour TTL
     this.cache = new NodeCache({ stdTTL: 3600, checkperiod: 120 });
   }
 
@@ -17,14 +18,11 @@ export class CacheService {
     const cacheKey = `user:${userId}`;
     const cached = this.cache.get<UserProfile>(cacheKey);
 
-    if (cached) {
-      return cached;
-    }
+    if (cached) return cached;
 
     const profile = await this.httpClient.getUserProfile(userId);
-    if (profile) {
-      this.cache.set(cacheKey, profile);
-    }
+    if (profile) this.cache.set(cacheKey, profile);
+
     return profile;
   }
 
@@ -32,14 +30,11 @@ export class CacheService {
     const cacheKey = `worker:${workerId}`;
     const cached = this.cache.get<WorkerProfile>(cacheKey);
 
-    if (cached) {
-      return cached;
-    }
+    if (cached) return cached;
 
     const profile = await this.httpClient.getWorkerProfile(workerId);
-    if (profile) {
-      this.cache.set(cacheKey, profile);
-    }
+    if (profile) this.cache.set(cacheKey, profile);
+
     return profile;
   }
 
