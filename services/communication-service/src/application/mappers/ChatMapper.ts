@@ -1,6 +1,6 @@
 import { Chat } from "../../domain/entities/Chat";
 import { Message } from "../../domain/entities/Message";
-import { CacheService } from "../../infrastructure/services/CacheService";
+import { ICacheService } from "../../domain/services/ICacheService";
 
 export class ChatMapper {
   /* 
@@ -9,7 +9,7 @@ export class ChatMapper {
 
   static async toChatWithParticipants(
     chat: Chat,
-    cacheService: CacheService
+    cacheService: ICacheService
   ): Promise<Chat> {
     const userProfile = await cacheService.getUserProfile(
       chat.participants.userId
@@ -42,7 +42,7 @@ export class ChatMapper {
 
   static async toChatListWithParticipants(
     chats: Chat[],
-    cacheService: CacheService
+    cacheService: ICacheService
   ): Promise<Chat[]> {
     return Promise.all(
       chats.map((chat) =>
@@ -57,7 +57,7 @@ export class ChatMapper {
 
   static async toMessageWithSender(
     message: Message,
-    cacheService: CacheService
+    cacheService: ICacheService
   ): Promise<Message> {
     let senderProfile;
 
@@ -80,7 +80,7 @@ export class ChatMapper {
 
   static async toMessageListWithSender(
     messages: Message[],
-    cacheService: CacheService
+    cacheService: ICacheService
   ): Promise<Message[]> {
     return Promise.all(
       messages.map((message) =>

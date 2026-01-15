@@ -13,7 +13,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
   ) {}
 
   async execute(data: SendMessageDTO): Promise<Message> {
-    // Create message
+    //create message
     const message: Message = {
       chatId: data.chatId,
       senderId: data.senderId,
