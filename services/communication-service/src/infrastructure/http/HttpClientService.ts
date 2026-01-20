@@ -10,15 +10,21 @@ export class HttpClientService {
 
   constructor() {
     this.authServiceClient = axios.create({
-      baseURL: process.env.AUTH_SERVICE_URL || 'http://localhost:4001',
+      baseURL: process.env.AUTH_SERVICE_URL,
       timeout: 5000,
     });
 
     this.workServiceClient = axios.create({
-      baseURL: process.env.WORK_SERVICE_URL || 'http://localhost:4002',
+      baseURL: process.env.WORK_SERVICE_URL,
       timeout: 5000,
     });
   }
+
+  /**
+   * communicate with auth service
+   * @param userId 
+   * @returns 
+   */
 
   async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
@@ -30,6 +36,12 @@ export class HttpClientService {
     }
   }
 
+  /**
+   * communicate with work service
+   * @param workerId 
+   * @returns 
+   */
+
   async getWorkerProfile(workerId: string): Promise<WorkerProfile | null> {
     try {
       const response = await this.workServiceClient.get(`/get-worker-profile/${workerId}`);
@@ -40,6 +52,12 @@ export class HttpClientService {
     }
   }
 
+  /**
+   * communicate with user service
+   * @param userIds 
+   * @returns 
+   */
+
   async getUserProfiles(userIds: string[]): Promise<UserProfile[]> {
     try {
       const response = await this.authServiceClient.post('/get-user-profile/batch', { userIds });
@@ -49,6 +67,12 @@ export class HttpClientService {
       return [];
     }
   }
+
+  /**
+   * communicate with work service
+   * @param workerIds 
+   * @returns 
+   */
 
   async getWorkerProfiles(workerIds: string[]): Promise<WorkerProfile[]> {
     try {

@@ -13,12 +13,12 @@ export class TokenService implements ITokenService {
 
     generateAccess(id: string, role?: "user" | "admin" | "worker"): string {
         const payload = role ? { id, role } : { id };
-        return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' }); // access token in 15 mins
+        return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' }); //access token in 15 mins
     }
 
     generateRefresh(id: string, role?: "user" | "admin" | "worker"): string {
         const payload = role ? { id, role } : { id };
-        return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '30d' }); // refresh token in 30 days
+        return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '30d' }); //refresh token in 30 days
     }
 
     verifyAccess(token: string): { id: string; role?: string } {

@@ -1,6 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 import { IUserRepository } from '../../../../domain/repositories/IUserRepository';
 
+/**
+ * comm
+ */
+
 @injectable()
 export class GetUserProfileUseCase {
   constructor(
@@ -14,7 +18,6 @@ export class GetUserProfileUseCase {
       throw new Error('User not found');
     }
 
-    // Return only safe, public profile data
     return {
       id: user.id || user._id,
       name: user.name,
