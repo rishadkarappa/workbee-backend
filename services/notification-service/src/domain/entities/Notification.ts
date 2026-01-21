@@ -1,7 +1,7 @@
 export interface Notification {
   id: string;
   userId: string;
-  type: 'NEW_MESSAGE' | 'WORK_UPDATE' | 'BOOKING_CONFIRMED' | 'PAYMENT';
+  type: 'NEW_MESSAGE' | 'WORK_UPDATE' | 'BOOKING_UPDATE' | 'PAYMENT';
   title: string;
   message: string;
   data?: {

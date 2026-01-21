@@ -8,7 +8,7 @@ const NotificationSchema = new Schema<NotificationDocument>(
     userId: { type: String, required: true, index: true },
     type: { 
       type: String, 
-      enum: ['NEW_MESSAGE', 'WORK_UPDATE', 'BOOKING_CONFIRMED', 'PAYMENT'],
+      enum: ['NEW_MESSAGE', 'WORK_UPDATE', 'BOOKING_UPDATE', 'PAYMENT'],
       required: true 
     },
     title: { type: String, required: true },
