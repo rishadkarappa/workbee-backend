@@ -1,0 +1,55 @@
+import amqp from 'amqplib';
+
+export class RabbitMQConnection {
+    private static connection: any = null;
+    private static channel: any = null;
+
+    static async connect(): Promise<void> {
+        if (this.connection) return;
+
+        try {
+            this.connection = await amqp.connect(
+                process.env.RABBITMQ_URL || 'amqp://localhost'
+            );
+            this.channel = await this.connection.createChannel();
+            console.log('-- RabbitMQ connected successfully');
+        } catch (error) {
+            console.error('-- RabbitMQ connection failed:', error);
+            throw error;
+        }
+    }
+
+    static async getChannel(): Promise<any> {
+        if (!this.channel) {
+            await this.connect();
+        }
+        return this.channel;
+    }
+
+    static async close(): Promise<void> {
+        if (this.channel) await this.channel.close();
+        if (this.connection) await this.connection.close();
+    }
+}
+
+export class RabbitMQClient {
+    private static isInitialized = false;
+
+    static async initialize(): Promise<void> {
+        if (this.isInitialized) {
+            console.log('-- Messaging service already initialized');
+            return;
+        }
+
+        try {
+            await RabbitMQConnection.connect();
+            console.log('-- RabbitMQ connected');
+
+            this.isInitialized = true;
+            console.log('-- Messaging Service initialized successfully');
+        } catch (error) {
+            console.error('-- Failed to initialize Messaging Service:', error);
+            throw error;
+        }
+    }
+}
