@@ -12,3 +12,4 @@ container.registerSingleton("GetUserNotificationsUseCase", GetUserNotificationsU
 container.registerSingleton("MarkNotificationAsReadUseCase", MarkNotificationAsReadUseCase);
 container.registerSingleton("MarkAllAsReadUseCase", MarkAllAsReadUseCase);
 container.registerSingleton("GetUnreadCountUseCase", GetUnreadCountUseCase);
+

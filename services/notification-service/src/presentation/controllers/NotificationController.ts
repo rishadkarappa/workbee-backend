@@ -12,7 +12,7 @@ export class NotificationController {
     @inject("MarkNotificationAsReadUseCase") private markNotificationAsReadUseCase: MarkNotificationAsReadUseCase,
     @inject("MarkAllAsReadUseCase") private markAllAsReadUseCase: MarkAllAsReadUseCase,
     @inject("GetUnreadCountUseCase") private getUnreadCountUseCase: GetUnreadCountUseCase
-  ) {}
+  ) { }
 
   async getNotifications(req: Request, res: Response) {
     try {
@@ -48,9 +48,15 @@ export class NotificationController {
 
   async markAsRead(req: Request, res: Response) {
     try {
-      const { notificationId } = req.params;
+      let { notificationId } = req.params;
 
-      const result = await this.markNotificationAsReadUseCase.execute(notificationId);
+      // Ensure it's a string
+      if (Array.isArray(notificationId)) {
+        notificationId = notificationId[0];
+      }
+
+      const result =
+        await this.markNotificationAsReadUseCase.execute(notificationId);
 
       res.status(200).json({
         success: true,
