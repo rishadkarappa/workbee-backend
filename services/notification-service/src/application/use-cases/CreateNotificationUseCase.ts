@@ -1,28 +1,20 @@
-import { inject, injectable } from 'tsyringe';
-import { INotificationRepository } from '../../domain/repositories/INotificationRepository';
-import { Notification } from '../../domain/entities/Notification';
-
-export interface CreateNotificationDTO {
-  userId: string;
-  type: 'NEW_MESSAGE' | 'WORK_UPDATE' | 'BOOKING_UPDATE' | 'PAYMENT';
-  title: string;
-  message: string;
-  data?: {
-    chatId?: string;
-    senderId?: string;
-    senderName?: string;
-    senderRole?: 'user' | 'worker';
-  };
-}
+import { inject, injectable } from "tsyringe";
+import { INotificationRepository } from "../../domain/repositories/INotificationRepository";
+import { Notification } from "../../domain/entities/Notification";
+import { ICreateNotificationUseCase } from "../ports/ICreateNotificationUseCase";
+import { CreateNotificationDTO } from "../dtos/CreateNotificationDTO";
 
 @injectable()
-export class CreateNotificationUseCase {
+export class CreateNotificationUseCase
+  implements ICreateNotificationUseCase
+{
   constructor(
-    @inject("NotificationRepository") private notificationRepository: INotificationRepository
+    @inject("NotificationRepository")
+    private notificationRepository: INotificationRepository
   ) {}
 
   async execute(dto: CreateNotificationDTO): Promise<Notification> {
-    const notification: Omit<Notification, 'id'> = {
+    const notification: Omit<Notification, "id"> = {
       userId: dto.userId,
       type: dto.type,
       title: dto.title,

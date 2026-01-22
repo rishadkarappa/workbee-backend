@@ -1,5 +1,6 @@
 import { Notification } from "../../domain/entities/Notification";
+import { CreateNotificationDTO } from "../dtos/CreateNotificationDTO";
 
 export interface ICreateNotificationUseCase {
-  execute(data: Notification): Promise<Notification>;
+  execute(dto: CreateNotificationDTO): Promise<Notification>;
 }

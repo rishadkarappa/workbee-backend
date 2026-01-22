@@ -1,44 +1,60 @@
-import { Request, Response } from 'express';
-import { inject, injectable } from 'tsyringe';
-import { GetUserNotificationsUseCase } from '../../application/use-cases/GetUserNotificationsUseCase';
-import { MarkNotificationAsReadUseCase } from '../../application/use-cases/MarkNotificationAsReadUseCase';
-import { MarkAllAsReadUseCase } from '../../application/use-cases/MarkAllAsReadUseCase';
-import { GetUnreadCountUseCase } from '../../application/use-cases/GetUnreadCountUseCase';
+import { Request, Response } from "express";
+import { inject, injectable } from "tsyringe";
+
+import { IGetUserNotificationsUseCase } from "../../application/ports/IGetUserNotificationsUseCase";
+import { IMarkNotificationAsReadUseCase } from "../../application/ports/IMarkNotificationAsReadUseCase";
+import { IMarkAllAsReadUseCase } from "../../application/ports/IMarkAllAsReadUseCase";
+import { IGetUnreadCountUseCase } from "../../application/ports/IGetUnreadCountUseCase";
+
+import { GetUserNotificationsDTO } from "../../application/dtos/GetUserNotificationsDTO";
+import { MarkNotificationAsReadDTO } from "../../application/dtos/MarkNotificationAsReadDTO";
+import { MarkAllAsReadDTO } from "../../application/dtos/MarkAllAsReadDTO";
+import { GetUnreadCountDTO } from "../../application/dtos/GetUnreadCountDTO";
 
 @injectable()
 export class NotificationController {
   constructor(
-    @inject("GetUserNotificationsUseCase") private getUserNotificationsUseCase: GetUserNotificationsUseCase,
-    @inject("MarkNotificationAsReadUseCase") private markNotificationAsReadUseCase: MarkNotificationAsReadUseCase,
-    @inject("MarkAllAsReadUseCase") private markAllAsReadUseCase: MarkAllAsReadUseCase,
-    @inject("GetUnreadCountUseCase") private getUnreadCountUseCase: GetUnreadCountUseCase
-  ) { }
+    @inject("GetUserNotificationsUseCase")
+    private _getUserNotificationsUseCase: IGetUserNotificationsUseCase,
+
+    @inject("MarkNotificationAsReadUseCase")
+    private _markNotificationAsReadUseCase: IMarkNotificationAsReadUseCase,
+
+    @inject("MarkAllAsReadUseCase")
+    private _markAllAsReadUseCase: IMarkAllAsReadUseCase,
+
+    @inject("GetUnreadCountUseCase")
+    private _getUnreadCountUseCase: IGetUnreadCountUseCase
+  ) {}
 
   async getNotifications(req: Request, res: Response) {
     try {
       const user = (req as any).user;
       const { limit, offset } = req.query;
 
-      if (!user || !user.id) {
+      if (!user?.id) {
         return res.status(401).json({
           success: false,
-          message: 'User not authenticated'
+          message: "User not authenticated"
         });
       }
 
-      const notifications = await this.getUserNotificationsUseCase.execute(
-        user.id,
-        limit ? parseInt(limit as string) : 50,
-        offset ? parseInt(offset as string) : 0
-      );
+      const dto: GetUserNotificationsDTO = {
+        userId: user.id,
+        limit: limit ? parseInt(limit as string, 10) : 50,
+        offset: offset ? parseInt(offset as string, 10) : 0
+      };
+
+      const notifications =
+        await this._getUserNotificationsUseCase.execute(dto);
 
       res.status(200).json({
         success: true,
         data: notifications,
-        message: 'Notifications retrieved successfully'
+        message: "Notifications retrieved successfully"
       });
     } catch (error: any) {
-      console.error('Get notifications error:', error);
+      console.error("Get notifications error:", error);
       res.status(400).json({
         success: false,
         message: error.message
@@ -50,21 +66,22 @@ export class NotificationController {
     try {
       let { notificationId } = req.params;
 
-      // Ensure it's a string
       if (Array.isArray(notificationId)) {
         notificationId = notificationId[0];
       }
 
+      const dto: MarkNotificationAsReadDTO = { notificationId };
+
       const result =
-        await this.markNotificationAsReadUseCase.execute(notificationId);
+        await this._markNotificationAsReadUseCase.execute(dto);
 
       res.status(200).json({
         success: true,
         data: result,
-        message: 'Notification marked as read'
+        message: "Notification marked as read"
       });
     } catch (error: any) {
-      console.error('Mark as read error:', error);
+      console.error("Mark as read error:", error);
       res.status(400).json({
         success: false,
         message: error.message
@@ -76,22 +93,25 @@ export class NotificationController {
     try {
       const user = (req as any).user;
 
-      if (!user || !user.id) {
+      if (!user?.id) {
         return res.status(401).json({
           success: false,
-          message: 'User not authenticated'
+          message: "User not authenticated"
         });
       }
 
-      const result = await this.markAllAsReadUseCase.execute(user.id);
+      const dto: MarkAllAsReadDTO = { userId: user.id };
+
+      const result =
+        await this._markAllAsReadUseCase.execute(dto);
 
       res.status(200).json({
         success: true,
         data: result,
-        message: 'All notifications marked as read'
+        message: "All notifications marked as read"
       });
     } catch (error: any) {
-      console.error('Mark all as read error:', error);
+      console.error("Mark all as read error:", error);
       res.status(400).json({
         success: false,
         message: error.message
@@ -103,22 +123,25 @@ export class NotificationController {
     try {
       const user = (req as any).user;
 
-      if (!user || !user.id) {
+      if (!user?.id) {
         return res.status(401).json({
           success: false,
-          message: 'User not authenticated'
+          message: "User not authenticated"
         });
       }
 
-      const count = await this.getUnreadCountUseCase.execute(user.id);
+      const dto: GetUnreadCountDTO = { userId: user.id };
+
+      const count =
+        await this._getUnreadCountUseCase.execute(dto);
 
       res.status(200).json({
         success: true,
         data: { count },
-        message: 'Unread count retrieved successfully'
+        message: "Unread count retrieved successfully"
       });
     } catch (error: any) {
-      console.error('Get unread count error:', error);
+      console.error("Get unread count error:", error);
       res.status(400).json({
         success: false,
         message: error.message
