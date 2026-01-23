@@ -7,7 +7,7 @@ import path from "path";
 dotenv.config()
 
 import { connectDatabase } from "./infrastructure/config/connectMongo";
-import { RabbitMQClient } from "./infrastructure/message-bus";
+import { RabbitMQClient } from "./infrastructure/message-bus/client";
 
 const PORT = process.env.PORT
 

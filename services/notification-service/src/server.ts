@@ -6,7 +6,7 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { connectDatabase } from "./infrastructure/config/connectMongo";
-import { RabbitMQClient } from "./infrastructure/config/rabbitmq";
+import { RabbitMQClient } from "./infrastructure/message-bus/client";
 import { container } from "./infrastructure/di/container";
 import { SocketManager } from "./infrastructure/socket/NotificationSocketManager";
 import { MessageEventConsumer } from "./infrastructure/message-bus/MessageEventConsumer";
