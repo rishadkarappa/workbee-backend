@@ -6,7 +6,7 @@ dotenv.config();
 
 import express from "express";
 import { connectDatabase } from "./infrastructure/config/connectMongo";
-import { RabbitMQClient } from "./infrastructure/message-bus";
+import { RabbitMQClient } from "./infrastructure/config/rabbitmq";
 
 import UserRoutes from './presentation/routes/user/UserRoutes'
 import AdminRoutes from './presentation/routes/admin/AdminRoutes'

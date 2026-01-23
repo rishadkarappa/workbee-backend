@@ -9,7 +9,8 @@ import {
     WorkerLoginResponseRMQDTO
 } from "../../dtos/worker/WorkerLoginRMQDTO";
 
-import { WorkerValidationClient, RabbitMQConnection } from "../../../infrastructure/message-bus";
+import { RabbitMQConnection } from "../../../infrastructure/config/rabbitmq";
+import { WorkerValidationClient } from "../../../infrastructure/message-bus/WorkerValidationClient";
 import { WorkerMapper } from "../../mappers/WorkerMapper";
 import { IWorkerLoginUseCase } from "../../ports/worker/IWorkerLoginUseCase";
 import { ITokenService } from "../../../domain/services/ITokenService";

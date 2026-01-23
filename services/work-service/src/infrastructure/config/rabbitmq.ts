@@ -29,3 +29,4 @@ export class RabbitMQConnection {
         if (this.connection) await this.connection.close();
     }
 }
+

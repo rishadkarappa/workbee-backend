@@ -1,7 +1,6 @@
 import { container } from 'tsyringe';
-import { RabbitMQConnection } from './RabbitMQConnection';
+import { RabbitMQConnection } from '../config/rabbitmq';
 import { WorkerValidationConsumer } from './WorkerValidationConsumer';
-// import { UserValidationConsumer } from './UserValidationConsumer';
 
 export class RabbitMQClient {
     private static isInitialized = false;
@@ -23,10 +22,6 @@ export class RabbitMQClient {
             await workerValidationConsumer.start(channel);
             console.log('-- Worker Validation Consumer started');
 
-            // Start User Validation Consumer
-            // const userValidationConsumer = container.resolve(UserValidationConsumer);
-            // await userValidationConsumer.start(channel);
-            console.log('-- User Validation Consumer started');
 
             this.isInitialized = true;
             console.log('-- Messaging Service initialized successfully');
@@ -37,6 +32,5 @@ export class RabbitMQClient {
     }
 }
 
-export { RabbitMQConnection } from './RabbitMQConnection';
+export { RabbitMQConnection } from '../config/rabbitmq';
 export { WorkerValidationConsumer } from './WorkerValidationConsumer';
-// export { UserValidationConsumer } from './UserValidationConsumer';

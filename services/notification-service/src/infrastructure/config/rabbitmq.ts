@@ -1,3 +1,7 @@
+/**
+ * rabbitmq connection and client intialization also in this file
+ */
+
 import amqp from 'amqplib';
 
 export class RabbitMQConnection {
