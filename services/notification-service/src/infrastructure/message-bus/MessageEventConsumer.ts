@@ -2,16 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import { RabbitMQConnection } from '../config/rabbitmq';
 import { CreateNotificationUseCase } from '../../application/use-cases/CreateNotificationUseCase';
 import { SocketManager } from '../socket/NotificationSocketManager';
-
-export interface NewMessageEvent {
-  userId: string;
-  senderId: string;
-  senderName: string;
-  senderRole: 'user' | 'worker';
-  chatId: string;
-  messageContent: string;
-  timestamp: Date;
-}
+import { INewMessageEvent } from '../../domain/message-contracts/INewMessageEvent';
 
 @injectable()
 export class MessageEventConsumer {
@@ -45,7 +36,7 @@ export class MessageEventConsumer {
         async (msg: any) => {
           if (msg) {
             try {
-              const event: NewMessageEvent = JSON.parse(msg.content.toString());
+              const event: INewMessageEvent = JSON.parse(msg.content.toString());
               await this.handleNewMessage(event);
               channel.ack(msg);
             } catch (error) {
@@ -62,7 +53,7 @@ export class MessageEventConsumer {
     }
   }
 
-  private async handleNewMessage(event: NewMessageEvent): Promise<void> {
+  private async handleNewMessage(event: INewMessageEvent): Promise<void> {
     try {
       console.log(`Processing new message event for user: ${event.userId}`);
 

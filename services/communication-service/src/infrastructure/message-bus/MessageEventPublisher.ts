@@ -1,22 +1,13 @@
 import { injectable } from 'tsyringe';
 import { RabbitMQConnection } from '../config/rabbitmq';
-
-export interface NewMessageEvent {
-  userId: string; // recipient user ID
-  senderId: string;
-  senderName: string;
-  senderRole: 'user' | 'worker';
-  chatId: string;
-  messageContent: string;
-  timestamp: Date;
-}
+import { INewMessageEvent } from '../../domain/message-contracts/INewMessageEvent';
 
 @injectable()
 export class MessageEventPublisher {
   private readonly EXCHANGE = 'workbee.events';
   private readonly ROUTING_KEY = 'message.new';
 
-  async publishNewMessage(event: NewMessageEvent): Promise<void> {
+  async publishNewMessage(event: INewMessageEvent): Promise<void> {
     try {
       const channel = await RabbitMQConnection.getChannel();
       
