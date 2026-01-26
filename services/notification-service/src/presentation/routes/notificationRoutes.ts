@@ -6,7 +6,6 @@ import { NotificationController } from '../controllers/NotificationController';
 const router = Router();
 const notificationController = container.resolve(NotificationController);
 
-// Protected routes - require authentication
 
 router.get('/notifications', notificationController.getNotifications.bind(notificationController));
 router.get('/notifications/unread-count', notificationController.getUnreadCount.bind(notificationController));
