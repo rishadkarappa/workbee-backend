@@ -1,11 +1,9 @@
 import { Router } from 'express';
 import { container } from 'tsyringe';
 import { NotificationController } from '../controllers/NotificationController';
-// import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 const notificationController = container.resolve(NotificationController);
-
 
 router.get('/notifications', notificationController.getNotifications.bind(notificationController));
 router.get('/notifications/unread-count', notificationController.getUnreadCount.bind(notificationController));

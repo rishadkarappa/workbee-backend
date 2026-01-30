@@ -1,19 +1,3 @@
-// import { inject, injectable } from 'tsyringe';
-// import { INotificationRepository } from '../../domain/repositories/INotificationRepository';
-// import { Notification } from '../../domain/entities/Notification';
-// import { IGetUserNotificationsUseCase } from '../ports/IGetUserNotificationsUseCase';
-
-// @injectable()
-// export class GetUserNotificationsUseCase implements IGetUserNotificationsUseCase{
-//   constructor(
-//     @inject("NotificationRepository") private notificationRepository: INotificationRepository
-//   ) {}
-
-//   async execute(userId: string, limit = 50, offset = 0): Promise<Notification[]> {
-//     return await this.notificationRepository.findByUserId(userId, limit, offset);
-//   }
-// }
-
 import { inject, injectable } from "tsyringe";
 import { INotificationRepository } from "../../domain/repositories/INotificationRepository";
 import { Notification } from "../../domain/entities/Notification";
