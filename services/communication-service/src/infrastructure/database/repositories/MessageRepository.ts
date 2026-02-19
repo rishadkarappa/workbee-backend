@@ -11,11 +11,19 @@ export class MessageRepository implements IMessageRepository {
     return this.toEntity(newMessage);
   }
 
-  async findByChatId(chatId: string, limit: number = 50, offset: number = 0): Promise<Message[]> {
-    const messages = await MessageModel.find({ chatId })
-      .sort({ createdAt: 1 })
-      .limit(limit)
-      .skip(offset);
+  
+  async findByChatId(chatId: string, limit?: number, offset?: number): Promise<Message[]> {
+    let query = MessageModel.find({ chatId }).sort({ createdAt: 1 });
+
+    if (offset !== undefined && offset > 0) {
+      query = query.skip(offset);
+    }
+
+    if (limit !== undefined && limit > 0) {
+      query = query.limit(limit);
+    }
+
+    const messages = await query;
     return messages.map(msg => this.toEntity(msg));
   }
 

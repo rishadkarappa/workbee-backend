@@ -64,12 +64,14 @@ export class ChatController implements IChatController{
       const { chatId } = req.params;
       const { limit, offset } = req.query;
 
-      console.log('get msg in getmes',{ chatId, limit, offset });
+      console.log('get msg in getmes', { chatId, limit, offset });
 
+      // Only parse limit/offset if explicitly provided in query params
+      // If not provided, pass undefined so repository fetches ALL messages
       const messages = await this._getMessagesUseCase.execute({
         chatId,
-        limit: limit ? parseInt(limit as string) : undefined,
-        offset: offset ? parseInt(offset as string) : undefined
+        limit: limit ? parseInt(limit as string, 10) : undefined,
+        offset: offset ? parseInt(offset as string, 10) : undefined
       });
 
       res.status(HttpStatus.OK).json(ResponseHelper.success(messages, 'Messages retrieved successfully'));
