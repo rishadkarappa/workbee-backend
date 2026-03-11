@@ -11,6 +11,7 @@ export class BlockWorkerUseCase implements IBlockWorkerUseCase{
 
     async execute(workerId: string): Promise<Worker> {
         const worker = await this._workerRepository.findById(workerId)
+        
         if(!worker) throw new Error("dont get worker to block");
         worker.isBlocked = !worker.isBlocked
         return this._workerRepository.save(worker)

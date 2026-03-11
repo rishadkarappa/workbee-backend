@@ -15,39 +15,51 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
   async execute(data: RefreshTokenRequestDTO): Promise<RefreshTokenResponseDTO> {
     const { refreshToken } = data;
 
-    // Verify the refresh token
-    let payload;
+    // Step 1: Verify the refresh token signature
+    let payload: { id: string; role?: string };
     try {
       payload = this._tokenService.verifyRefresh(refreshToken);
     } catch (error) {
       throw new Error(ErrorMessages.AUTH.INVALID_REFRESH_TOKEN);
     }
 
-    // Validate token exists in Redis
-    const isValid = await this._tokenService.validateRefreshToken(payload.id, refreshToken);
+    const userId = payload.id;
+    const role = payload.role;
+
+    // Step 2: Validate token exists in Redis
+    // This works for ALL roles (user, worker, admin) because we store by userId
+    const isValid = await this._tokenService.validateRefreshToken(userId, refreshToken);
     if (!isValid) {
       throw new Error(ErrorMessages.AUTH.REFRESH_TOKEN_NOT_FOUND);
     }
 
-    // Get user to ensure they still exist and are active
-    const user = await this._userRepository.findById(payload.id);
-    if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
-    if (!user.isVerified) throw new Error(ErrorMessages.USER.NOT_VERIFIED);
+    // Step 3: Verify the entity still exists and is active
+    // Workers live in a separate service/DB — we cannot query them from auth service.
+    // For workers: Redis validation above is sufficient proof they are authenticated.
+    // For users/admins: also check the local users collection.
+    if (role === "user" || role === "admin") {
+      const user = await this._userRepository.findById(userId);
+      if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
+      if (!user.isVerified) throw new Error(ErrorMessages.USER.NOT_VERIFIED);
+      if (user.isBlocked) throw new Error("User is blocked");
+    }
+    // Workers: Redis token presence is the auth check.
+    // If the worker was deactivated, their Redis token should be deleted
+    // by the worker service (call _tokenService.deleteRefreshToken on block/deactivate).
 
-    // Generate new access token
+    // Step 4: Generate new tokens
     const newAccessToken = this._tokenService.generateAccess(
-      user.id!,
-      user.role as "user" | "admin" | "worker"
+      userId,
+      role as "user" | "admin" | "worker"
     );
 
-    // Optionally: Generate new refresh token and rotate
     const newRefreshToken = this._tokenService.generateRefresh(
-      user.id!,
-      user.role as "user" | "admin" | "worker"
+      userId,
+      role as "user" | "admin" | "worker"
     );
 
-    // Store new refresh token in Redis (token rotation)
-    await this._tokenService.storeRefreshToken(user.id!, newRefreshToken);
+    // Step 5: Rotate refresh token in Redis
+    await this._tokenService.storeRefreshToken(userId, newRefreshToken);
 
     return {
       accessToken: newAccessToken,
