@@ -1,3 +1,6 @@
+/**
+ * Mongo db configuration connection
+ */
 import mongoose  from "mongoose";
 
 export const connectDatabase = async () => {
