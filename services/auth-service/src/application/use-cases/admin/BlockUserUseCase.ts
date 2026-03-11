@@ -1,25 +1,31 @@
 import { inject, injectable } from "tsyringe";
 import { IBlockUserUseCase } from "../../ports/admin/IBlockUserUseCase";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
+import { ITokenService } from "../../../domain/services/ITokenService";
 import { User } from "../../../domain/entities/User";
 
-// import { ITokenService } from "../../../domain/services/ITokenService";
-
 @injectable()
-export class BlockUserUseCase implements IBlockUserUseCase{
-    constructor(
-        @inject("UserRepository") private _userRepository:IUserRepository
-    ){}
+export class BlockUserUseCase implements IBlockUserUseCase {
+  constructor(
+    @inject("UserRepository") private _userRepository: IUserRepository,
+    @inject("TokenService") private _tokenService: ITokenService
+  ) {}
 
-    async execute(userId: string): Promise<User> {
-        const user = await this._userRepository.findById(userId)
+  async execute(userId: string): Promise<User> {
+    const user = await this._userRepository.findById(userId);
+    if (!user) throw new Error("User not found to block");
 
-        if(!user) throw new Error("user not found to block")
+    user.isBlocked = !user.isBlocked;
+    const updatedUser = await this._userRepository.save(user);
 
-        user.isBlocked = !user.isBlocked;
+    // If user was just blocked, immediately invalidate their refresh token
+    // so they get logged out on their next request
 
-        // await this.ITokenService.deleteRefreshToken(userId);
-
-        return this._userRepository.save(user)
+    if (updatedUser.isBlocked) {
+      await this._tokenService.deleteRefreshToken(userId);
+      console.log(`Refresh token deleted for blocked user: ${userId}`);
     }
+
+    return updatedUser;
+  }
 }
