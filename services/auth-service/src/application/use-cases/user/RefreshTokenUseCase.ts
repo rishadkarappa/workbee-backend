@@ -26,26 +26,32 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     const userId = payload.id;
     const role = payload.role;
 
-    // Step 2: Validate token exists in Redis
-    // This works for ALL roles (user, worker, admin) because we store by userId
+    // Step 2: Validate token exists in Redis (works for ALL roles)
     const isValid = await this._tokenService.validateRefreshToken(userId, refreshToken);
     if (!isValid) {
       throw new Error(ErrorMessages.AUTH.REFRESH_TOKEN_NOT_FOUND);
     }
 
-    // Step 3: Verify the entity still exists and is active
-    // Workers live in a separate service/DB — we cannot query them from auth service.
-    // For workers: Redis validation above is sufficient proof they are authenticated.
-    // For users/admins: also check the local users collection.
-    if (role === "user" || role === "admin") {
+    // Step 3: Role-based entity validation
+    if (role === "user") {
+      // Regular users: check they exist, are verified, and not blocked
       const user = await this._userRepository.findById(userId);
       if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
       if (!user.isVerified) throw new Error(ErrorMessages.USER.NOT_VERIFIED);
       if (user.isBlocked) throw new Error("User is blocked");
+
+    } else if (role === "admin") {
+      // Admins: only verify they still exist in the DB.
+      // Admins are NEVER subject to isBlocked checks — blocking an admin
+      // through the user block flow would lock out the entire system.
+      const admin = await this._userRepository.findById(userId);
+      if (!admin) throw new Error(ErrorMessages.USER.NOT_FOUND);
+
+    } else if (role === "worker") {
+      // Workers live in a separate service DB — no DB lookup possible here.
+      // Redis token presence (step 2) is the auth check.
+      // Workers are invalidated by deleting their Redis token in BlockWorkerUseCase.
     }
-    // Workers: Redis token presence is the auth check.
-    // If the worker was deactivated, their Redis token should be deleted
-    // by the worker service (call _tokenService.deleteRefreshToken on block/deactivate).
 
     // Step 4: Generate new tokens
     const newAccessToken = this._tokenService.generateAccess(

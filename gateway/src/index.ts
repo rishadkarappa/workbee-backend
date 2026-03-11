@@ -42,10 +42,6 @@ const services = [
         route:"/communication",
         target: process.env.COMMUNICATION_SERVICE
     },
-    // {
-    //     route:"/notification",
-    //     target: process.env.NOTIFICATION_SERVICE
-    // }
 ];
 
 // forward routes to services
