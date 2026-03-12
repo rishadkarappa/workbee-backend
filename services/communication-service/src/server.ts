@@ -10,6 +10,7 @@ import { connectDatabase } from "./infrastructure/config/connectMongo";
 import chatRoutes from './presentation/routes/ChatRoute';
 import { SocketManager } from "./infrastructure/socket/SocketManager";
 import { authMiddleware } from "./presentation/middleware/authMiddleware";
+import { RabbitMQClient } from "./infrastructure/message-bus/Client";
 
 const PORT = process.env.PORT;
 const app = express();
@@ -28,10 +29,13 @@ const httpServer = http.createServer(app);
 const startServer = async () => {
   try {
     await connectDatabase();
-    console.log('Database connected');
+    console.log('-- Database connected');
+
+    await RabbitMQClient.initialize();
+    console.log('-- Rabbitmq connected');
 
     const socketManager = new SocketManager(httpServer);
-    console.log('Socket.IO initialized');
+    console.log('-- Socket.IO initialized');
 
     httpServer.listen(PORT, () => console.log(`Communication service running on port ${PORT}`));
   } catch (error) {

@@ -20,7 +20,7 @@ const httpServer = http.createServer(app);
 
 // Middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  origin: process.env.CORS_ORIGIN,
   credentials: true
 }));
 app.use(express.json());
@@ -36,25 +36,25 @@ const startServer = async () => {
   try {
     // Connect to MongoDB
     await connectDatabase();
-    console.log('Database connected');
+    console.log('-- Database connected');
 
     // Connect to RabbitMQ
     await RabbitMQClient.initialize();
-    console.log('RabbitMQ connected');
+    console.log('-- RabbitMQ connected');
 
     // Initialize Socket.IO
     const socketManager = new SocketManager(httpServer);
     container.registerInstance("SocketManager", socketManager);
-    console.log('Socket.IO initialized');
+    console.log('-- Socket.IO initialized');
 
     // Start message consumer
     const messageConsumer = container.resolve(MessageEventConsumer);
     await messageConsumer.start();
-    console.log('Message consumer started');
+    console.log('-- Message consumer started');
 
     // Start server
     httpServer.listen(PORT, () => {
-      console.log(`Notification service running on port ${PORT}`);
+      console.log(`-- Notification service running on port ${PORT}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
