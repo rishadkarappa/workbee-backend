@@ -11,6 +11,7 @@ import { container } from "./infrastructure/di/container";
 import { SocketManager } from "./infrastructure/socket/NotificationSocketManager";
 import { MessageEventConsumer } from "./infrastructure/message-bus/MessageEventConsumer";
 import notificationRoutes from "./presentation/routes/notificationRoutes";
+import { extractUser } from "./presentation/middlewares/extractUser";
 
 const PORT = process.env.PORT || 4004;
 
@@ -23,6 +24,9 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// user-extraction middleware
+app.use(extractUser)
 
 // Routes
 app.use('/', notificationRoutes);

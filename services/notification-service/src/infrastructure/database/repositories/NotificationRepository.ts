@@ -5,6 +5,7 @@ import { NotificationModel } from '../models/NotificationModel';
 
 @injectable()
 export class NotificationRepository implements INotificationRepository {
+
   async create(notification: Omit<Notification, 'id'>): Promise<Notification> {
     const doc = await NotificationModel.create(notification);
     return this.toEntity(doc);
@@ -16,7 +17,8 @@ export class NotificationRepository implements INotificationRepository {
   }
 
   async findByUserId(userId: string, limit = 50, offset = 0): Promise<Notification[]> {
-    const docs = await NotificationModel.find({ userId })
+    const docs = await NotificationModel
+      .find({ userId })
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(offset);
@@ -26,17 +28,17 @@ export class NotificationRepository implements INotificationRepository {
   async markAsRead(id: string): Promise<boolean> {
     const result = await NotificationModel.updateOne(
       { _id: id },
-      { isRead: true, readAt: new Date() }
+      { $set: { isRead: true } }
     );
-    return result.modifiedCount > 0;
+    return result.matchedCount > 0;
   }
 
   async markAllAsRead(userId: string): Promise<boolean> {
-    const result = await NotificationModel.updateMany(
+    await NotificationModel.updateMany(
       { userId, isRead: false },
-      { isRead: true, readAt: new Date() }
+      { $set: { isRead: true } }
     );
-    return result.modifiedCount > 0;
+    return true;
   }
 
   async delete(id: string): Promise<boolean> {
