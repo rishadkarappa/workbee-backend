@@ -28,10 +28,9 @@ export class SocketManager {
       }
     });
 
-    // Resolve from DI container
     this.cacheService = container.resolve(CacheService);
     this.messageEventPublisher = container.resolve(MessageEventPublisher);
-    
+
     this.setupMiddleware();
     this.setupEventHandlers();
   }
@@ -79,7 +78,7 @@ export class SocketManager {
         chatId: string;
         content: string;
         type?: 'text' | 'image' | 'file';
-        recipientId?: string; // Add recipient ID
+        recipientId?: string;
       }) => {
         try {
           if (!socket.userId || !socket.userRole) {
@@ -97,7 +96,6 @@ export class SocketManager {
             type: data.type
           });
 
-          // Fetch sender details
           let senderProfile;
           if (socket.userRole === 'user') {
             senderProfile = await this.cacheService.getUserProfile(socket.userId);
@@ -107,14 +105,39 @@ export class SocketManager {
 
           const enrichedMessage = {
             ...message,
+            // Always include chatId explicitly in the payload.
+            // message entity has chatId but spreading may lose it depending
+            // on serialization. Being explicit guarantees the frontend
+            // can always read (message as any).chatId for badge updates.
+            chatId: data.chatId,
             senderDetails: senderProfile ? {
               name: senderProfile.name,
               avatar: senderProfile.avatar
             } : undefined
           };
 
-          // Emit to all users in the chat room
+          // Emit to everyone who has this chat open (both sides if both have it open)
           this.io.to(`chat:${data.chatId}`).emit('new_message', enrichedMessage);
+
+          // Also emit to the recipient's personal room.
+          // The recipient is ALWAYS in user:${recipientId} from the moment they connect.
+          // But they only join chat:${chatId} when they open that specific chat.
+          // If the chat is not open, the above emit reaches nobody on their side
+          // badge never increments → only shows after refresh.
+          if (data.recipientId) {
+            const recipientSocketId = this.userSockets.get(data.recipientId);
+            if (recipientSocketId) {
+              const recipientSocket = this.io.sockets.sockets.get(recipientSocketId);
+              const isRecipientInChatRoom = recipientSocket?.rooms.has(`chat:${data.chatId}`);
+
+              if (!isRecipientInChatRoom) {
+                // Recipient doesn't have this chat open — send via personal room
+                // so their handleNewMessage fires and increments the badge
+                this.io.to(`user:${data.recipientId}`).emit('new_message', enrichedMessage);
+              }
+              // If they ARE in the chat room, they already got it from the emit above
+            }
+          }
 
           // Publish notification event to RabbitMQ
           if (data.recipientId && senderProfile) {
@@ -151,7 +174,6 @@ export class SocketManager {
     });
   }
 
-  // Method to emit notification to specific user
   public emitNotificationToUser(userId: string, notification: any) {
     this.io.to(`user:${userId}`).emit('new_notification', notification);
   }

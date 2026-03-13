@@ -18,6 +18,11 @@ export interface Chat {
   };
   lastMessage?: string;
   lastMessageAt?: Date;
+  unreadCount?: {
+    userId: number;
+    workerId: number;
+  };
+  myUnreadCount?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

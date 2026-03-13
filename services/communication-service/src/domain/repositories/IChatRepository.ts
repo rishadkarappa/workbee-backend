@@ -1,4 +1,4 @@
-import { Chat } from "../entities/Chat";
+import { Chat } from '../entities/Chat';
 
 export interface IChatRepository {
   create(chat: Chat): Promise<Chat>;
@@ -7,4 +7,11 @@ export interface IChatRepository {
   findByUserId(userId: string): Promise<Chat[]>;
   findByWorkerId(workerId: string): Promise<Chat[]>;
   updateLastMessage(chatId: string, message: string): Promise<void>;
+  incrementUnreadCount(chatId: string, recipientRole: 'userId' | 'workerId'): Promise<void>;
+  resetUnreadCount(chatId: string, readerRole: 'userId' | 'workerId'): Promise<void>;
 }
+
+
+
+
+

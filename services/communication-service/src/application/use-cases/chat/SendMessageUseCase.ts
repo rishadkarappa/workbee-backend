@@ -13,7 +13,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
   ) {}
 
   async execute(data: SendMessageDTO): Promise<Message> {
-    //create message
     const message: Message = {
       chatId: data.chatId,
       senderId: data.senderId,
@@ -26,6 +25,14 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     const savedMessage = await this.messageRepository.create(message);
 
     await this.chatRepository.updateLastMessage(data.chatId, data.content);
+
+    // Increment unread count for the recipient
+    // sender = 'user'   → recipient key = 'workerId'
+    // sender = 'worker' → recipient key = 'userId'
+    const recipientRole: 'userId' | 'workerId' =
+      data.senderRole === 'user' ? 'workerId' : 'userId';
+
+    await this.chatRepository.incrementUnreadCount(data.chatId, recipientRole);
 
     return savedMessage;
   }

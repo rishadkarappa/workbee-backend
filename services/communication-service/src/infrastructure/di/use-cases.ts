@@ -8,10 +8,10 @@ import { ICreateChatUseCase } from "../../application/ports/chat/ICreateChatUseC
 import { IGetMessagesUseCase } from "../../application/ports/chat/IGetMessagesUseCase";
 import { IGetUserChatsUseCase } from "../../application/ports/chat/IGetUserChatsUseCase";
 import { ISendMessageUseCase } from "../../application/ports/chat/ISendMessageUseCase";
-
-
+import { MarkChatAsReadUseCase } from "../../application/use-cases/chat/MarkChatAsReadUseCase";
 
 container.registerSingleton<ICreateChatUseCase>("CreateChatUseCase",CreateChatUseCase)
 container.registerSingleton<IGetMessagesUseCase>("GetMessagesUseCase",GetMessagesUseCase)
 container.registerSingleton<IGetUserChatsUseCase>("GetUserChatsUseCase",GetUserChatsUseCase)
 container.registerSingleton<ISendMessageUseCase>("SendMessageUseCase",SendMessageUseCase)
+container.registerSingleton("MarkChatAsReadUseCase", MarkChatAsReadUseCase); // create interface of this

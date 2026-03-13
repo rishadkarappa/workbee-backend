@@ -4,23 +4,23 @@ import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/responseHelper';
 
 import { IChatController } from '../ports/IChatController';
-
 import { ICreateChatUseCase } from '../../application/ports/chat/ICreateChatUseCase';
 import { IGetUserChatsUseCase } from '../../application/ports/chat/IGetUserChatsUseCase';
 import { IGetMessagesUseCase } from '../../application/ports/chat/IGetMessagesUseCase';
+import { MarkChatAsReadUseCase } from '../../application/use-cases/chat/MarkChatAsReadUseCase';
 
 @injectable()
-export class ChatController implements IChatController{
+export class ChatController implements IChatController {
   constructor(
-    @inject("CreateChatUseCase") private _createChatUseCase: ICreateChatUseCase,
-    @inject("GetUserChatsUseCase") private _getUserChatsUseCase: IGetUserChatsUseCase,
-    @inject("GetMessagesUseCase") private _getMessagesUseCase: IGetMessagesUseCase
-  ) { }
+    @inject("CreateChatUseCase")     private _createChatUseCase: ICreateChatUseCase,
+    @inject("GetUserChatsUseCase")   private _getUserChatsUseCase: IGetUserChatsUseCase,
+    @inject("GetMessagesUseCase")    private _getMessagesUseCase: IGetMessagesUseCase,
+    @inject("MarkChatAsReadUseCase") private _markChatAsReadUseCase: MarkChatAsReadUseCase
+  ) {}
 
   async createChat(req: Request, res: Response) {
     try {
       const { userId, workerId } = req.body;
-      console.log('Create chat request:', { userId, workerId });
       const chat = await this._createChatUseCase.execute({ userId, workerId });
       res.status(HttpStatus.OK).json(ResponseHelper.success(chat, 'Chat created/retrieved successfully'));
     } catch (error: any) {
@@ -33,28 +33,20 @@ export class ChatController implements IChatController{
     try {
       const user = (req as any).user;
 
-      // console.log(user);
-      // console.log("userid",user?.id);
-      // console.log('userrole', user?.role);
-      // console.log('head', req.headers);
-
       if (!user || !user.id || !user.role) {
-        console.error('User authentication data missing!');
         return res.status(HttpStatus.UNAUTHORIZED).json(
           ResponseHelper.error('User not authenticated', HttpStatus.UNAUTHORIZED)
         );
       }
 
-      // const chats = await this.getUserChatsUseCase.execute(user.id, user.role);
       const chats = await this._getUserChatsUseCase.execute({
         userId: user.id,
         role: user.role
       });
-      console.log('Chats retrieved:', chats.length);
+
       res.status(HttpStatus.OK).json(ResponseHelper.success(chats, 'Chats retrieved successfully'));
     } catch (error: any) {
       console.error('Get user chats error:', error.message);
-      console.error('Error stack:', error.stack);
       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
     }
   }
@@ -64,19 +56,38 @@ export class ChatController implements IChatController{
       const { chatId } = req.params;
       const { limit, offset } = req.query;
 
-      console.log('get msg in getmes', { chatId, limit, offset });
-
-      // Only parse limit/offset if explicitly provided in query params
-      // If not provided, pass undefined so repository fetches ALL messages
       const messages = await this._getMessagesUseCase.execute({
         chatId,
-        limit: limit ? parseInt(limit as string, 10) : undefined,
+        limit:  limit  ? parseInt(limit  as string, 10) : undefined,
         offset: offset ? parseInt(offset as string, 10) : undefined
       });
 
       res.status(HttpStatus.OK).json(ResponseHelper.success(messages, 'Messages retrieved successfully'));
     } catch (error: any) {
       console.error('Get messages error:', error);
+      res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+    }
+  }
+
+  async markChatAsRead(req: Request, res: Response) {
+    try {
+      const user = (req as any).user;
+      const { chatId } = req.params;
+
+      if (!user || !user.id || !user.role) {
+        return res.status(HttpStatus.UNAUTHORIZED).json(
+          ResponseHelper.error('User not authenticated', HttpStatus.UNAUTHORIZED)
+        );
+      }
+
+      await this._markChatAsReadUseCase.execute({
+        chatId,
+        role: user.role
+      });
+
+      res.status(HttpStatus.OK).json(ResponseHelper.success(null, 'Chat marked as read'));
+    } catch (error: any) {
+      console.error('Mark chat as read error:', error);
       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
     }
   }
