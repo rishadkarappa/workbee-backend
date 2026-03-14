@@ -21,3 +21,8 @@ export interface GetUserChatsDTO {
   userId: string;
   role: "user" | "worker";
 }
+
+export interface MarkChatAsReadDTO {
+  chatId: string;
+  role: "user" | "worker";
+}

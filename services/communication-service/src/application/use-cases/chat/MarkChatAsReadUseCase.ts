@@ -1,13 +1,11 @@
 import { inject, injectable } from 'tsyringe';
 import { IChatRepository } from '../../../domain/repositories/IChatRepository';
+import { MarkChatAsReadDTO } from '../../dtos/chat/ChatDTO';
+import { IMarkChatAsReadUseCase } from '../../ports/chat/IMarkChatAsReadUseCase';
 
-export interface MarkChatAsReadDTO {
-  chatId: string;
-  role: 'user' | 'worker';
-}
 
 @injectable()
-export class MarkChatAsReadUseCase {
+export class MarkChatAsReadUseCase implements IMarkChatAsReadUseCase {
   constructor(
     @inject("ChatRepository") private chatRepository: IChatRepository
   ) {}
