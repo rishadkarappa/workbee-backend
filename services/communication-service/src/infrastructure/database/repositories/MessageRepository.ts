@@ -5,20 +5,18 @@ import { MessageModel } from '../../database/models/MessageModel';
 
 @injectable()
 export class MessageRepository implements IMessageRepository {
-  
+
   async create(message: Message): Promise<Message> {
     const newMessage = await MessageModel.create(message);
     return this.toEntity(newMessage);
   }
 
-  
   async findByChatId(chatId: string, limit?: number, offset?: number): Promise<Message[]> {
     let query = MessageModel.find({ chatId }).sort({ createdAt: 1 });
 
     if (offset !== undefined && offset > 0) {
       query = query.skip(offset);
     }
-
     if (limit !== undefined && limit > 0) {
       query = query.limit(limit);
     }
@@ -40,14 +38,16 @@ export class MessageRepository implements IMessageRepository {
 
   private toEntity(doc: any): Message {
     return {
-      id: doc._id.toString(),
-      chatId: doc.chatId,
-      senderId: doc.senderId,
-      senderRole: doc.senderRole,
-      content: doc.content,
-      type: doc.type,
-      isRead: doc.isRead,
-      createdAt: doc.createdAt
+      id:             doc._id.toString(),
+      chatId:         doc.chatId,
+      senderId:       doc.senderId,
+      senderRole:     doc.senderRole,
+      content:        doc.content,
+      type:           doc.type,
+      mediaUrl:       doc.mediaUrl,
+      mediaPublicId:  doc.mediaPublicId,
+      isRead:         doc.isRead,
+      createdAt:      doc.createdAt,
     };
   }
 }

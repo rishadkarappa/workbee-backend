@@ -21,3 +21,5 @@ container.registerSingleton<ISendMessageUseCase>("SendMessageUseCase",SendMessag
 container.registerSingleton<IMarkChatAsReadUseCase>("MarkChatAsReadUseCase", MarkChatAsReadUseCase); 
 
 
+
+

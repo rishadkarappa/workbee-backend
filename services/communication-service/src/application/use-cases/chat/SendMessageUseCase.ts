@@ -8,23 +8,32 @@ import { ISendMessageUseCase } from '../../ports/chat/ISendMessageUseCase';
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
-    @inject("MessageRepository") private messageRepository: IMessageRepository,
-    @inject("ChatRepository") private chatRepository: IChatRepository
+    @inject('MessageRepository') private messageRepository: IMessageRepository,
+    @inject('ChatRepository')    private chatRepository:    IChatRepository
   ) {}
 
   async execute(data: SendMessageDTO): Promise<Message> {
     const message: Message = {
-      chatId: data.chatId,
-      senderId: data.senderId,
+      chatId:     data.chatId,
+      senderId:   data.senderId,
       senderRole: data.senderRole,
-      content: data.content,
-      type: data.type || 'text',
-      isRead: false
+      content:    data.content,
+      type:       data.type || 'text',
+      mediaUrl:      data.mediaUrl,
+      mediaPublicId: data.mediaPublicId,
+      isRead: false,
     };
 
     const savedMessage = await this.messageRepository.create(message);
 
-    await this.chatRepository.updateLastMessage(data.chatId, data.content);
+    // Update last message preview — for media use a friendly label
+    const previewText = data.type === 'image'
+      ? '📷 Image'
+      : data.type === 'video'
+        ? '🎥 Video'
+        : data.content;
+
+    await this.chatRepository.updateLastMessage(data.chatId, previewText);
 
     // Increment unread count for the recipient
     // sender = 'user'   → recipient key = 'workerId'

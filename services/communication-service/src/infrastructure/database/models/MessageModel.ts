@@ -5,19 +5,27 @@ export interface IMessageDocument extends Document {
   senderId: string;
   senderRole: 'user' | 'worker';
   content: string;
-  type: 'text' | 'image' | 'file';
+  type: 'text' | 'image' | 'video' | 'file';
+  mediaUrl?: string;
+  mediaPublicId?: string;
   isRead: boolean;
   createdAt: Date;
 }
 
 const MessageSchema = new Schema<IMessageDocument>(
   {
-    chatId: { type: String, required: true, index: true },
-    senderId: { type: String, required: true },
+    chatId:    { type: String, required: true, index: true },
+    senderId:  { type: String, required: true },
     senderRole: { type: String, enum: ['user', 'worker'], required: true },
-    content: { type: String, required: true },
-    type: { type: String, enum: ['text', 'image', 'file'], default: 'text' },
-    isRead: { type: Boolean, default: false }
+    content:   { type: String, required: true },
+    type: {
+      type:    String,
+      enum:    ['text', 'image', 'video', 'file'],
+      default: 'text',
+    },
+    mediaUrl:      { type: String },
+    mediaPublicId: { type: String },
+    isRead: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
