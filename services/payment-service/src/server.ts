@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import { connectDB } from "./infrastructure/config/connectPsql";
+import { connectDB } from "./infrastructure/config/connectDB";
 
 const app = express();
 
