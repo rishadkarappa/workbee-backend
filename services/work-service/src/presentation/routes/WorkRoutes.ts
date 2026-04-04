@@ -28,4 +28,6 @@ router.delete('/delete-my-work/:workId', workController.deleteMyWork.bind(workCo
 router.get('/get-worker-profile/:workerId', workController.getWorkerProfile.bind(workController));
 router.post('/get-worker-profile/batch', workController.getWorkerProfilesBatch.bind(workController));
 
+router.get('/worker-assigned-works', workController.getWorkerAssignedWorks.bind(workController));
+
 export default router

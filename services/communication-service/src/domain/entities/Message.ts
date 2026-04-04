@@ -4,7 +4,7 @@ export interface Message {
   senderId: string;
   senderRole: string;
   content: string;
-  type: 'text' | 'image' | 'video' | 'file';
+  type: 'text' | 'image' | 'video' | 'file'| 'system';
   // set for image/video messages
   mediaUrl?: string;
   mediaPublicId?: string;

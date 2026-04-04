@@ -27,6 +27,9 @@ export interface Work {
     anythingElse?: string;
     termsAccepted: boolean;
     status: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'cancelled';
+    progress?: 'started' | 'ongoing' | 'completed';
+    workerId?: string;
     createdAt?: Date;
     updatedAt?: Date;
+    
 }

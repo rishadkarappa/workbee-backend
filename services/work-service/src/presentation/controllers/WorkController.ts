@@ -23,6 +23,7 @@ import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWork
 
 import { GetWorkerProfileUseCase } from "../../application/use-case/isc/GetWorkerProfileUseCase";
 import { GetWorkerProfilesBatchUseCase } from "../../application/use-case/isc/GetWorkerProfilesBatchUseCase";
+import { GetWorkerAssignedWorksUseCase } from "../../application/use-case/worker/GetWorkerAssignedWorksUseCase";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -40,6 +41,7 @@ export class WorkController implements IWorkController {
         @inject("DeleteMyWorkUseCase") private _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
         @inject("GetWorkerProfileUseCase") private _getWorkerProfileUseCase: GetWorkerProfileUseCase,
         @inject("GetWorkerProfilesBatchUseCase") private _getWorkerProfilesBatchUseCase: GetWorkerProfilesBatchUseCase,
+        @inject("GetWorkerAssignedWorksUseCase") private _getWorkerAssignedWorksUseCase: GetWorkerAssignedWorksUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -338,7 +340,24 @@ export class WorkController implements IWorkController {
       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
     }
   }
+
+  async getWorkerAssignedWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const workerId = req.headers['x-user-id'] as string;
+ 
+      if (!workerId) {
+        res.status(HttpStatus.UNAUTHORIZED).json(
+          ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+        );
+        return;
+      }
+ 
+      const result = await this._getWorkerAssignedWorksUseCase.execute(workerId);
+      res.status(HttpStatus.OK).json(
+        ResponseHelper.success(result, "Worker assigned works retrieved successfully")
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
 }
-
-
-

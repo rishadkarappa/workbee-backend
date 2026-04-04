@@ -178,6 +178,23 @@ export class MongoWorkRepository implements IWorkRepository {
         };
     }
 
+    // async findByWorkerId(workerId: string): Promise<{ works: Work[] }> {
+    //     const works = await WorkModel.find({
+    //         workerId: workerId,
+    //         status: { $in: ['assigned', 'in-progress', 'completed'] }
+    //     }).sort({ updatedAt: -1 });
+
+    //     return { works: works.map(this.mapToEntity) };
+    // }
+    async findByWorkerId(workerId: string): Promise<{ works: Work[] }> {
+        const works = await WorkModel.find({
+            workerId,
+            status: { $in: ['assigned', 'in-progress', 'completed'] }
+        }).sort({ updatedAt: -1 });
+
+        return { works: works.map(this.mapToEntity.bind(this)) };
+    }
+
     private mapToEntity(doc: any): Work {
         return {
             id: doc._id.toString(),
@@ -205,6 +222,8 @@ export class MongoWorkRepository implements IWorkRepository {
             anythingElse: doc.anythingElse,
             termsAccepted: doc.termsAccepted,
             status: doc.status,
+            progress: doc.progress,
+            workerId: doc.workerId,
             createdAt: doc.createdAt,
             updatedAt: doc.updatedAt
         };

@@ -16,4 +16,6 @@ export interface IWorkRepository{
         maxDistance?: number;
     }): Promise<{ works: Work[]; total: number }>;
     getMyWorks(id:string):Promise<{works:Work[]|null}>;
+    findByWorkerId(workerId: string): Promise<{ works: Work[] }>;
+    
 }

@@ -5,7 +5,7 @@ export interface IMessageDocument extends Document {
   senderId: string;
   senderRole: 'user' | 'worker';
   content: string;
-  type: 'text' | 'image' | 'video' | 'file';
+  type: 'text' | 'image' | 'video' | 'file'| 'system';
   mediaUrl?: string;
   mediaPublicId?: string;
   isRead: boolean;
@@ -20,7 +20,7 @@ const MessageSchema = new Schema<IMessageDocument>(
     content:   { type: String, required: true },
     type: {
       type:    String,
-      enum:    ['text', 'image', 'video', 'file'],
+      enum:    ['text', 'image', 'video', 'file','system'],
       default: 'text',
     },
     mediaUrl:      { type: String },

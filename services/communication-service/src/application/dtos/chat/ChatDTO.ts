@@ -8,7 +8,7 @@ export interface SendMessageDTO {
   senderId:    string;
   senderRole:  'user' | 'worker';
   content:     string;
-  type?:       'text' | 'image' | 'video' | 'file';
+  type?:       'text' | 'image' | 'video' | 'file'| 'system';
   // uploads to Cloudinary
   mediaUrl?:      string;
   mediaPublicId?: string;

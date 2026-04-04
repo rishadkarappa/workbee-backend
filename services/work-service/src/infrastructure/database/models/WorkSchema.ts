@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 import { Work } from "../../../domain/entities/Work";
 
 
-export interface WorkTocument extends Omit<Work, 'id'>,Document{}
+export interface WorkTocument extends Omit<Work, 'id'>, Document { }
 
 const WorkSchema = new Schema<WorkTocument>(
     {
@@ -20,14 +20,14 @@ const WorkSchema = new Schema<WorkTocument>(
         duration: { type: String },
         budget: { type: String },
         location: {
-            type:{
-                type:String,
-                enum:["Point"],
-                default:"Point",
+            type: {
+                type: String,
+                enum: ["Point"],
+                default: "Point",
                 required: true
             },
-            coordinates:{
-                type:[Number],//longi , lati
+            coordinates: {
+                type: [Number],//longi , lati
                 required: true
             }
         },
@@ -40,18 +40,28 @@ const WorkSchema = new Schema<WorkTocument>(
         extraRequirements: { type: String },
         anythingElse: { type: String },
         termsAccepted: { type: Boolean, required: true, default: false },
-        status: { 
-            type: String, 
-            enum: ['pending', 'assigned', 'in-progress', 'completed', 'cancelled'], 
-            default: 'pending' 
-        }
+        status: {
+            type: String,
+            enum: ['pending', 'assigned', 'in-progress', 'completed', 'cancelled'],
+            default: 'pending'
+        },
+        progress: {
+            type: String,
+            enum: ['started', 'ongoing', 'completed'],
+            default: null
+        },
+        workerId: {
+            type: String,
+            default: null,
+            index: true
+        },
     },
     { timestamps: true }
 );
 
 WorkSchema.index({ location: "2dsphere" });
 
-export const WorkModel = mongoose.model<WorkTocument>("Work",WorkSchema);
+export const WorkModel = mongoose.model<WorkTocument>("Work", WorkSchema);
 
 
 
