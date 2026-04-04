@@ -55,6 +55,29 @@ export interface WorkResponseDto {
     updatedAt: Date;
 }
 
+// export interface UpdateWorkDto {
+//     workId: string;
+//     userId: string;
+//     workTitle?: string;
+//     workCategory?: string;
+//     workType?: 'oneDay' | 'multipleDay';
+//     date?: string;
+//     startDate?: string;
+//     endDate?: string;
+//     time?: string;
+//     description?: string;
+//     duration?: string;
+//     budget?: string;
+//     manualAddress?: string;
+//     landmark?: string;
+//     contactNumber?: string;
+//     petrolAllowance?: string;
+//     extraRequirements?: string;
+//     anythingElse?: string;
+//     status?: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'cancelled';
+//     progress?: string;
+//     workerId?: string;
+// }
 export interface UpdateWorkDto {
     workId: string;
     userId: string;
@@ -75,7 +98,7 @@ export interface UpdateWorkDto {
     extraRequirements?: string;
     anythingElse?: string;
     status?: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'cancelled';
-    progress?: string;
+    progress?: 'started' | 'ongoing' | 'completed';
     workerId?: string;
 }
 

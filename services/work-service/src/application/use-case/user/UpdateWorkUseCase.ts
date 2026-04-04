@@ -12,21 +12,35 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
 
     async execute(dto: UpdateWorkDto): Promise<WorkResponseDto> {
         const existingWork = await this._workRepository.findById(dto.workId);
-        
+
         if (!existingWork) {
-            throw new Error('Work not found');
+            throw new Error("Work not found");
         }
 
-        if (existingWork.userId !== dto.userId) {
-            throw new Error('You do not have permission to update this work');
+        const isWorkerProgressUpdate =
+            dto.progress !== undefined ||
+            dto.status === "in-progress" ||
+            dto.status === "completed";
+
+        if (isWorkerProgressUpdate) {
+            if (String(existingWork.workerId) !== String(dto.userId)) {
+                throw new Error("You do not have permission to update this work");
+            }
+        } else {
+            if (String(existingWork.userId) !== String(dto.userId)) {
+                throw new Error("You do not have permission to update this work");
+            }
         }
 
         const { workId, userId, ...updateData } = dto;
 
-        const updatedWork = await this._workRepository.update(workId, updateData);
-        
+        const updatedWork = await this._workRepository.update(
+            workId,
+            updateData
+        );
+
         if (!updatedWork) {
-            throw new Error('Failed to update work');
+            throw new Error("Failed to update work");
         }
 
         return WorkMapper.toResponseDto(updatedWork);

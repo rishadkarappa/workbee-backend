@@ -11,4 +11,5 @@ export interface IWorkController {
     getMyWorks(req: Request, res: Response, next: NextFunction): Promise<void>;
     updateWork(req: Request, res: Response, next: NextFunction): Promise<void>;
     deleteMyWork(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getWorkerAssignedWorks(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
