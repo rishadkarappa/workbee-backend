@@ -12,11 +12,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^1.0.3",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "mongoose": "^9.3.0",
     "pg": "^8.20.0",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "stripe": "^22.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
