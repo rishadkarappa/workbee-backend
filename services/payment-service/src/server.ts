@@ -1,27 +1,53 @@
 import "reflect-metadata";
+import "./infrastructure/di/container";
+
 import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import cors from "cors";
 import { connectDB } from "./infrastructure/config/connectDB";
+
+import paymentRoutes from "./presentation/routes/PaymentRoutes";
+import { startPayoutWorker } from "./infrastructure/queue/PayoutQueue";
 
 const app = express();
 
+app.use(cors({
+  origin:      process.env.CORS_ORIGIN,
+  credentials: true,
+}));
+
+// ── Stripe webhook MUST receive raw body ─────────────────────
+app.use(
+  "/payment/webhook",
+  express.raw({ type: "application/json" })
+);
+
+// All other routes get JSON body
 app.use(express.json());
 
-const PORT = Number(process.env.PORT);
+
+// ── Routes
+app.use("/payment", paymentRoutes);
+
+// ── Error handler
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[PaymentService] Error:", err);
+  res.status(err.status || 500).json({ success: false, message: err.message || "Internal server error" });
+});
+
+const PORT = Number(process.env.PORT) || 4005;
 
 const startServer = async () => {
   try {
     await connectDB();
-    console.log("DB connected");
-
+    startPayoutWorker();
     app.listen(PORT, () => {
-      console.log(`Payment Service running on port ${PORT}`);
+      console.log(`[PaymentService] Running on port ${PORT}`);
     });
-
   } catch (error) {
-    console.error("Failed to start server:", error);
+    console.error("[PaymentService] Failed to start:", error);
     process.exit(1);
   }
 };

@@ -13,14 +13,19 @@
   "license": "ISC",
   "dependencies": {
     "amqplib": "^1.0.3",
+    "axios": "^1.15.0",
+    "bullmq": "^5.73.4",
+    "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "mongoose": "^9.3.0",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
-    "stripe": "^22.0.1"
+    "stripe": "^22.0.1",
+    "tsyringe": "^4.10.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.0",
     "@types/pg": "^8.18.0",
