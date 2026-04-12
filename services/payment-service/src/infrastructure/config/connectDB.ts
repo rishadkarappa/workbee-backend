@@ -9,7 +9,7 @@ export const getPool = (): Pool => {
       host: process.env.DB_HOST,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      port: Number(process.env.DB_PORT) || 5432,
+      port: Number(process.env.DB_PORT),
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000,

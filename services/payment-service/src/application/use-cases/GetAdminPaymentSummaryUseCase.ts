@@ -1,7 +1,6 @@
 
 
 import { inject, injectable } from "tsyringe";
-import Stripe from "stripe";
 import {
   IPlatformEarningRepository,
 } from "../../domain/repositories/IPlatformEarningRepository";

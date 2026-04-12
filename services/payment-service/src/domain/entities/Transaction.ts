@@ -12,7 +12,7 @@ export interface Transaction {
     id: string;
     walletId: string;
     workId?: string;
-    stripePaymentIntentId?: string;
+    razorpayPaymentId?: string; 
     type: TransactionType;
     amount: number;
     currency: string;

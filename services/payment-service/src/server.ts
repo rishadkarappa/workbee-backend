@@ -14,15 +14,9 @@ import { startPayoutWorker } from "./infrastructure/queue/PayoutQueue";
 const app = express();
 
 app.use(cors({
-  origin:      process.env.CORS_ORIGIN,
+  origin: process.env.CORS_ORIGIN,
   credentials: true,
 }));
-
-// ── Stripe webhook MUST receive raw body ─────────────────────
-app.use(
-  "/payment/webhook",
-  express.raw({ type: "application/json" })
-);
 
 // All other routes get JSON body
 app.use(express.json());
@@ -37,7 +31,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(err.status || 500).json({ success: false, message: err.message || "Internal server error" });
 });
 
-const PORT = Number(process.env.PORT) || 4005;
+const PORT = Number(process.env.PORT);
 
 const startServer = async () => {
   try {

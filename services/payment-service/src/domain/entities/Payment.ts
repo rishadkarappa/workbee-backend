@@ -10,8 +10,8 @@ export interface Payment {
     workId: string;
     userId: string;
     workerId: string;
-    stripeSessionId?: string;
-    stripePaymentIntentId?: string;
+    razorpayOrderId?:     string;
+    razorpayPaymentId?:   string;  
     amount: number;
     platformFee: number;
     workerPayout: number;

@@ -1,15 +1,15 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { CreateCheckoutSessionUseCase } from '../../application/use-cases/CreateCheckoutSessionUseCase';
-import { HandleStripeWebhookUseCase } from '../../application/use-cases/HandleStripeWebhookUseCase';
 import { ScheduleWorkerPayoutUseCase } from '../../application/use-cases/ScheduleWorkerPayoutUseCase';
 import { ReleaseWorkerPayoutUseCase } from '../../application/use-cases/ReleaseWorkerPayoutUseCase';
 import { GetWalletUseCase } from '../../application/use-cases/GetWalletUseCase';
 import { GetAdminPaymentSummaryUseCase } from '../../application/use-cases/GetAdminPaymentSummaryUseCase';
+import { CreateRazorpayOrderUseCase } from '../../application/use-cases/CreateRazorpayOrderUseCase';
+import { VerifyRazorpayPaymentUseCase } from '../../application/use-cases/VerifyRazorpayPaymentUseCase';
 
 
-container.register("CreateCheckoutSessionUseCase",    { useClass: CreateCheckoutSessionUseCase });
-container.register("HandleStripeWebhookUseCase",      { useClass: HandleStripeWebhookUseCase });
+container.register("CreateRazorpayOrderUseCase",    { useClass: CreateRazorpayOrderUseCase });
+container.register("VerifyRazorpayPaymentUseCase",      { useClass: VerifyRazorpayPaymentUseCase });
 container.register("ScheduleWorkerPayoutUseCase",     { useClass: ScheduleWorkerPayoutUseCase });
 container.register("ReleaseWorkerPayoutUseCase",      { useClass: ReleaseWorkerPayoutUseCase });
 container.register("GetWalletUseCase",                { useClass: GetWalletUseCase });

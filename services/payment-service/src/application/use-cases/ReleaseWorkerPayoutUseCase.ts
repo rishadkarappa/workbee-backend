@@ -1,18 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import {
-    IPlatformEarningRepository,
-} from "../../domain/repositories/IPlatformEarningRepository";
 
-import {
-    IPaymentRepository,
-} from "../../domain/repositories/IPaymentRepository";
-import {
-    IWalletRepository,
-} from "../../domain/repositories/IWalletRepository";
-
-import {
-    ITransactionRepository,
-} from "../../domain/repositories/ITransactionRepository";
+import { IPlatformEarningRepository } from "../../domain/repositories/IPlatformEarningRepository";
+import { IPaymentRepository } from "../../domain/repositories/IPaymentRepository";
+import { IWalletRepository } from "../../domain/repositories/IWalletRepository";
+import { ITransactionRepository } from "../../domain/repositories/ITransactionRepository";
 
 @injectable()
 export class ReleaseWorkerPayoutUseCase {
@@ -25,7 +16,6 @@ export class ReleaseWorkerPayoutUseCase {
 
     async execute(paymentId: string): Promise<void> {
         const payment = await this.paymentRepo.findById(paymentId);
-
         if (!payment || payment.status !== "paid") {
             console.log(`[ReleaseWorkerPayout] skipping ${paymentId} — status: ${payment?.status}`);
             return;
@@ -33,7 +23,6 @@ export class ReleaseWorkerPayoutUseCase {
 
         const workerWallet = await this.walletRepo.findOrCreate(payment.workerId, "worker");
 
-        // Move pending → available
         await this.walletRepo.movePendingToBalance(workerWallet.id, payment.workerPayout);
         await this.walletRepo.incrementTotalEarned(workerWallet.id, payment.workerPayout);
 
@@ -41,7 +30,7 @@ export class ReleaseWorkerPayoutUseCase {
         await this.txRepo.create({
             walletId: workerWallet.id,
             workId: payment.workId,
-            stripePaymentIntentId: payment.stripePaymentIntentId,
+            razorpayPaymentId: payment.razorpayPaymentId,  // clean name
             type: "credit",
             amount: payment.workerPayout,
             currency: payment.currency,
@@ -53,9 +42,9 @@ export class ReleaseWorkerPayoutUseCase {
             },
         });
 
-        // Platform fee record
+        // Platform fee audit record
         await this.txRepo.create({
-            walletId: workerWallet.id,  // just for audit trail
+            walletId: workerWallet.id,
             workId: payment.workId,
             type: "platform_fee",
             amount: payment.platformFee,
@@ -71,7 +60,6 @@ export class ReleaseWorkerPayoutUseCase {
             currency: payment.currency,
         });
 
-        // Mark payment as fully settled
         await this.paymentRepo.updateStatus(payment.id, "worker_credited", {
             payoutCompletedAt: new Date(),
         });
