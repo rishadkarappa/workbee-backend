@@ -95,28 +95,34 @@ export class PaymentController {
     }
   }
 
-  // POST /payment/work-completed
   async workCompleted(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { workId } = req.body;
+  try {
+    const userId = req.headers["x-user-id"] as string;
+    const userRole = req.headers["x-user-role"] as string;
 
-      if (!workId) {
-        res.status(400).json({ success: false, message: "workId required" });
-        return;
-      }
-
-      const result = await this.schedulePayoutUseCase.execute(workId);
-
-      if (result) {
-        await scheduleWorkerPayout(result.paymentId);
-        res.status(200).json({ success: true, message: "Payout scheduled in 1 hour" });
-      } else {
-        res.status(200).json({ success: true, message: "No paid payment found for this work, skipped" });
-      }
-    } catch (err) {
-      next(err);
+    // Only workers (or admins) should trigger payouts
+    if (!userId || (userRole !== "worker" && userRole !== "admin")) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+      return;
     }
+
+    const { workId } = req.body;
+    if (!workId) {
+      res.status(400).json({ success: false, message: "workId required" });
+      return;
+    }
+
+    const result = await this.schedulePayoutUseCase.execute(workId);
+    if (result) {
+      await scheduleWorkerPayout(result.paymentId);
+      res.status(200).json({ success: true, message: "Payout scheduled in 1 hour" });
+    } else {
+      res.status(200).json({ success: true, message: "No paid payment found, skipped" });
+    }
+  } catch (err) {
+    next(err);
   }
+}
 
   // GET /payment/wallet
   async getWallet(req: Request, res: Response, next: NextFunction): Promise<void> {
