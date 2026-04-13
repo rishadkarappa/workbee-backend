@@ -1,4 +1,3 @@
-// src/application/use-cases/GetAdminPaymentsListUseCase.ts
 import { inject, injectable } from "tsyringe";
 import { IPaymentRepository } from "../../domain/repositories/IPaymentRepository";
 

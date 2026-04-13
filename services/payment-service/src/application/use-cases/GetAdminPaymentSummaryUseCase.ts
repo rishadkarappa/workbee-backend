@@ -1,5 +1,3 @@
-
-
 import { inject, injectable } from "tsyringe";
 import {
   IPlatformEarningRepository,

@@ -6,11 +6,10 @@ import { IWalletRepository } from "../../domain/repositories/IWalletRepository";
  
 const PLATFORM_FEE_PERCENT = 0.01; // 1%
  
-// ────────────────────────────────────────────────────────────────
 // Called when user clicks "Confirm" on a deal request.
 // Creates a Razorpay Order and a pending Payment row.
 // The frontend uses the order id to open Razorpay checkout.
-// ────────────────────────────────────────────────────────────────
+
 @injectable()
 export class CreateRazorpayOrderUseCase {
     private razorpay: Razorpay;

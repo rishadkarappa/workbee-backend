@@ -45,6 +45,15 @@ export class TransactionRepository implements ITransactionRepository {
         return this.mapTx(rows[0]);
     }
 
+    // ✅ NEW: Update transaction status (e.g., hold → completed after payout)
+    async updateStatus(id: string, status: string): Promise<Transaction> {
+        const { rows } = await this.db.query(
+            `UPDATE transactions SET status = $2 WHERE id = $1 RETURNING *`,
+            [id, status]
+        );
+        return this.mapTx(rows[0]);
+    }
+
     async findByWalletId(walletId: string, limit = 50): Promise<Transaction[]> {
         const { rows } = await this.db.query(
             "SELECT * FROM transactions WHERE wallet_id = $1 ORDER BY created_at DESC LIMIT $2",

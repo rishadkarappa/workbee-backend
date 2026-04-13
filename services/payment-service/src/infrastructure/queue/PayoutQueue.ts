@@ -9,12 +9,12 @@ const REDIS_CONNECTION = {
 };
 
 const QUEUE_NAME = "worker-payout";
-const DELAY_MS   = 60 * 60 * 1000; // 1 hour
+const DELAY_MS   = 2 * 60 * 1000; // 1 hour
 
 let payoutQueue: Queue | null = null;
 let payoutWorker: Worker | null = null;
 
-// ── Queue (producer) ──────────────────────────────────────────
+// Queue (producer) 
 export const getPayoutQueue = (): Queue => {
   if (!payoutQueue) {
     payoutQueue = new Queue(QUEUE_NAME, {
@@ -41,7 +41,7 @@ export const scheduleWorkerPayout = async (paymentId: string): Promise<void> => 
   console.log(`[PayoutQueue] Scheduled payout for payment ${paymentId} in 1 hour`);
 };
 
-// ── Worker (consumer) ─────────────────────────────────────────
+// Worker (consumer)
 export const startPayoutWorker = (): void => {
   payoutWorker = new Worker(
     QUEUE_NAME,
