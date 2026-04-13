@@ -85,6 +85,33 @@ export class PaymentRepository implements IPaymentRepository {
         return rows[0] ? this.mapPayment(rows[0]) : null;
     }
 
+    async findAllPaginated(page: number, limit: number): Promise<{
+        payments: any[];
+        total: number;
+        totalPages: number;
+    }> {
+        const offset = (page - 1) * limit;
+
+        const { rows } = await this.db.query(
+            `SELECT * FROM payments
+     ORDER BY created_at DESC
+     LIMIT $1 OFFSET $2`,
+            [limit, offset]
+        );
+
+        const { rows: countRows } = await this.db.query(
+            "SELECT COUNT(*) AS total FROM payments"
+        );
+
+        const total = parseInt(countRows[0].total);
+
+        return {
+            payments: rows.map(this.mapPayment.bind(this)),
+            total,
+            totalPages: Math.ceil(total / limit),
+        };
+    }
+
     async updateStatus(id: string, status: string, extra: Partial<Payment> = {}): Promise<Payment> {
         const setClauses: string[] = ["status = $2", "updated_at = NOW()"];
         const values: any[] = [id, status];

@@ -11,5 +11,6 @@ router.post("/verify", paymentController.verifyPayment.bind(paymentController));
 router.post("/work-completed", paymentController.workCompleted.bind(paymentController));
 router.get("/wallet", paymentController.getWallet.bind(paymentController));
 router.get("/admin/summary", paymentController.getAdminSummary.bind(paymentController));
+router.get("/admin/payments", paymentController.getAdminPaymentsList.bind(paymentController));
 
 export default router;

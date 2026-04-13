@@ -7,6 +7,7 @@ import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/Schedul
 import { GetWalletUseCase } from "../../application/use-cases/GetWalletUseCase";
 import { GetAdminPaymentSummaryUseCase } from "../../application/use-cases/GetAdminPaymentSummaryUseCase";
 import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
+import { GetAdminPaymentsListUseCase } from "../../application/use-cases/GetAdminPaymentsListUseCase";
 
 @injectable()
 export class PaymentController {
@@ -16,6 +17,7 @@ export class PaymentController {
     @inject("ScheduleWorkerPayoutUseCase") private schedulePayoutUseCase: ScheduleWorkerPayoutUseCase,
     @inject("GetWalletUseCase") private getWalletUseCase: GetWalletUseCase,
     @inject("GetAdminPaymentSummaryUseCase") private adminSummaryUseCase: GetAdminPaymentSummaryUseCase,
+    @inject("GetAdminPaymentsListUseCase") private adminPaymentsListUseCase: GetAdminPaymentsListUseCase,
   ) { }
 
   // POST /payment/create-order
@@ -150,4 +152,23 @@ export class PaymentController {
       next(err);
     }
   }
+
+  async getAdminPaymentsList(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userRole = req.headers["x-user-role"] as string;
+      if (userRole !== "admin") {
+        res.status(403).json({ success: false, message: "Forbidden" });
+        return;
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+
+      const data = await this.adminPaymentsListUseCase.execute(page, limit);
+      res.status(200).json({ success: true, data });
+    } catch (err) {
+      next(err);
+    }
+  }
+
 }
