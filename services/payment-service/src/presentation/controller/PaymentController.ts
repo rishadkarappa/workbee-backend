@@ -6,43 +6,37 @@ import { VerifyRazorpayPaymentUseCase } from "../../application/use-cases/Verify
 import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/ScheduleWorkerPayoutUseCase";
 import { GetWalletUseCase } from "../../application/use-cases/GetWalletUseCase";
 import { GetAdminPaymentSummaryUseCase } from "../../application/use-cases/GetAdminPaymentSummaryUseCase";
-
 import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
 
 @injectable()
 export class PaymentController {
   constructor(
-    @inject("CreateRazorpayOrderUseCase")
-    private createRazorpayOrderUseCase: CreateRazorpayOrderUseCase,
+    @inject("CreateRazorpayOrderUseCase") private createOrderUseCase: CreateRazorpayOrderUseCase,
+    @inject("VerifyRazorpayPaymentUseCase") private verifyPaymentUseCase: VerifyRazorpayPaymentUseCase,
+    @inject("ScheduleWorkerPayoutUseCase") private schedulePayoutUseCase: ScheduleWorkerPayoutUseCase,
+    @inject("GetWalletUseCase") private getWalletUseCase: GetWalletUseCase,
+    @inject("GetAdminPaymentSummaryUseCase") private adminSummaryUseCase: GetAdminPaymentSummaryUseCase,
+  ) { }
 
-    @inject("VerifyRazorpayPaymentUseCase")
-    private verifyRazorpayPaymentUseCase: VerifyRazorpayPaymentUseCase,
-
-    @inject("ScheduleWorkerPayoutUseCase")
-    private scheduleWorkerPayoutUseCase: ScheduleWorkerPayoutUseCase,
-
-    @inject("GetWalletUseCase")
-    private getWalletUseCase: GetWalletUseCase,
-
-    @inject("GetAdminPaymentSummaryUseCase")
-    private getAdminPaymentSummaryUseCase: GetAdminPaymentSummaryUseCase
-  ) {}
-
-  async createOrder(req: Request, res: Response, next: NextFunction) {
+  // POST /payment/create-order
+  async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
 
       if (!userId || userRole !== "user") {
-        return res.status(401).json({
-          success: false,
-          message: "Unauthorized",
-        });
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
       }
 
       const { workId, workerId, workTitle, amount } = req.body;
 
-      const result = await this.createRazorpayOrderUseCase.execute({
+      if (!workId || !workerId || !workTitle || !amount) {
+        res.status(400).json({ success: false, message: "Missing required fields: workId, workerId, workTitle, amount" });
+        return;
+      }
+
+      const result = await this.createOrderUseCase.execute({
         workId,
         userId,
         workerId,
@@ -50,83 +44,110 @@ export class PaymentController {
         amount: Number(amount),
       });
 
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
-        data: result,
+        data: {
+          orderId: result.orderId,
+          amount: result.amount,
+          currency: result.currency,
+          keyId: result.keyId,
+          paymentId: result.payment.id,
+        },
       });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   }
 
-  async verifyPayment(req: Request, res: Response, next: NextFunction) {
-    try {
-      const result =
-        await this.verifyRazorpayPaymentUseCase.execute(req.body);
-
-      return res.status(200).json({
-        success: true,
-        data: result,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async workCompleted(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { workId } = req.body;
-
-      const result =
-        await this.scheduleWorkerPayoutUseCase.execute(workId);
-
-      if (result) {
-        await scheduleWorkerPayout(result.paymentId);
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "Payout scheduled successfully",
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getWallet(req: Request, res: Response, next: NextFunction) {
+  // POST /payment/verify
+  async verifyPayment(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
 
-      const data = await this.getWalletUseCase.execute(
-        userId,
-        userRole
-      );
+      if (!userId || userRole !== "user") {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
 
-      return res.status(200).json({
-        success: true,
-        data,
+      const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+
+      if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+        res.status(400).json({ success: false, message: "Missing payment verification fields" });
+        return;
+      }
+
+      const result = await this.verifyPaymentUseCase.execute({
+        razorpayOrderId,
+        razorpayPaymentId,
+        razorpaySignature,
       });
-    } catch (error) {
-      next(error);
+
+      res.status(200).json({ success: true, data: result });
+    } catch (err: any) {
+      if (err.message === "Payment signature verification failed") {
+        res.status(400).json({ success: false, message: err.message });
+        return;
+      }
+      next(err);
     }
   }
 
-  async getAdminSummary(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  // POST /payment/work-completed
+  async workCompleted(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const data =
-        await this.getAdminPaymentSummaryUseCase.execute();
+      const { workId } = req.body;
 
-      return res.status(200).json({
-        success: true,
-        data,
-      });
-    } catch (error) {
-      next(error);
+      if (!workId) {
+        res.status(400).json({ success: false, message: "workId required" });
+        return;
+      }
+
+      const result = await this.schedulePayoutUseCase.execute(workId);
+
+      if (result) {
+        await scheduleWorkerPayout(result.paymentId);
+        res.status(200).json({ success: true, message: "Payout scheduled in 1 hour" });
+      } else {
+        res.status(200).json({ success: true, message: "No paid payment found for this work, skipped" });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // GET /payment/wallet
+  async getWallet(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.headers["x-user-id"] as string;
+      const userRole = req.headers["x-user-role"] as string;
+
+      if (!userId) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+
+      const data = await this.getWalletUseCase.execute(userId, userRole);
+      res.status(200).json({ success: true, data });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // GET /payment/admin/summary
+  async getAdminSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userRole = req.headers["x-user-role"] as string;
+
+      if (userRole !== "admin") {
+        res.status(403).json({ success: false, message: "Forbidden" });
+        return;
+      }
+
+      const data = await this.adminSummaryUseCase.execute();
+      res.status(200).json({ success: true, data });
+    } catch (err) {
+      next(err);
     }
   }
 }

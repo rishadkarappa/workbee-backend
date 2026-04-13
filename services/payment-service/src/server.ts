@@ -23,7 +23,7 @@ app.use(express.json());
 
 
 // ── Routes
-app.use("/payment", paymentRoutes);
+app.use("/", paymentRoutes);
 
 // ── Error handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
