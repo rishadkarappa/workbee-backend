@@ -1,13 +1,12 @@
--- ============================================================
 -- WorkBee Payment Service - PostgreSQL Schema (Razorpay version)
 -- Run this in pgAdmin Query Tool on your payment service DB
--- ============================================================
+
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- ============================================================
+
 -- WALLETS TABLE
--- ============================================================
+
 CREATE TABLE wallets (
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     owner_id        VARCHAR(255) NOT NULL,
@@ -21,9 +20,9 @@ CREATE TABLE wallets (
     UNIQUE (owner_id, role)
 );
 
--- ============================================================
+
 -- TRANSACTIONS TABLE
--- ============================================================
+
 CREATE TABLE transactions (
     id                    UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     wallet_id             UUID NOT NULL REFERENCES wallets(id) ON DELETE CASCADE,
@@ -43,9 +42,9 @@ CREATE TABLE transactions (
     created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- ============================================================
+
 -- PAYMENTS TABLE
--- ============================================================
+
 CREATE TABLE payments (
     id                    UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     work_id               VARCHAR(255) NOT NULL,
@@ -67,9 +66,9 @@ CREATE TABLE payments (
     updated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- ============================================================
+
 -- PLATFORM_EARNINGS TABLE
--- ============================================================
+
 CREATE TABLE platform_earnings (
     id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     payment_id     UUID NOT NULL REFERENCES payments(id) ON DELETE CASCADE,
@@ -79,9 +78,9 @@ CREATE TABLE platform_earnings (
     collected_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- ============================================================
+
 -- INDEXES
--- ============================================================
+
 CREATE INDEX idx_wallets_owner              ON wallets(owner_id, role);
 CREATE INDEX idx_transactions_wallet        ON transactions(wallet_id);
 CREATE INDEX idx_transactions_work          ON transactions(work_id);
@@ -90,9 +89,9 @@ CREATE INDEX idx_payments_user              ON payments(user_id);
 CREATE INDEX idx_payments_worker            ON payments(worker_id);
 CREATE INDEX idx_payments_razorpay_order    ON payments(razorpay_order_id);
 
--- ============================================================
+
 -- AUTO-UPDATE updated_at trigger
--- ============================================================
+
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN

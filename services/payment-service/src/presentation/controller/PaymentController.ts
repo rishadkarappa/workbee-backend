@@ -12,12 +12,12 @@ import { GetAdminPaymentsListUseCase } from "../../application/use-cases/GetAdmi
 @injectable()
 export class PaymentController {
   constructor(
-    @inject("CreateRazorpayOrderUseCase") private createOrderUseCase: CreateRazorpayOrderUseCase,
-    @inject("VerifyRazorpayPaymentUseCase") private verifyPaymentUseCase: VerifyRazorpayPaymentUseCase,
-    @inject("ScheduleWorkerPayoutUseCase") private schedulePayoutUseCase: ScheduleWorkerPayoutUseCase,
-    @inject("GetWalletUseCase") private getWalletUseCase: GetWalletUseCase,
-    @inject("GetAdminPaymentSummaryUseCase") private adminSummaryUseCase: GetAdminPaymentSummaryUseCase,
-    @inject("GetAdminPaymentsListUseCase") private adminPaymentsListUseCase: GetAdminPaymentsListUseCase,
+    @inject("CreateRazorpayOrderUseCase") private _createOrderUseCase: CreateRazorpayOrderUseCase,
+    @inject("VerifyRazorpayPaymentUseCase") private _verifyPaymentUseCase: VerifyRazorpayPaymentUseCase,
+    @inject("ScheduleWorkerPayoutUseCase") private _schedulePayoutUseCase: ScheduleWorkerPayoutUseCase,
+    @inject("GetWalletUseCase") private _getWalletUseCase: GetWalletUseCase,
+    @inject("GetAdminPaymentSummaryUseCase") private _adminSummaryUseCase: GetAdminPaymentSummaryUseCase,
+    @inject("GetAdminPaymentsListUseCase") private _adminPaymentsListUseCase: GetAdminPaymentsListUseCase,
   ) { }
 
   // POST /payment/create-order
@@ -38,7 +38,7 @@ export class PaymentController {
         return;
       }
 
-      const result = await this.createOrderUseCase.execute({
+      const result = await this._createOrderUseCase.execute({
         workId,
         userId,
         workerId,
@@ -79,7 +79,7 @@ export class PaymentController {
         return;
       }
 
-      const result = await this.verifyPaymentUseCase.execute({
+      const result = await this._verifyPaymentUseCase.execute({
         razorpayOrderId,
         razorpayPaymentId,
         razorpaySignature,
@@ -112,7 +112,7 @@ export class PaymentController {
       return;
     }
 
-    const result = await this.schedulePayoutUseCase.execute(workId);
+    const result = await this._schedulePayoutUseCase.execute(workId);
     if (result) {
       await scheduleWorkerPayout(result.paymentId);
       res.status(200).json({ success: true, message: "Payout scheduled in 1 hour" });
@@ -135,7 +135,7 @@ export class PaymentController {
         return;
       }
 
-      const data = await this.getWalletUseCase.execute(userId, userRole);
+      const data = await this._getWalletUseCase.execute(userId, userRole);
       res.status(200).json({ success: true, data });
     } catch (err) {
       next(err);
@@ -152,7 +152,7 @@ export class PaymentController {
         return;
       }
 
-      const data = await this.adminSummaryUseCase.execute();
+      const data = await this._adminSummaryUseCase.execute();
       res.status(200).json({ success: true, data });
     } catch (err) {
       next(err);
@@ -170,7 +170,7 @@ export class PaymentController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
 
-      const data = await this.adminPaymentsListUseCase.execute(page, limit);
+      const data = await this._adminPaymentsListUseCase.execute(page, limit);
       res.status(200).json({ success: true, data });
     } catch (err) {
       next(err);
