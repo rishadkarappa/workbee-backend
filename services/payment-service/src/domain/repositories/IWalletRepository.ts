@@ -1,6 +1,5 @@
 import { Wallet } from "../entities/Wallet";
  
-// ── IWalletRepository ─────────────────────────────────────────
 export interface IWalletRepository {
   findByOwner(ownerId: string, role: string): Promise<Wallet | null>;
   findOrCreate(ownerId: string, role: string): Promise<Wallet>;

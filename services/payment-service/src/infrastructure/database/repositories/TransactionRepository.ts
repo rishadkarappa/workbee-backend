@@ -45,7 +45,7 @@ export class TransactionRepository implements ITransactionRepository {
         return this.mapTx(rows[0]);
     }
 
-    // ✅ NEW: Update transaction status (e.g., hold → completed after payout)
+    // Update transaction status (e.g., hold → completed after payout)
     async updateStatus(id: string, status: string): Promise<Transaction> {
         const { rows } = await this.db.query(
             `UPDATE transactions SET status = $2 WHERE id = $1 RETURNING *`,

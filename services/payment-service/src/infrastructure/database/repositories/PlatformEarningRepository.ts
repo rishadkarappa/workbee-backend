@@ -7,6 +7,7 @@ import {
 import { PlatformEarning } from "../../../domain/entities/Platform";
 
 // Platform Earning Repository
+
 @injectable()
 export class PlatformEarningRepository implements IPlatformEarningRepository {
   private get db() { return getPool(); }

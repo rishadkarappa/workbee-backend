@@ -3,7 +3,6 @@ import { getPool } from "../../config/connectDB";
 import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
 import { Wallet } from "../../../domain/entities/Wallet";
 
-// ── Wallet Repository ─────────────────────────────────────────
 @injectable()
 export class WalletRepository implements IWalletRepository {
   private get db() { return getPool(); }
