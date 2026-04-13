@@ -13,11 +13,11 @@ export class PlatformEarningRepository implements IPlatformEarningRepository {
 
   private mapEarning(row: any): PlatformEarning {
     return {
-      id:          row.id,
-      paymentId:   row.payment_id,
-      workId:      row.work_id,
-      feeAmount:   parseFloat(row.fee_amount),
-      currency:    row.currency,
+      id: row.id,
+      paymentId: row.payment_id,
+      workId: row.work_id,
+      feeAmount: parseFloat(row.fee_amount),
+      currency: row.currency,
       collectedAt: row.collected_at,
     };
   }
@@ -32,10 +32,10 @@ export class PlatformEarningRepository implements IPlatformEarningRepository {
   }
 
   async getAdminSummary(): Promise<{
-    totalRevenue:      number;
+    totalRevenue: number;
     totalPlatformFees: number;
-    pendingPayouts:    number;
-    refundedAmount:    number;
+    pendingPayouts: number;
+    refundedAmount: number;
   }> {
     const { rows } = await this.db.query(`
       SELECT
@@ -47,10 +47,10 @@ export class PlatformEarningRepository implements IPlatformEarningRepository {
     `);
     const r = rows[0];
     return {
-      totalRevenue:      parseFloat(r.total_revenue),
+      totalRevenue: parseFloat(r.total_revenue),
       totalPlatformFees: parseFloat(r.total_platform_fees),
-      pendingPayouts:    parseFloat(r.pending_payouts),
-      refundedAmount:    parseFloat(r.refunded_amount),
+      pendingPayouts: parseFloat(r.pending_payouts),
+      refundedAmount: parseFloat(r.refunded_amount),
     };
   }
 

@@ -33,3 +33,4 @@ export const connectDB = async (): Promise<void> => {
     throw error;
   }
 };
+

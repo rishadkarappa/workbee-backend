@@ -9,22 +9,22 @@ export class PaymentRepository implements IPaymentRepository {
 
     private mapPayment(row: any): Payment {
         return {
-            id:                 row.id,
-            workId:             row.work_id,
-            userId:             row.user_id,
-            workerId:           row.worker_id,
-            razorpayOrderId:    row.razorpay_order_id,    // renamed
-            razorpayPaymentId:  row.razorpay_payment_id,  // renamed
-            amount:             parseFloat(row.amount),
-            platformFee:        parseFloat(row.platform_fee),
-            workerPayout:       parseFloat(row.worker_payout),
-            currency:           row.currency,
-            status:             row.status,
-            workCompletedAt:    row.work_completed_at,
-            payoutScheduledAt:  row.payout_scheduled_at,
-            payoutCompletedAt:  row.payout_completed_at,
-            createdAt:          row.created_at,
-            updatedAt:          row.updated_at,
+            id: row.id,
+            workId: row.work_id,
+            userId: row.user_id,
+            workerId: row.worker_id,
+            razorpayOrderId: row.razorpay_order_id,
+            razorpayPaymentId: row.razorpay_payment_id,
+            amount: parseFloat(row.amount),
+            platformFee: parseFloat(row.platform_fee),
+            workerPayout: parseFloat(row.worker_payout),
+            currency: row.currency,
+            status: row.status,
+            workCompletedAt: row.work_completed_at,
+            payoutScheduledAt: row.payout_scheduled_at,
+            payoutCompletedAt: row.payout_completed_at,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
         };
     }
 
@@ -39,7 +39,7 @@ export class PaymentRepository implements IPaymentRepository {
                 data.workId,
                 data.userId,
                 data.workerId,
-                data.razorpayOrderId   ?? null,
+                data.razorpayOrderId ?? null,
                 data.razorpayPaymentId ?? null,
                 data.amount,
                 data.platformFee,
@@ -87,7 +87,7 @@ export class PaymentRepository implements IPaymentRepository {
 
     async updateStatus(id: string, status: string, extra: Partial<Payment> = {}): Promise<Payment> {
         const setClauses: string[] = ["status = $2", "updated_at = NOW()"];
-        const values: any[]        = [id, status];
+        const values: any[] = [id, status];
         let idx = 3;
 
         if (extra.razorpayPaymentId) {

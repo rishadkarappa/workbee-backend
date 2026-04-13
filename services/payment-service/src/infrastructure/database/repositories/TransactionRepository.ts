@@ -9,17 +9,17 @@ export class TransactionRepository implements ITransactionRepository {
 
     private mapTx(row: any): Transaction {
         return {
-            id:                 row.id,
-            walletId:           row.wallet_id,
-            workId:             row.work_id,
-            razorpayPaymentId:  row.razorpay_payment_id,
-            type:               row.type,
-            amount:             parseFloat(row.amount),
-            currency:           row.currency,
-            status:             row.status,
-            description:        row.description,
-            metadata:           row.metadata,
-            createdAt:          row.created_at,
+            id: row.id,
+            walletId: row.wallet_id,
+            workId: row.work_id,
+            razorpayPaymentId: row.razorpay_payment_id,
+            type: row.type,
+            amount: parseFloat(row.amount),
+            currency: row.currency,
+            status: row.status,
+            description: row.description,
+            metadata: row.metadata,
+            createdAt: row.created_at,
         };
     }
 
@@ -32,13 +32,13 @@ export class TransactionRepository implements ITransactionRepository {
              RETURNING *`,
             [
                 data.walletId,
-                data.workId            ?? null,
+                data.workId ?? null,
                 data.razorpayPaymentId ?? null,
                 data.type,
                 data.amount,
                 data.currency,
                 data.status,
-                data.description       ?? null,
+                data.description ?? null,
                 data.metadata ? JSON.stringify(data.metadata) : null,
             ]
         );

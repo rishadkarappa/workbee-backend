@@ -10,15 +10,15 @@ export class WalletRepository implements IWalletRepository {
 
   private mapWallet(row: any): Wallet {
     return {
-      id:             row.id,
-      ownerId:        row.owner_id,
-      role:           row.role,
-      balance:        parseFloat(row.balance),
+      id: row.id,
+      ownerId: row.owner_id,
+      role: row.role,
+      balance: parseFloat(row.balance),
       pendingBalance: parseFloat(row.pending_balance),
-      totalEarned:    parseFloat(row.total_earned),
-      totalSpent:     parseFloat(row.total_spent),
-      createdAt:      row.created_at,
-      updatedAt:      row.updated_at,
+      totalEarned: parseFloat(row.total_earned),
+      totalSpent: parseFloat(row.total_spent),
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
     };
   }
 

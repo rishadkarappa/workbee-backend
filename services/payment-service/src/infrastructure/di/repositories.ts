@@ -5,10 +5,10 @@ import { TransactionRepository } from '../database/repositories/TransactionRepos
 import { PaymentRepository } from '../database/repositories/PaymentRepository';
 import { PlatformEarningRepository } from '../database/repositories/PlatformEarningRepository';
 
-// ── DI Container registrations ────────────────────────────────
-container.register("WalletRepository",          { useClass: WalletRepository });
-container.register("TransactionRepository",     { useClass: TransactionRepository });
-container.register("PaymentRepository",         { useClass: PaymentRepository });
+// ── DI Container registrations
+container.register("WalletRepository", { useClass: WalletRepository });
+container.register("TransactionRepository", { useClass: TransactionRepository });
+container.register("PaymentRepository", { useClass: PaymentRepository });
 container.register("PlatformEarningRepository", { useClass: PlatformEarningRepository });
 
 
