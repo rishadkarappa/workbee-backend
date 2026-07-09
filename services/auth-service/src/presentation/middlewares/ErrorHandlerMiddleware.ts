@@ -26,7 +26,6 @@ export const errorHandler = (
         );
         return;
     }
-
     // Handle unexpected errors
     console.error('Unexpected Error:', err);
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(

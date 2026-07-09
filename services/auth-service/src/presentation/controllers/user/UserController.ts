@@ -130,7 +130,7 @@ export class UserController implements IUserController {
       const { email } = req.body;
 
       const result = await this._forgotPasswordUseCase.execute(email)
-      console.log('rrrrrrr', result)
+      // console.log('rrrrrrr', result)
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({ result }, ResponseMessage.USER.SENT_RESET_LINK, HttpStatus.OK))
@@ -144,8 +144,8 @@ export class UserController implements IUserController {
       console.log("bodycontets", req.body)
       const { token } = req.params
       const { password } = req.body
-      console.log(password)
-      console.log('passssss', req.body.passoword)
+      // console.log(password)
+      // console.log('passssss', req.body.passoword)
 
       const result = await this._resetPasswordUseCase.execute(token, password)
       res

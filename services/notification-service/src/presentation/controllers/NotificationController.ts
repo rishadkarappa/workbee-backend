@@ -14,17 +14,13 @@ import { GetUnreadCountDTO } from "../../application/dtos/GetUnreadCountDTO";
 @injectable()
 export class NotificationController {
   constructor(
-    @inject("GetUserNotificationsUseCase")
-    private _getUserNotificationsUseCase: IGetUserNotificationsUseCase,
+    @inject("GetUserNotificationsUseCase") private _getUserNotificationsUseCase: IGetUserNotificationsUseCase,
 
-    @inject("MarkNotificationAsReadUseCase")
-    private _markNotificationAsReadUseCase: IMarkNotificationAsReadUseCase,
+    @inject("MarkNotificationAsReadUseCase") private _markNotificationAsReadUseCase: IMarkNotificationAsReadUseCase,
 
-    @inject("MarkAllAsReadUseCase")
-    private _markAllAsReadUseCase: IMarkAllAsReadUseCase,
+    @inject("MarkAllAsReadUseCase") private _markAllAsReadUseCase: IMarkAllAsReadUseCase,
 
-    @inject("GetUnreadCountUseCase")
-    private _getUnreadCountUseCase: IGetUnreadCountUseCase
+    @inject("GetUnreadCountUseCase") private _getUnreadCountUseCase: IGetUnreadCountUseCase
   ) {}
 
   async getNotifications(req: Request, res: Response) {
