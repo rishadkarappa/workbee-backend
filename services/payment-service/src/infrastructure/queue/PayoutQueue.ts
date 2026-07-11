@@ -9,7 +9,7 @@ const REDIS_CONNECTION = {
 };
 
 const QUEUE_NAME = "worker-payout";
-const DELAY_MS   = 2 * 60 * 1000; // 1 hour
+const DELAY_MS   = 60 * 60 * 1000; // change later
 
 let payoutQueue: Queue | null = null;
 let payoutWorker: Worker | null = null;

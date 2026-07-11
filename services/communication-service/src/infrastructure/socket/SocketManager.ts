@@ -13,7 +13,7 @@ interface AuthenticatedSocket extends Socket {
   userRole?: 'user' | 'worker' | 'admin';
 }
 
-// ─ Payload shape the client sends via send_message
+// Payload shape the client sends via send_message
 interface SendMessagePayload {
   chatId:       string;
   content:      string;
@@ -23,7 +23,7 @@ interface SendMessagePayload {
   mediaPublicId?: string;
 }
 
-// ─ New payload shapes for work confirmation flow
+// New payload shapes for work confirmation flow
 interface AskForConfirmPayload {
   chatId:     string;
   workId:     string;

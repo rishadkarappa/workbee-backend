@@ -12,11 +12,11 @@ import { MarkChatAsReadUseCase } from '../../application/use-cases/chat/MarkChat
 @injectable()
 export class ChatController implements IChatController {
   constructor(
-    @inject("CreateChatUseCase")     private _createChatUseCase: ICreateChatUseCase,
-    @inject("GetUserChatsUseCase")   private _getUserChatsUseCase: IGetUserChatsUseCase,
-    @inject("GetMessagesUseCase")    private _getMessagesUseCase: IGetMessagesUseCase,
+    @inject("CreateChatUseCase") private _createChatUseCase: ICreateChatUseCase,
+    @inject("GetUserChatsUseCase") private _getUserChatsUseCase: IGetUserChatsUseCase,
+    @inject("GetMessagesUseCase") private _getMessagesUseCase: IGetMessagesUseCase,
     @inject("MarkChatAsReadUseCase") private _markChatAsReadUseCase: MarkChatAsReadUseCase
-  ) {}
+  ) { }
 
   async createChat(req: Request, res: Response) {
     try {
@@ -58,7 +58,7 @@ export class ChatController implements IChatController {
 
       const messages = await this._getMessagesUseCase.execute({
         chatId,
-        limit:  limit  ? parseInt(limit  as string, 10) : undefined,
+        limit: limit ? parseInt(limit as string, 10) : undefined,
         offset: offset ? parseInt(offset as string, 10) : undefined
       });
 
