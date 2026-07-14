@@ -315,50 +315,50 @@ export class WorkController implements IWorkController {
     // inter ser comm with chat
 
     async getWorkerProfile(req: Request, res: Response) {
-    try {
-      const { workerId } = req.params;
-      const profile = await this._getWorkerProfileUseCase.execute(workerId);
-      res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'Worker profile retrieved'));
-    } catch (error: any) {
-      res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
+        try {
+            const { workerId } = req.params;
+            const profile = await this._getWorkerProfileUseCase.execute({workerId});
+            res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'Worker profile retrieved'));
+        } catch (error: any) {
+            res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
+        }
     }
-  }
 
-  async getWorkerProfilesBatch(req: Request, res: Response) {
-    try {
-      const { workerIds } = req.body;
-      
-      if (!Array.isArray(workerIds)) {
-        return res.status(HttpStatus.BAD_REQUEST).json(
-          ResponseHelper.error('workerIds must be an array', HttpStatus.BAD_REQUEST)
-        );
-      }
+    async getWorkerProfilesBatch(req: Request, res: Response) {
+        try {
+            const { workerIds } = req.body;
 
-      const profiles = await this._getWorkerProfilesBatchUseCase.execute(workerIds);
-      res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'Worker profiles retrieved'));
-    } catch (error: any) {
-      res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+            if (!Array.isArray(workerIds)) {
+                return res.status(HttpStatus.BAD_REQUEST).json(
+                    ResponseHelper.error('workerIds must be an array', HttpStatus.BAD_REQUEST)
+                );
+            }
+
+            const profiles = await this._getWorkerProfilesBatchUseCase.execute(workerIds);
+            res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'Worker profiles retrieved'));
+        } catch (error: any) {
+            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+        }
     }
-  }
 
-  async getWorkerAssignedWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const workerId = req.headers['x-user-id'] as string;
- 
-      if (!workerId) {
-        res.status(HttpStatus.UNAUTHORIZED).json(
-          ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
-        );
-        return;
-      }
- 
-      const result = await this._getWorkerAssignedWorksUseCase.execute(workerId);
-      res.status(HttpStatus.OK).json(
-        ResponseHelper.success(result, "Worker assigned works retrieved successfully")
-      );
-    } catch (err) {
-      next(err);
+    async getWorkerAssignedWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workerId = req.headers['x-user-id'] as string;
+
+            if (!workerId) {
+                res.status(HttpStatus.UNAUTHORIZED).json(
+                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+                );
+                return;
+            }
+
+            const result = await this._getWorkerAssignedWorksUseCase.execute(workerId);
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(result, "Worker assigned works retrieved successfully")
+            );
+        } catch (err) {
+            next(err);
+        }
     }
-  }
-  
+
 }

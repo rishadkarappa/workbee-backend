@@ -41,3 +41,17 @@ export interface WorkerApproveDto {
     status: "approved" | "rejected";
     rejectionReason?: string;
 }
+
+
+/** get worker prife req and res dtos */
+export interface GetWorkerProfileDto {
+    workerId:string
+}
+
+export interface GetWorkerProfileReponseDto {
+    id?:string;
+    name:string;
+    email:string;
+    role : 'worker'| 'admin'|'user';
+    createdAt?:Date;
+}
