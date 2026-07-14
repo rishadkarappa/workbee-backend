@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
 
+import { IPaymentController } from "../ports/IPaymentController";
+
 import { CreateRazorpayOrderUseCase } from "../../application/use-cases/CreateRazorpayOrderUseCase";
 import { VerifyRazorpayPaymentUseCase } from "../../application/use-cases/VerifyRazorpayPaymentUseCase";
 import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/ScheduleWorkerPayoutUseCase";
@@ -10,7 +12,7 @@ import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
 import { GetAdminPaymentsListUseCase } from "../../application/use-cases/GetAdminPaymentsListUseCase";
 
 @injectable()
-export class PaymentController {
+export class PaymentController implements IPaymentController {
   constructor(
     @inject("CreateRazorpayOrderUseCase") private _createOrderUseCase: CreateRazorpayOrderUseCase,
     @inject("VerifyRazorpayPaymentUseCase") private _verifyPaymentUseCase: VerifyRazorpayPaymentUseCase,
