@@ -20,9 +20,9 @@ import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorker
 import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseCase";
 import { IUpdateWorkUseCase } from "../../application/ports/user/IUpdateWorkUseCase";
 import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWorkUseCase";
+import { IGetWorkerProfileUseCase } from "../../application/ports/worker/IGetWorkerProfileUseCase";
 
-import { GetWorkerProfileUseCase } from "../../application/use-case/isc/GetWorkerProfileUseCase";
-import { GetWorkerProfilesBatchUseCase } from "../../application/use-case/isc/GetWorkerProfilesBatchUseCase";
+import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetWorkerProfilesBatchUseCase";
 import { GetWorkerAssignedWorksUseCase } from "../../application/use-case/worker/GetWorkerAssignedWorksUseCase";
 
 @injectable()
@@ -39,8 +39,8 @@ export class WorkController implements IWorkController {
         @inject("GetMyWorksUseCase") private _getMyWorksUseCase: IGetMyWorksUseCase,
         @inject("UpdateWorkUseCase") private _updateWorkUseCase: IUpdateWorkUseCase,
         @inject("DeleteMyWorkUseCase") private _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
-        @inject("GetWorkerProfileUseCase") private _getWorkerProfileUseCase: GetWorkerProfileUseCase,
-        @inject("GetWorkerProfilesBatchUseCase") private _getWorkerProfilesBatchUseCase: GetWorkerProfilesBatchUseCase,
+        @inject("GetWorkerProfileUseCase") private _getWorkerProfileUseCase: IGetWorkerProfileUseCase,
+        @inject("GetWorkerProfilesBatchUseCase") private _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
         @inject("GetWorkerAssignedWorksUseCase") private _getWorkerAssignedWorksUseCase: GetWorkerAssignedWorksUseCase,
     ) { }
 
@@ -312,12 +312,17 @@ export class WorkController implements IWorkController {
     }
 
 
-    // inter ser comm with chat
+    /** ==========================================================
+     * inter ser comm with chat
+     * ===========================================================
+     * @param req 
+     * @param res 
+     */
 
     async getWorkerProfile(req: Request, res: Response) {
         try {
             const { workerId } = req.params;
-            const profile = await this._getWorkerProfileUseCase.execute({workerId});
+            const profile = await this._getWorkerProfileUseCase.execute({ workerId });
             res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'Worker profile retrieved'));
         } catch (error: any) {
             res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
@@ -334,7 +339,7 @@ export class WorkController implements IWorkController {
                 );
             }
 
-            const profiles = await this._getWorkerProfilesBatchUseCase.execute(workerIds);
+            const profiles = await this._getWorkerProfilesBatchUseCase.execute({ workerIds });
             res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'Worker profiles retrieved'));
         } catch (error: any) {
             res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
