@@ -1,9 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 import { IWorkerRepository } from '../../../domain/repositories/IWorkerRepository';
 import { GetWorkerProfileDto, GetWorkerProfileReponseDto } from '../../dtos/worker/WorkerDTO';
+import { IGetWorkerProfileUseCase } from '../../ports/worker/IGetWorkerProfileUseCase';
 
 @injectable()
-export class GetWorkerProfileUseCase {
+export class GetWorkerProfileUseCase implements IGetWorkerProfileUseCase{
   constructor(
     @inject("WorkerRepository") private workerRepository: IWorkerRepository
   ) { }

@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IWorkerRepository } from '../../../domain/repositories/IWorkerRepository';
 import { IGetWorkerProfileBatchUseCase } from '../../ports/isc/IGetWorkerProfilesBatchUseCase';
-import { GetWorkerProfilesBatchDto, GetWorkerProfilesBatchResponseDto } from '../../dtos/worker/GetWorkerProfilesBatchDtos';
+import { GetWorkerProfilesBatchDto, GetWorkerProfilesBatchResponseDto } from '../../dtos/worker/GetWorkerProfilesBatch.dtos';
 
 @injectable()
 export class GetWorkerProfilesBatchUseCase implements IGetWorkerProfileBatchUseCase{

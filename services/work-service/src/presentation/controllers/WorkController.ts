@@ -21,9 +21,8 @@ import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseC
 import { IUpdateWorkUseCase } from "../../application/ports/user/IUpdateWorkUseCase";
 import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWorkUseCase";
 import { IGetWorkerProfileUseCase } from "../../application/ports/worker/IGetWorkerProfileUseCase";
-
 import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetWorkerProfilesBatchUseCase";
-import { GetWorkerAssignedWorksUseCase } from "../../application/use-case/worker/GetWorkerAssignedWorksUseCase";
+import { IGetWorkerAssignedWorksUseCase } from "../../application/ports/isc/IGetWorkerAssignedWorksUseCase";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -41,7 +40,7 @@ export class WorkController implements IWorkController {
         @inject("DeleteMyWorkUseCase") private _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
         @inject("GetWorkerProfileUseCase") private _getWorkerProfileUseCase: IGetWorkerProfileUseCase,
         @inject("GetWorkerProfilesBatchUseCase") private _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
-        @inject("GetWorkerAssignedWorksUseCase") private _getWorkerAssignedWorksUseCase: GetWorkerAssignedWorksUseCase,
+        @inject("GetWorkerAssignedWorksUseCase") private _getWorkerAssignedWorksUseCase: IGetWorkerAssignedWorksUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -357,7 +356,7 @@ export class WorkController implements IWorkController {
                 return;
             }
 
-            const result = await this._getWorkerAssignedWorksUseCase.execute(workerId);
+            const result = await this._getWorkerAssignedWorksUseCase.execute({workerId});
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(result, "Worker assigned works retrieved successfully")
             );
