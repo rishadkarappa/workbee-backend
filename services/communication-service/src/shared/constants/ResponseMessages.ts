@@ -22,10 +22,10 @@ export const ResponseMessage = {
         GET_USERS:"get suers successfully"
     },
 
-    OTP: {
-        SENT: "OTP sent successfully",
-        EXPIRED: "OTP expired",
-        VERIFIED:"OTP verified successfully",
-        INVALID: "Invalid OTP",
+    CHAT: {
+        CHAT_CREATED: 'Chat created/retrieved successfully',
+        CHAT_RETRIEVED:'Chats retrieved successfully',
+        MESSAGE_RETREIVED:"Messages retrieved successfully",
+        MARKED_AS_READ:'Chat marked as read',
     },
 }

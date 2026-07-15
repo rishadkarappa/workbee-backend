@@ -8,6 +8,7 @@ import { ICreateChatUseCase } from '../../application/ports/chat/ICreateChatUseC
 import { IGetUserChatsUseCase } from '../../application/ports/chat/IGetUserChatsUseCase';
 import { IGetMessagesUseCase } from '../../application/ports/chat/IGetMessagesUseCase';
 import { MarkChatAsReadUseCase } from '../../application/use-cases/chat/MarkChatAsReadUseCase';
+import { ResponseMessage } from '../../shared/constants/ResponseMessages';
 
 @injectable()
 export class ChatController implements IChatController {
@@ -22,7 +23,7 @@ export class ChatController implements IChatController {
     try {
       const { userId, workerId } = req.body;
       const chat = await this._createChatUseCase.execute({ userId, workerId });
-      res.status(HttpStatus.OK).json(ResponseHelper.success(chat, 'Chat created/retrieved successfully'));
+      res.status(HttpStatus.OK).json(ResponseHelper.success(chat, ResponseMessage.CHAT.CHAT_CREATED));
     } catch (error: any) {
       console.error('Create chat error:', error);
       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
@@ -44,7 +45,7 @@ export class ChatController implements IChatController {
         role: user.role
       });
 
-      res.status(HttpStatus.OK).json(ResponseHelper.success(chats, 'Chats retrieved successfully'));
+      res.status(HttpStatus.OK).json(ResponseHelper.success(chats, ResponseMessage.CHAT.CHAT_RETRIEVED));
     } catch (error: any) {
       console.error('Get user chats error:', error.message);
       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
@@ -62,7 +63,7 @@ export class ChatController implements IChatController {
         offset: offset ? parseInt(offset as string, 10) : undefined
       });
 
-      res.status(HttpStatus.OK).json(ResponseHelper.success(messages, 'Messages retrieved successfully'));
+      res.status(HttpStatus.OK).json(ResponseHelper.success(messages, ResponseMessage.CHAT.MESSAGE_RETREIVED));
     } catch (error: any) {
       console.error('Get messages error:', error);
       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
@@ -85,7 +86,7 @@ export class ChatController implements IChatController {
         role: user.role
       });
 
-      res.status(HttpStatus.OK).json(ResponseHelper.success(null, 'Chat marked as read'));
+      res.status(HttpStatus.OK).json(ResponseHelper.success(null, ResponseMessage.CHAT.MARKED_AS_READ));
     } catch (error: any) {
       console.error('Mark chat as read error:', error);
       res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
