@@ -61,7 +61,7 @@ export class AdminController implements IAdminContoller {
         try {
             const userId = req.params.id
             const result = await this._blockUserUseCase.execute(userId)
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "ResponseMessage.ADMIN.BLOCKED_USER"))
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.ADMIN_BLOCKED_USER))
         } catch (error) {
             next(error)
         }

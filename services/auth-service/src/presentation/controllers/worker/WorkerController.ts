@@ -7,6 +7,7 @@ import { WorkerLoginRequestDTO } from "../../../application/dtos/worker/LoginWor
 import { IWorkerLoginUseCase } from "../../../application/ports/worker/IWorkerLoginUseCase";
 
 import { IWorkerController } from "../../ports/IWorkerController";
+import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
 @injectable()
 export class WorkerController implements IWorkerController{
@@ -22,7 +23,7 @@ export class WorkerController implements IWorkerController{
             const worker = await this._workerLoginUseCase.execute(dto);
 
             res.status(HttpStatus.OK)
-                .json(ResponseHelper.success(worker, "Worker logged in successfully"));
+                .json(ResponseHelper.success(worker, ResponseMessage.AUTH.WORKER_LOGGED));
         } catch (err: any) {
             next(err)
         }

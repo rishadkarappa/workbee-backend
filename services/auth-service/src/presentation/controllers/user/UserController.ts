@@ -24,6 +24,7 @@ import { IResendOtpUseCase } from "../../../application/ports/user/IResendOtpUse
 import { ResendOtpRequestDTO } from "../../../application/dtos/user/ResendOtpDTO";
 import { GetUserProfileUseCase } from "../../../application/use-cases/isc/chat/GetUserProfileUseCase";
 import { GetUserProfilesBatchUseCase } from "../../../application/use-cases/isc/chat/GetUserProfilesBatchUseCase";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class UserController implements IUserController {
@@ -77,7 +78,7 @@ export class UserController implements IUserController {
 
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success(result, "ResponseMessage.OTP.RESENT", HttpStatus.OK));
+        .json(ResponseHelper.success(result, ResponseMessage.OTP.OTP_RESENT, HttpStatus.OK));
     } catch (err) {
       next(err)
     }
@@ -126,7 +127,7 @@ export class UserController implements IUserController {
 
   async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log('hited contoller forgot passs')
+      // console.log('hited contoller forgot passs')
       const { email } = req.body;
 
       const result = await this._forgotPasswordUseCase.execute(email)
@@ -163,7 +164,7 @@ export class UserController implements IUserController {
       if (!dto.refreshToken) {
         res
           .status(HttpStatus.BAD_REQUEST)
-          .json(ResponseHelper.error("Refresh token is required", HttpStatus.BAD_REQUEST));
+          .json(ResponseHelper.error(ResponseMessage.TOKEN.REFRESH_TOKEN_IS_REQUIRED, HttpStatus.BAD_REQUEST));
         return;
       }
 
@@ -171,9 +172,8 @@ export class UserController implements IUserController {
 
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success(result, "Token refreshed successfully", HttpStatus.OK));
+        .json(ResponseHelper.success(result, ResponseMessage.TOKEN.TOKEN_REFRESHED, HttpStatus.OK));
     } catch (error) {
-      console.error("RefreshTokenController Error:", error);
       next(error);
     }
   }
@@ -186,7 +186,7 @@ export class UserController implements IUserController {
       if (!userId) {
         res
           .status(HttpStatus.UNAUTHORIZED)
-          .json(ResponseHelper.error("User not authenticated", HttpStatus.UNAUTHORIZED));
+          .json(ResponseHelper.error(ResponseMessage.AUTH.USER_NOT_AUTHENTICATED, HttpStatus.UNAUTHORIZED));
         return;
       }
 
@@ -194,7 +194,7 @@ export class UserController implements IUserController {
 
       res
         .status(HttpStatus.OK)
-        .json(ResponseHelper.success(null, "Logged out successfully", HttpStatus.OK));
+        .json(ResponseHelper.success(null, ResponseMessage.GENERAL.LOGED_OUT, HttpStatus.OK));
     } catch (error) {
       next(error);
     }
@@ -212,7 +212,7 @@ export class UserController implements IUserController {
     try {
       const { userId } = req.params;
       const profile = await this._getUserProfileUseCase.execute(userId);
-      res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'User profile retrieved'));
+      res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.USER.USER_PROFILE_RETRIEVED));
     } catch (error: any) {
      next(error);
     }
@@ -224,12 +224,12 @@ export class UserController implements IUserController {
       
       if (!Array.isArray(userIds)) {
         return res.status(HttpStatus.BAD_REQUEST).json(
-          ResponseHelper.error('userIds must be an array', HttpStatus.BAD_REQUEST)
+          ResponseHelper.error(ErrorMessages.AUTH.USERIDS_MUST_BE_ARRAY, HttpStatus.BAD_REQUEST)
         );
       }
 
       const profiles = await this._getUserProfilesBatchUseCase.execute(userIds);
-      res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'User profiles retrieved'));
+      res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, ResponseMessage.USER.USER_PROFILES_ARE_RETRIEVED));
     } catch (error: any) {
      next(error);
     }
