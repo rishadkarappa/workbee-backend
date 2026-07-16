@@ -25,7 +25,12 @@ export const ErrorMessages = {
     GENERAL:{
         SERVER_ERROR:"Something went wrong, Please try again later",
         BAD_REQUEST:"Invalid request",
-        NOT_FOUND_OTP:'user not found when sent otp'
+        NOT_FOUND_OTP:'user not found when sent otp',
+        INTERNAL_SERVER_ERROR:"Internal server error"
+    },
+
+    WORKER: {
+        WORKER_ID_MUST_BE_ARRAY:'workerIds must be an array'
     }
 
 

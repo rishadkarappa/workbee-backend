@@ -23,6 +23,7 @@ import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWork
 import { IGetWorkerProfileUseCase } from "../../application/ports/worker/IGetWorkerProfileUseCase";
 import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetWorkerProfilesBatchUseCase";
 import { IGetWorkerAssignedWorksUseCase } from "../../application/ports/isc/IGetWorkerAssignedWorksUseCase";
+import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -93,7 +94,7 @@ export class WorkController implements IWorkController {
             const result = await this._workerApproveUseCase.execute(dto);
             res
                 .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result, "Worker status updated successfully"));
+                .json(ResponseHelper.success(result, ResponseMessage.WORK.WORK_STATUS_UPDATED));
         } catch (err) {
             next(err);
         }
@@ -163,16 +164,9 @@ export class WorkController implements IWorkController {
                 termsAccepted
             };
 
-            console.log("Final WorkData", JSON.stringify(dto, null, 2));
-            console.log("calling PostWorkUseCase;;;;");
-
             const result = await this._postWorkUseCase.execute(dto);
 
-            console.log("work posted successfully=", result);
-
-            res
-                .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result, "Task booked successfully"));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.WORK.WORK_BOOKED));
         } catch (err) {
             next(err);
         }
@@ -228,7 +222,7 @@ export class WorkController implements IWorkController {
         try {
             const workerId = req.params.id;
             const result = await this._blockWorkerUseCase.execute(workerId);
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Blocked worker"));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.AUTH.BLOCKED_WORKER));
         } catch (err) {
             next(err);
         }
@@ -240,14 +234,14 @@ export class WorkController implements IWorkController {
 
             if (!userId) {
                 res.status(HttpStatus.UNAUTHORIZED).json(
-                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+                    ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
                 );
                 return;
             }
 
             const result = await this._getMyWorksUseCase.execute(userId);
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(result, "Successfully retrieved user works")
+                ResponseHelper.success(result, ResponseMessage.WORK.RETRIEVED_WORKS)
             );
         } catch (err) {
             next(err);
@@ -262,7 +256,7 @@ export class WorkController implements IWorkController {
 
             if (!userId) {
                 res.status(HttpStatus.UNAUTHORIZED).json(
-                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+                    ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
                 );
                 return;
             }
@@ -276,7 +270,7 @@ export class WorkController implements IWorkController {
             const updatedWork = await this._updateWorkUseCase.execute(dto);
 
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(updatedWork, "Work updated successfully")
+                ResponseHelper.success(updatedWork, ResponseMessage.WORK.WORK_UPDATED)
             );
         } catch (err) {
             next(err);
@@ -289,7 +283,7 @@ export class WorkController implements IWorkController {
 
             if (!userId) {
                 res.status(HttpStatus.UNAUTHORIZED).json(
-                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+                    ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
                 );
                 return;
             }
@@ -302,7 +296,7 @@ export class WorkController implements IWorkController {
             const result = await this._deleteMyWorkUseCase.execute(dto);
 
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(result, "Work deleted successfully")
+                ResponseHelper.success(result, ResponseMessage.WORK.WORK_DELETED)
             );
 
         } catch (err) {
@@ -314,34 +308,33 @@ export class WorkController implements IWorkController {
     /** ==========================================================
      * inter ser comm with chat
      * ===========================================================
-     * @param req 
-     * @param res 
      */
 
-    async getWorkerProfile(req: Request, res: Response) {
+    async getWorkerProfile(req: Request, res: Response, next:NextFunction):Promise<void> {
         try {
             const { workerId } = req.params;
             const profile = await this._getWorkerProfileUseCase.execute({ workerId });
-            res.status(HttpStatus.OK).json(ResponseHelper.success(profile, 'Worker profile retrieved'));
-        } catch (error: any) {
-            res.status(HttpStatus.NOT_FOUND).json(ResponseHelper.error(error.message, HttpStatus.NOT_FOUND));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.WORKER.WORKER_PROFILE_RETRIEVED));
+        } catch (error) {
+            next(error)
         }
     }
 
-    async getWorkerProfilesBatch(req: Request, res: Response) {
+    async getWorkerProfilesBatch(req: Request, res: Response, next:NextFunction):Promise<void> {
         try {
             const { workerIds } = req.body;
 
             if (!Array.isArray(workerIds)) {
-                return res.status(HttpStatus.BAD_REQUEST).json(
-                    ResponseHelper.error('workerIds must be an array', HttpStatus.BAD_REQUEST)
+                res.status(HttpStatus.BAD_REQUEST).json(
+                    ResponseHelper.error(ErrorMessages.WORKER.WORKER_ID_MUST_BE_ARRAY, HttpStatus.BAD_REQUEST)
                 );
+                return;
             }
 
             const profiles = await this._getWorkerProfilesBatchUseCase.execute({ workerIds });
-            res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, 'Worker profiles retrieved'));
-        } catch (error: any) {
-            res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, ResponseMessage.WORKER.WORKER_PROFILE_RETRIEVED_BATCH));
+        } catch (error) {
+            next(error)
         }
     }
 
@@ -351,14 +344,14 @@ export class WorkController implements IWorkController {
 
             if (!workerId) {
                 res.status(HttpStatus.UNAUTHORIZED).json(
-                    ResponseHelper.error("Unauthorized", HttpStatus.UNAUTHORIZED)
+                    ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
                 );
                 return;
             }
 
             const result = await this._getWorkerAssignedWorksUseCase.execute({workerId});
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(result, "Worker assigned works retrieved successfully")
+                ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_ASSIGNED_WORK_RETRIEVED)
             );
         } catch (err) {
             next(err);
