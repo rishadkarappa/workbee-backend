@@ -15,11 +15,7 @@ export class ResponseHelper{
     }
 
     // if res was fail
-    static error(
-        message:string,
-        statusCode:number = HttpStatus.INTERNAL_SERVER_ERROR,
-        errors?:any
-    ):ApiResponse<null>{
+    static error(message:string,statusCode:number = HttpStatus.INTERNAL_SERVER_ERROR,errors?:any):ApiResponse<null>{
         return {
             success:false,
             statusCode,
