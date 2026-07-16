@@ -16,7 +16,8 @@ export const ErrorMessages = {
         UNAUTHORIZED:"Unauthorized access",
         ATUH_HEADER_IS_MISSING:"Authorization header is missing",
         INVALID_REFRESH_TOKEN:"invalid refresh token",
-        REFRESH_TOKEN_NOT_FOUND:"refresh token not fond"
+        REFRESH_TOKEN_NOT_FOUND:"refresh token not fond",
+        USER_UNAUTHENTICATED:'User not authenticated',
     },
 
     ADMIN:{
