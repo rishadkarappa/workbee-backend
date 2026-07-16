@@ -1,5 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
+
+import { INotificationController } from "../ports/INotificationController";
 
 import { IGetUserNotificationsUseCase } from "../../application/ports/IGetUserNotificationsUseCase";
 import { IMarkNotificationAsReadUseCase } from "../../application/ports/IMarkNotificationAsReadUseCase";
@@ -12,7 +14,7 @@ import { MarkAllAsReadDTO } from "../../application/dtos/MarkAllAsReadDTO";
 import { GetUnreadCountDTO } from "../../application/dtos/GetUnreadCountDTO";
 
 @injectable()
-export class NotificationController {
+export class NotificationController implements INotificationController {
   constructor(
     @inject("GetUserNotificationsUseCase") private _getUserNotificationsUseCase: IGetUserNotificationsUseCase,
 
@@ -23,16 +25,17 @@ export class NotificationController {
     @inject("GetUnreadCountUseCase") private _getUnreadCountUseCase: IGetUnreadCountUseCase
   ) {}
 
-  async getNotifications(req: Request, res: Response) {
+  async getNotifications(req: Request, res: Response, next:NextFunction): Promise<void> {
     try {
       const user = (req as any).user;
       const { limit, offset } = req.query;
 
       if (!user?.id) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: "User not authenticated"
         });
+        return;
       }
 
       const dto: GetUserNotificationsDTO = {
@@ -49,16 +52,12 @@ export class NotificationController {
         data: notifications,
         message: "Notifications retrieved successfully"
       });
-    } catch (error: any) {
-      console.error("Get notifications error:", error);
-      res.status(400).json({
-        success: false,
-        message: error.message
-      });
+    } catch (error) {
+      next(error)
     }
   }
 
-  async markAsRead(req: Request, res: Response) {
+  async markAsRead(req: Request, res: Response, next:NextFunction): Promise<void> {
     try {
       let { notificationId } = req.params;
 
@@ -76,24 +75,21 @@ export class NotificationController {
         data: result,
         message: "Notification marked as read"
       });
-    } catch (error: any) {
-      console.error("Mark as read error:", error);
-      res.status(400).json({
-        success: false,
-        message: error.message
-      });
+    } catch (error) {
+      next(error)
     }
   }
 
-  async markAllAsRead(req: Request, res: Response) {
+  async markAllAsRead(req: Request, res: Response, next:NextFunction): Promise<void> {
     try {
       const user = (req as any).user;
 
       if (!user?.id) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: "User not authenticated"
         });
+        return;
       }
 
       const dto: MarkAllAsReadDTO = { userId: user.id };
@@ -106,24 +102,21 @@ export class NotificationController {
         data: result,
         message: "All notifications marked as read"
       });
-    } catch (error: any) {
-      console.error("Mark all as read error:", error);
-      res.status(400).json({
-        success: false,
-        message: error.message
-      });
+    } catch (error) {
+      next(error)
     }
   }
 
-  async getUnreadCount(req: Request, res: Response) {
+  async getUnreadCount(req: Request, res: Response, next:NextFunction): Promise<void> {
     try {
       const user = (req as any).user;
 
       if (!user?.id) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: "User not authenticated"
         });
+        return;
       }
 
       const dto: GetUnreadCountDTO = { userId: user.id };
@@ -136,12 +129,8 @@ export class NotificationController {
         data: { count },
         message: "Unread count retrieved successfully"
       });
-    } catch (error: any) {
-      console.error("Get unread count error:", error);
-      res.status(400).json({
-        success: false,
-        message: error.message
-      });
+    } catch (error) {
+      next(error)
     }
   }
 }
