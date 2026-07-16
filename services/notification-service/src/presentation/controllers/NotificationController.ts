@@ -12,16 +12,17 @@ import { GetUserNotificationsDTO } from "../../application/dtos/GetUserNotificat
 import { MarkNotificationAsReadDTO } from "../../application/dtos/MarkNotificationAsReadDTO";
 import { MarkAllAsReadDTO } from "../../application/dtos/MarkAllAsReadDTO";
 import { GetUnreadCountDTO } from "../../application/dtos/GetUnreadCountDTO";
+import { HttpStatus } from "../../shared/enums/HttpStatus";
+import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
+import { ResponseMessage } from "../../shared/constants/ResponseMessages";
+import { ErrorMessage } from "../../shared/constants/ErrorMessages";
 
 @injectable()
 export class NotificationController implements INotificationController {
   constructor(
     @inject("GetUserNotificationsUseCase") private _getUserNotificationsUseCase: IGetUserNotificationsUseCase,
-
     @inject("MarkNotificationAsReadUseCase") private _markNotificationAsReadUseCase: IMarkNotificationAsReadUseCase,
-
     @inject("MarkAllAsReadUseCase") private _markAllAsReadUseCase: IMarkAllAsReadUseCase,
-
     @inject("GetUnreadCountUseCase") private _getUnreadCountUseCase: IGetUnreadCountUseCase
   ) {}
 
@@ -31,10 +32,7 @@ export class NotificationController implements INotificationController {
       const { limit, offset } = req.query;
 
       if (!user?.id) {
-        res.status(401).json({
-          success: false,
-          message: "User not authenticated"
-        });
+        res.status(HttpStatus.UNAUTHERIZED).json(ResponseHelper.error(ErrorMessage.AUTH.UNAUTHENTICATED));
         return;
       }
 
@@ -44,14 +42,8 @@ export class NotificationController implements INotificationController {
         offset: offset ? parseInt(offset as string, 10) : 0
       };
 
-      const notifications =
-        await this._getUserNotificationsUseCase.execute(dto);
-
-      res.status(200).json({
-        success: true,
-        data: notifications,
-        message: "Notifications retrieved successfully"
-      });
+      const notifications = await this._getUserNotificationsUseCase.execute(dto);
+      res.status(HttpStatus.OK).json(ResponseHelper.success(notifications, ResponseMessage.NOTIFICATION.NOTIFICATION_RETRIEVED));
     } catch (error) {
       next(error)
     }
@@ -66,15 +58,9 @@ export class NotificationController implements INotificationController {
       }
 
       const dto: MarkNotificationAsReadDTO = { notificationId };
+      const result = await this._markNotificationAsReadUseCase.execute(dto);
 
-      const result =
-        await this._markNotificationAsReadUseCase.execute(dto);
-
-      res.status(200).json({
-        success: true,
-        data: result,
-        message: "Notification marked as read"
-      });
+      res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.NOTIFICATION.MARKED_AS_READ));
     } catch (error) {
       next(error)
     }
@@ -85,23 +71,15 @@ export class NotificationController implements INotificationController {
       const user = (req as any).user;
 
       if (!user?.id) {
-        res.status(401).json({
-          success: false,
-          message: "User not authenticated"
-        });
+        res.status(HttpStatus.UNAUTHERIZED).json(ResponseHelper.error(ErrorMessage.AUTH.UNAUTHENTICATED));
         return;
       }
 
       const dto: MarkAllAsReadDTO = { userId: user.id };
 
-      const result =
-        await this._markAllAsReadUseCase.execute(dto);
+      const result = await this._markAllAsReadUseCase.execute(dto);
 
-      res.status(200).json({
-        success: true,
-        data: result,
-        message: "All notifications marked as read"
-      });
+      res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.NOTIFICATION.MARKED_ALL_AS_READ));
     } catch (error) {
       next(error)
     }
@@ -112,23 +90,14 @@ export class NotificationController implements INotificationController {
       const user = (req as any).user;
 
       if (!user?.id) {
-        res.status(401).json({
-          success: false,
-          message: "User not authenticated"
-        });
+        res.status(HttpStatus.UNAUTHERIZED).json(ResponseHelper.error(ErrorMessage.AUTH.UNAUTHENTICATED));
         return;
       }
 
       const dto: GetUnreadCountDTO = { userId: user.id };
+      const count =await this._getUnreadCountUseCase.execute(dto);
 
-      const count =
-        await this._getUnreadCountUseCase.execute(dto);
-
-      res.status(200).json({
-        success: true,
-        data: { count },
-        message: "Unread count retrieved successfully"
-      });
+      res.status(HttpStatus.OK).json(ResponseHelper.success(count, ResponseMessage.NOTIFICATION.UNREAD_COUNT_RETRIEVED));
     } catch (error) {
       next(error)
     }
