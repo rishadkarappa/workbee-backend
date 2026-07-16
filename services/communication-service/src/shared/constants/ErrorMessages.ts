@@ -27,6 +27,7 @@ export const ErrorMessages = {
 
     GENERAL:{
         SERVER_ERROR:"Something went wrong, Please try again later",
+        INTERNAL_SERVER_ERROR:"Someting wrong Internal server error",
         BAD_REQUEST:"Invalid request",
         NOT_FOUND_OTP:'user not found when sent otp'
     }
