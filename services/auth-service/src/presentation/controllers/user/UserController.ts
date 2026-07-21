@@ -29,18 +29,18 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 @injectable()
 export class UserController implements IUserController {
   constructor(
-    @inject("RegisterUserUseCase") private _registerUserUseCase: IRegisterUserUseCase,
-    @inject("LoginUserUseCase") private _loginUserUseCase: ILoginUserUseCase,
-    @inject("VerifyOtpUseCase") private _verifyOtpUseCase: IVerifyOtpUseCase,
-    @inject("ResendOtpUseCase") private _resendOtpUseCase: IResendOtpUseCase,
-    @inject("VerifyUserUseCase") private _verifyUserUseCase: IVerifyUserUseCase,
-    @inject("GoogleLoginUserUseCase") private _googleLoginUserUseCase: IGoogleLoginUserUseCase,
-    @inject("ForgotPasswordUseCase") private _forgotPasswordUseCase: IForgotPasswordUseCase,
-    @inject("ResetPasswordUseCase") private _resetPasswordUseCase: IResetPasswordUseCase,
-    @inject("RefreshTokenUseCase") private _refreshTokenUseCase: RefreshTokenUseCase,
-    @inject("LogoutUserUseCase") private _logoutUserUseCase: LogoutUserUseCase,
-    @inject("GetUserProfileUseCase") private _getUserProfileUseCase: GetUserProfileUseCase,
-    @inject("GetUserProfilesBatchUseCase") private _getUserProfilesBatchUseCase: GetUserProfilesBatchUseCase,
+    @inject("RegisterUserUseCase") private readonly _registerUserUseCase: IRegisterUserUseCase,
+    @inject("LoginUserUseCase") private readonly _loginUserUseCase: ILoginUserUseCase,
+    @inject("VerifyOtpUseCase") private readonly _verifyOtpUseCase: IVerifyOtpUseCase,
+    @inject("ResendOtpUseCase") private readonly _resendOtpUseCase: IResendOtpUseCase,
+    @inject("VerifyUserUseCase") private readonly _verifyUserUseCase: IVerifyUserUseCase,
+    @inject("GoogleLoginUserUseCase") private readonly _googleLoginUserUseCase: IGoogleLoginUserUseCase,
+    @inject("ForgotPasswordUseCase") private readonly _forgotPasswordUseCase: IForgotPasswordUseCase,
+    @inject("ResetPasswordUseCase") private readonly _resetPasswordUseCase: IResetPasswordUseCase,
+    @inject("RefreshTokenUseCase") private readonly _refreshTokenUseCase: RefreshTokenUseCase,
+    @inject("LogoutUserUseCase") private readonly _logoutUserUseCase: LogoutUserUseCase,
+    @inject("GetUserProfileUseCase") private readonly _getUserProfileUseCase: GetUserProfileUseCase,
+    @inject("GetUserProfilesBatchUseCase") private readonly _getUserProfilesBatchUseCase: GetUserProfilesBatchUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {

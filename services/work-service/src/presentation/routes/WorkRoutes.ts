@@ -13,7 +13,7 @@ router.get("/get-new-appliers", workController.getNewAppliers.bind(workControlle
 router.post("/approve-worker", workController.approveWorker.bind(workController))
 router.get("/get-workers", workController.getWorkers.bind(workController))
 router.get("/get-all-works", workController.getAllWorks.bind(workController))
-router.post("/post-work",
+router.post("/post-work", 
     upload.fields([
         { name: 'voiceFile', maxCount: 1 },
         { name: 'videoFile', maxCount: 1 },
@@ -23,6 +23,7 @@ router.patch('/block-worker/:id', workController.blockWorker.bind(workController
 router.get('/get-my-works', workController.getMyWorks.bind(workController));
 router.put('/update-work/:workId', workController.updateWork.bind(workController))
 router.delete('/delete-my-work/:workId', workController.deleteMyWork.bind(workController))
+
 
 // inter ser comm (http)
 router.get('/get-worker-profile/:workerId', workController.getWorkerProfile.bind(workController));

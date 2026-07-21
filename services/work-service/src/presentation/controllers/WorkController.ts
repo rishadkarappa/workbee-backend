@@ -28,20 +28,20 @@ import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 @injectable()
 export class WorkController implements IWorkController {
     constructor(
-        @inject("ApplyWorkerUseCase") private _applyWorkerUseCase: IApplyWorkerUseCase,
-        @inject("GetNewAppliersUseCase") private _getNewAppliersUseCase: IGetNewAppliersUseCase,
-        @inject("WorkerApproveUseCase") private _workerApproveUseCase: IWorkerApproveUseCase,
-        @inject("GetAllWorkersUseCase") private _getAllWorkersUseCase: IGetAllWorkersUseCase,
-        @inject("PostWorkUseCase") private _postWorkUseCase: IPostWorkUseCase,
-        @inject("FileUploadService") private _fileUploadService: IFileUploadService,
-        @inject("GetAllWorksUseCase") private _getAllWorksUseCase: IGetAllWorksUseCase,
-        @inject("BlockWorkerUseCase") private _blockWorkerUseCase: IBlockWorkerUseCase,
-        @inject("GetMyWorksUseCase") private _getMyWorksUseCase: IGetMyWorksUseCase,
-        @inject("UpdateWorkUseCase") private _updateWorkUseCase: IUpdateWorkUseCase,
-        @inject("DeleteMyWorkUseCase") private _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
-        @inject("GetWorkerProfileUseCase") private _getWorkerProfileUseCase: IGetWorkerProfileUseCase,
-        @inject("GetWorkerProfilesBatchUseCase") private _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
-        @inject("GetWorkerAssignedWorksUseCase") private _getWorkerAssignedWorksUseCase: IGetWorkerAssignedWorksUseCase,
+        @inject("ApplyWorkerUseCase") private readonly _applyWorkerUseCase: IApplyWorkerUseCase,
+        @inject("GetNewAppliersUseCase") private readonly _getNewAppliersUseCase: IGetNewAppliersUseCase,
+        @inject("WorkerApproveUseCase") private readonly _workerApproveUseCase: IWorkerApproveUseCase,
+        @inject("GetAllWorkersUseCase") private readonly _getAllWorkersUseCase: IGetAllWorkersUseCase,
+        @inject("PostWorkUseCase") private readonly _postWorkUseCase: IPostWorkUseCase,
+        @inject("FileUploadService") private readonly _fileUploadService: IFileUploadService,
+        @inject("GetAllWorksUseCase") private readonly _getAllWorksUseCase: IGetAllWorksUseCase,
+        @inject("BlockWorkerUseCase") private readonly _blockWorkerUseCase: IBlockWorkerUseCase,
+        @inject("GetMyWorksUseCase") private readonly _getMyWorksUseCase: IGetMyWorksUseCase,
+        @inject("UpdateWorkUseCase") private readonly _updateWorkUseCase: IUpdateWorkUseCase,
+        @inject("DeleteMyWorkUseCase") private readonly _deleteMyWorkUseCase: IDeleteMyWorkUseCase,
+        @inject("GetWorkerProfileUseCase") private readonly _getWorkerProfileUseCase: IGetWorkerProfileUseCase,
+        @inject("GetWorkerProfilesBatchUseCase") private readonly _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
+        @inject("GetWorkerAssignedWorksUseCase") private readonly _getWorkerAssignedWorksUseCase: IGetWorkerAssignedWorksUseCase,
     ) { }
 
     async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {

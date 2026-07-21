@@ -12,7 +12,7 @@ import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 @injectable()
 export class WorkerController implements IWorkerController{
     constructor(
-        @inject("WorkerLoginUseCase") private _workerLoginUseCase: IWorkerLoginUseCase,
+        @inject("WorkerLoginUseCase") private readonly _workerLoginUseCase: IWorkerLoginUseCase,
 
     ){}
 

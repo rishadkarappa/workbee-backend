@@ -15,9 +15,9 @@ import { IBlockUserUseCase } from "../../../application/ports/admin/IBlockUserUs
 @injectable()
 export class AdminController implements IAdminContoller {
     constructor(
-        @inject("LoginAdminUseCase") private _loginAdminUseCase: ILoginAdminUseCase,
-        @inject("GetUsersUseCase") private _getUsersUseCase: IGetUsersUseCase,
-        @inject("BlockUserUseCase") private _blockUserUseCase: IBlockUserUseCase,
+        @inject("LoginAdminUseCase") private readonly _loginAdminUseCase: ILoginAdminUseCase,
+        @inject("GetUsersUseCase") private readonly _getUsersUseCase: IGetUsersUseCase,
+        @inject("BlockUserUseCase") private readonly _blockUserUseCase: IBlockUserUseCase,
     ) { }
 
     async adminLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
