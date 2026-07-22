@@ -14,10 +14,10 @@ import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 @injectable()
 export class ChatController implements IChatController {
   constructor(
-    @inject("CreateChatUseCase") private _createChatUseCase: ICreateChatUseCase,
-    @inject("GetUserChatsUseCase") private _getUserChatsUseCase: IGetUserChatsUseCase,
-    @inject("GetMessagesUseCase") private _getMessagesUseCase: IGetMessagesUseCase,
-    @inject("MarkChatAsReadUseCase") private _markChatAsReadUseCase: MarkChatAsReadUseCase
+    @inject("CreateChatUseCase") private readonly _createChatUseCase: ICreateChatUseCase,
+    @inject("GetUserChatsUseCase") private readonly _getUserChatsUseCase: IGetUserChatsUseCase,
+    @inject("GetMessagesUseCase") private readonly _getMessagesUseCase: IGetMessagesUseCase,
+    @inject("MarkChatAsReadUseCase") private readonly _markChatAsReadUseCase: MarkChatAsReadUseCase
   ) { }
 
   async createChat(req: Request, res: Response, next: NextFunction): Promise<void> {

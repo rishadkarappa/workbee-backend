@@ -14,12 +14,12 @@ import { GetAdminPaymentsListUseCase } from "../../application/use-cases/GetAdmi
 @injectable()
 export class PaymentController implements IPaymentController {
   constructor(
-    @inject("CreateRazorpayOrderUseCase") private _createOrderUseCase: CreateRazorpayOrderUseCase,
-    @inject("VerifyRazorpayPaymentUseCase") private _verifyPaymentUseCase: VerifyRazorpayPaymentUseCase,
-    @inject("ScheduleWorkerPayoutUseCase") private _schedulePayoutUseCase: ScheduleWorkerPayoutUseCase,
-    @inject("GetWalletUseCase") private _getWalletUseCase: GetWalletUseCase,
-    @inject("GetAdminPaymentSummaryUseCase") private _adminSummaryUseCase: GetAdminPaymentSummaryUseCase,
-    @inject("GetAdminPaymentsListUseCase") private _adminPaymentsListUseCase: GetAdminPaymentsListUseCase,
+    @inject("CreateRazorpayOrderUseCase") private readonly _createOrderUseCase: CreateRazorpayOrderUseCase,
+    @inject("VerifyRazorpayPaymentUseCase") private readonly _verifyPaymentUseCase: VerifyRazorpayPaymentUseCase,
+    @inject("ScheduleWorkerPayoutUseCase") private readonly _schedulePayoutUseCase: ScheduleWorkerPayoutUseCase,
+    @inject("GetWalletUseCase") private readonly _getWalletUseCase: GetWalletUseCase,
+    @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: GetAdminPaymentSummaryUseCase,
+    @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: GetAdminPaymentsListUseCase,
   ) { }
 
   // POST /payment/create-order

@@ -20,10 +20,10 @@ import { ErrorMessage } from "../../shared/constants/ErrorMessages";
 @injectable()
 export class NotificationController implements INotificationController {
   constructor(
-    @inject("GetUserNotificationsUseCase") private _getUserNotificationsUseCase: IGetUserNotificationsUseCase,
-    @inject("MarkNotificationAsReadUseCase") private _markNotificationAsReadUseCase: IMarkNotificationAsReadUseCase,
-    @inject("MarkAllAsReadUseCase") private _markAllAsReadUseCase: IMarkAllAsReadUseCase,
-    @inject("GetUnreadCountUseCase") private _getUnreadCountUseCase: IGetUnreadCountUseCase
+    @inject("GetUserNotificationsUseCase") private readonly _getUserNotificationsUseCase: IGetUserNotificationsUseCase,
+    @inject("MarkNotificationAsReadUseCase") private readonly _markNotificationAsReadUseCase: IMarkNotificationAsReadUseCase,
+    @inject("MarkAllAsReadUseCase") private readonly _markAllAsReadUseCase: IMarkAllAsReadUseCase,
+    @inject("GetUnreadCountUseCase") private readonly _getUnreadCountUseCase: IGetUnreadCountUseCase
   ) {}
 
   async getNotifications(req: Request, res: Response, next:NextFunction): Promise<void> {
