@@ -8,9 +8,9 @@ import { SendBidOfferDTO, BidActionResult } from '../../dtos/bid/BidDTO';
 @injectable()
 export class SendBidOfferUseCase implements ISendBidOfferUseCase {
   constructor(
-    @inject('BidRepository') private bidRepository: IBidRepository,
-    @inject('MessageRepository') private messageRepository: IMessageRepository,
-    @inject('ChatRepository') private chatRepository: IChatRepository
+    @inject('BidRepository') private readonly _bidRepository: IBidRepository,
+    @inject('MessageRepository') private readonly _messageRepository: IMessageRepository,
+    @inject('ChatRepository') private readonly _chatRepository: IChatRepository
   ) {}
 
   async execute(data: SendBidOfferDTO): Promise<BidActionResult> {
@@ -18,7 +18,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
       throw new Error('Offer amount must be greater than zero');
     }
 
-    const existing = await this.bidRepository.findActiveByWorkId(data.workId);
+    const existing = await this._bidRepository.findActiveByWorkId(data.workId);
 
     let bid;
 
@@ -28,7 +28,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
         throw new Error('Only the worker can make the first offer');
       }
 
-      bid = await this.bidRepository.create({
+      bid = await this._bidRepository.create({
         chatId: data.chatId,
         workId: data.workId,
         workTitle: data.workTitle,
@@ -49,14 +49,14 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
         throw new Error('It is not your turn to make an offer');
       }
 
-      // Only ONE counter offer is allowed total (i.e. history length must be exactly 1 here).
+      // Only ONE counter offer is allowed total (eg history length must be exactly 1 here).
       if (existing.history.length >= 2) {
         throw new Error('Only one counter offer is allowed');
       }
 
       const nextAwaiting = data.offeredBy === 'user' ? 'worker' : 'user';
 
-      const updated = await this.bidRepository.update(existing.id!, {
+      const updated = await this._bidRepository.update(existing.id!, {
         amount: data.amount,
         lastOfferBy: data.offeredBy,
         awaitingResponseFrom: nextAwaiting,
@@ -84,7 +84,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
     const senderId = data.offeredBy === 'worker' ? bid.workerId : bid.userId;
     const senderRole = data.offeredBy;
 
-    const message = await this.messageRepository.create({
+    const message = await this._messageRepository.create({
       chatId: data.chatId,
       senderId,
       senderRole,
@@ -93,7 +93,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
       isRead: false,
     });
 
-    await this.chatRepository.updateLastMessage(
+    await this._chatRepository.updateLastMessage(
       data.chatId,
       isCounter ? `Countered with ₹${bid.amount}` : `Offered ₹${bid.amount}`
     );

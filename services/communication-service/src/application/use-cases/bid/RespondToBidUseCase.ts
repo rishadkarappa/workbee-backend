@@ -8,20 +8,20 @@ import { RespondToBidDTO, BidActionResult } from '../../dtos/bid/BidDTO';
 @injectable()
 export class RespondToBidUseCase implements IRespondToBidUseCase {
   constructor(
-    @inject('BidRepository') private bidRepository: IBidRepository,
-    @inject('MessageRepository') private messageRepository: IMessageRepository,
-    @inject('ChatRepository') private chatRepository: IChatRepository
+    @inject('BidRepository') private readonly _bidRepository: IBidRepository,
+    @inject('MessageRepository') private readonly _messageRepository: IMessageRepository,
+    @inject('ChatRepository') private readonly _chatRepository: IChatRepository
   ) {}
 
   async execute(data: RespondToBidDTO): Promise<BidActionResult> {
-    const bid = await this.bidRepository.findById(data.bidId);
+    const bid = await this._bidRepository.findById(data.bidId);
     if (!bid) throw new Error('Bid not found');
     if (bid.status !== 'pending') throw new Error('This negotiation has already been finalized');
     if (bid.awaitingResponseFrom !== data.respondedBy) {
       throw new Error('It is not your turn to respond');
     }
 
-    const updated = await this.bidRepository.update(bid.id!, {
+    const updated = await this._bidRepository.update(bid.id!, {
       status: data.action === 'accept' ? 'accepted' : 'rejected',
     });
 
@@ -39,7 +39,7 @@ export class RespondToBidUseCase implements IRespondToBidUseCase {
 
     const senderId = data.respondedBy === 'worker' ? bid.workerId : bid.userId;
 
-    const message = await this.messageRepository.create({
+    const message = await this._messageRepository.create({
       chatId: bid.chatId,
       senderId,
       senderRole: data.respondedBy,
@@ -48,7 +48,7 @@ export class RespondToBidUseCase implements IRespondToBidUseCase {
       isRead: false,
     });
 
-    await this.chatRepository.updateLastMessage(
+    await this._chatRepository.updateLastMessage(
       bid.chatId,
       data.action === 'accept' ? `Offer of ₹${bid.amount} accepted` : `Offer of ₹${bid.amount} rejected`
     );
