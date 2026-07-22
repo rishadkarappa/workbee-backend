@@ -9,17 +9,17 @@ import { ISendMessageUseCase } from '../../ports/chat/ISendMessageUseCase';
 export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
     @inject('MessageRepository') private messageRepository: IMessageRepository,
-    @inject('ChatRepository')    private chatRepository:    IChatRepository
-  ) {}
+    @inject('ChatRepository') private chatRepository: IChatRepository
+  ) { }
 
   async execute(data: SendMessageDTO): Promise<Message> {
     const message: Message = {
-      chatId:     data.chatId,
-      senderId:   data.senderId,
+      chatId: data.chatId,
+      senderId: data.senderId,
       senderRole: data.senderRole,
-      content:    data.content,
-      type:       data.type || 'text',
-      mediaUrl:      data.mediaUrl,
+      content: data.content,
+      type: data.type || 'text',
+      mediaUrl: data.mediaUrl,
       mediaPublicId: data.mediaPublicId,
       isRead: false,
     };

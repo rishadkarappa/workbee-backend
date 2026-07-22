@@ -7,6 +7,9 @@ import { GetUserChatsUseCase } from "../../application/use-cases/chat/GetUserCha
 import { SendMessageUseCase } from "../../application/use-cases/chat/SendMessageUseCase";
 import { MarkChatAsReadUseCase } from "../../application/use-cases/chat/MarkChatAsReadUseCase";
 
+import { SendBidOfferUseCase } from "../../application/use-cases/bid/SendBidOfferUseCase";
+import { RespondToBidUseCase } from "../../application/use-cases/bid/RespondToBidUseCase";
+
 // interface
 import { ICreateChatUseCase } from "../../application/ports/chat/ICreateChatUseCase";
 import { IGetMessagesUseCase } from "../../application/ports/chat/IGetMessagesUseCase";
@@ -21,5 +24,5 @@ container.registerSingleton<ISendMessageUseCase>("SendMessageUseCase",SendMessag
 container.registerSingleton<IMarkChatAsReadUseCase>("MarkChatAsReadUseCase", MarkChatAsReadUseCase); 
 
 
-
-
+container.register('SendBidOfferUseCase', { useClass: SendBidOfferUseCase });
+container.register('RespondToBidUseCase', { useClass: RespondToBidUseCase });

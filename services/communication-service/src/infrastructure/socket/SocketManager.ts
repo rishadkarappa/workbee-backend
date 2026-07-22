@@ -5,6 +5,10 @@ import { container } from 'tsyringe';
 import { SendMessageUseCase } from '../../application/use-cases/chat/SendMessageUseCase';
 import { CacheService } from '../services/CacheService';
 import { MessageEventPublisher } from '../message-bus/MessageEventPublisher';
+import { IMessageRepository } from '../../domain/repositories/IMessageRepository';
+import { IChatRepository } from '../../domain/repositories/IChatRepository';
+import { IRespondToBidUseCase } from '../../application/ports/bid/IRespondToBidUseCase';
+import { ISendBidOfferUseCase } from '../../application/ports/bid/ISendBidOfferUseCase';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
@@ -324,6 +328,111 @@ export class SocketManager {
         } catch (error: any) {
           console.error('[Socket] work_progress_update error:', error);
           socket.emit('error', { message: error.message });
+        }
+      });
+
+      socket.on('send_bid_offer', async (data: {
+        chatId: string; workId: string; workTitle: string;
+        userId: string; workerId: string; workerName: string;
+        amount: number; offeredBy: 'user' | 'worker';
+      }) => {
+        try {
+          if (!socket.userId) {
+            socket.emit('error', { message: 'User not authenticated' });
+            return;
+          }
+          const sendBidOfferUseCase = container.resolve<ISendBidOfferUseCase>('SendBidOfferUseCase');
+          const { bid, systemMessageContent } = await sendBidOfferUseCase.execute(data);
+          const parsed = JSON.parse(systemMessageContent);
+
+          const message = {
+            id: parsed.messageId,
+            chatId: data.chatId,
+            senderId: data.offeredBy === 'worker' ? data.workerId : data.userId,
+            senderRole: data.offeredBy,
+            content: JSON.stringify({ ...parsed, messageId: undefined }),
+            type: 'system',
+            isRead: false,
+            createdAt: new Date(),
+          };
+
+          // ✅ FIX: use the same room convention as every other event
+          this.io.to(`chat:${bid.chatId}`).emit('new_message', message);
+          // ✅ also push to both personal rooms so it lands even if chat isn't open
+          this.io.to(`user:${bid.userId}`).emit('new_message', message);
+          this.io.to(`user:${bid.workerId}`).emit('new_message', message);
+        } catch (err: any) {
+          socket.emit('error', { message: err.message || 'Failed to send offer' });
+        }
+      });
+
+      socket.on('respond_bid', async (data: {
+        bidId: string; respondedBy: 'user' | 'worker'; action: 'accept' | 'reject';
+      }) => {
+        try {
+          if (!socket.userId) {
+            socket.emit('error', { message: 'User not authenticated' });
+            return;
+          }
+          const respondToBidUseCase = container.resolve<IRespondToBidUseCase>('RespondToBidUseCase');
+          const { bid, systemMessageContent } = await respondToBidUseCase.execute(data);
+          const parsed = JSON.parse(systemMessageContent);
+
+          const message = {
+            id: parsed.messageId,
+            chatId: bid.chatId,
+            senderId: data.respondedBy === 'worker' ? bid.workerId : bid.userId,
+            senderRole: data.respondedBy,
+            content: JSON.stringify({ ...parsed, messageId: undefined }),
+            type: 'system',
+            isRead: false,
+            createdAt: new Date(),
+          };
+
+          this.io.to(`chat:${bid.chatId}`).emit('new_message', message);
+          this.io.to(`user:${bid.userId}`).emit('new_message', message);
+          this.io.to(`user:${bid.workerId}`).emit('new_message', message);
+        } catch (err: any) {
+          socket.emit('error', { message: err.message || 'Failed to respond to offer' });
+        }
+      });
+
+      socket.on('bid_payment_completed', async (data: {
+        chatId: string; bidId: string; workId: string; workTitle: string;
+        userId: string; workerId: string; workerName: string; amount: number;
+      }) => {
+        try {
+          const messageRepository = container.resolve<IMessageRepository>('MessageRepository');
+          const chatRepository = container.resolve<IChatRepository>('ChatRepository');
+
+          const payload = { type: 'WORK_BID_PAID', ...data };
+          const saved = await messageRepository.create({
+            chatId: data.chatId,
+            senderId: data.userId,
+            senderRole: 'user',
+            content: JSON.stringify(payload),
+            type: 'system',
+            isRead: false,
+          });
+          await chatRepository.updateLastMessage(data.chatId, `Payment of ₹${data.amount} completed`);
+
+          const message = {
+            id: saved.id,
+            chatId: data.chatId,
+            senderId: data.userId,
+            senderRole: 'user',
+            content: JSON.stringify(payload),
+            type: 'system',
+            isRead: false,
+            createdAt: new Date(),
+          };
+
+          // ✅ FIX: correct room prefix
+          this.io.to(`chat:${data.chatId}`).emit('new_message', message);
+          this.io.to(`user:${data.userId}`).emit('new_message', message);
+          this.io.to(`user:${data.workerId}`).emit('new_message', message);
+        } catch (err: any) {
+          socket.emit('error', { message: err.message || 'Failed to record payment' });
         }
       });
 

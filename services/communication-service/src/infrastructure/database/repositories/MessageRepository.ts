@@ -38,16 +38,16 @@ export class MessageRepository implements IMessageRepository {
 
   private toEntity(doc: any): Message {
     return {
-      id:             doc._id.toString(),
-      chatId:         doc.chatId,
-      senderId:       doc.senderId,
-      senderRole:     doc.senderRole,
-      content:        doc.content,
-      type:           doc.type,
-      mediaUrl:       doc.mediaUrl,
-      mediaPublicId:  doc.mediaPublicId,
-      isRead:         doc.isRead,
-      createdAt:      doc.createdAt,
+      id: doc._id.toString(),
+      chatId: doc.chatId,
+      senderId: doc.senderId,
+      senderRole: doc.senderRole,
+      content: doc.content,
+      type: doc.type,
+      mediaUrl: doc.mediaUrl,
+      mediaPublicId: doc.mediaPublicId,
+      isRead: doc.isRead,
+      createdAt: doc.createdAt,
     };
   }
 }
