@@ -8,8 +8,8 @@ import { ISendMessageUseCase } from '../../ports/chat/ISendMessageUseCase';
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
-    @inject('MessageRepository') private messageRepository: IMessageRepository,
-    @inject('ChatRepository') private chatRepository: IChatRepository
+    @inject('MessageRepository') private readonly _messageRepository: IMessageRepository,
+    @inject('ChatRepository') private readonly _chatRepository: IChatRepository
   ) { }
 
   async execute(data: SendMessageDTO): Promise<Message> {
@@ -24,25 +24,59 @@ export class SendMessageUseCase implements ISendMessageUseCase {
       isRead: false,
     };
 
-    const savedMessage = await this.messageRepository.create(message);
+    const savedMessage = await this._messageRepository.create(message);
 
-    // Update last message preview — for media use a friendly label
-    const previewText = data.type === 'image'
-      ? '📷 Image'
-      : data.type === 'video'
-        ? '🎥 Video'
-        : data.content;
+    await this._chatRepository.updateLastMessage(data.chatId, this.getPreviewText(data));
 
-    await this.chatRepository.updateLastMessage(data.chatId, previewText);
-
-    // Increment unread count for the recipient
-    // sender = 'user'   → recipient key = 'workerId'
-    // sender = 'worker' → recipient key = 'userId'
     const recipientRole: 'userId' | 'workerId' =
       data.senderRole === 'user' ? 'workerId' : 'userId';
 
-    await this.chatRepository.incrementUnreadCount(data.chatId, recipientRole);
+    await this._chatRepository.incrementUnreadCount(data.chatId, recipientRole);
 
     return savedMessage;
+  }
+
+  // Friendly, human-readable preview for the chat list — never raw JSON.
+  private getPreviewText(data: SendMessageDTO): string {
+    if (data.type === 'image') return '📷 Image';
+    if (data.type === 'video') return '🎥 Video';
+
+    if (data.type === 'system') {
+      try {
+        const parsed = JSON.parse(data.content);
+        switch (parsed.type) {
+          case 'WORK_CONFIRM_REQUEST':
+            return 'Confirmation requested';
+          case 'WORK_CONFIRM_ACCEPTED':
+            return 'Deal confirmed';
+          case 'WORK_CONFIRM_REJECTED':
+            return 'Deal rejected';
+          case 'WORK_PROGRESS_UPDATE': {
+            const label =
+              parsed.progress === 'started' ? 'Work started' :
+              parsed.progress === 'ongoing' ? 'Work in progress' :
+              parsed.progress === 'completed' ? 'Work completed' :
+              `Progress: ${parsed.progress}`;
+            return label;
+          }
+          case 'WORK_BID_OFFER':
+            return `Offered ₹${parsed.amount}`;
+          case 'WORK_BID_COUNTER':
+            return `Countered ₹${parsed.amount}`;
+          case 'WORK_BID_ACCEPTED':
+            return `Offer accepted — ₹${parsed.amount}`;
+          case 'WORK_BID_REJECTED':
+            return 'Offer rejected';
+          case 'WORK_BID_PAID':
+            return `Payment of ₹${parsed.amount} completed`;
+          default:
+            return 'New update';
+        }
+      } catch {
+        return 'New update';
+      }
+    }
+
+    return data.content;
   }
 }
