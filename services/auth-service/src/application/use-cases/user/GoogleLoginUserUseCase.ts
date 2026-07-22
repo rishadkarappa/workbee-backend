@@ -13,8 +13,8 @@ const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 @injectable()
 export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
     constructor(
-        @inject("UserRepository") private _userRepository: IUserRepository,
-        @inject("TokenService") private _tokenService: ITokenService
+        @inject("UserRepository") private readonly _userRepository: IUserRepository,
+        @inject("TokenService") private readonly _tokenService: ITokenService
     ){}
 
     async execute(data: GoogleLoginRequestDTO): Promise<GoogleLoginResponseDTO>{

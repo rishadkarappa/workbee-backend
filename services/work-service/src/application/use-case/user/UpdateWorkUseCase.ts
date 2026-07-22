@@ -8,7 +8,7 @@ import { WorkMapper } from "../../mappers/WorkMapper";
 @injectable()
 export class UpdateWorkUseCase implements IUpdateWorkUseCase {
   constructor(
-    @inject("WorkRepository") private _workRepository: IWorkRepository
+    @inject("WorkRepository") private readonly _workRepository: IWorkRepository
   ) {}
 
   async execute(dto: UpdateWorkDto): Promise<WorkResponseDto> {

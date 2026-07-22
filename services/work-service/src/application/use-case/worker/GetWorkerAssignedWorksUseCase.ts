@@ -6,7 +6,7 @@ import { GetWorkerAssignedWorksDto } from "../../dtos/worker/GetWorkerAssignedWo
 @injectable()
 export class GetWorkerAssignedWorksUseCase implements IGetWorkerAssignedWorksUseCase {
     constructor(
-        @inject("WorkRepository") private _workRepository: IWorkRepository
+        @inject("WorkRepository") private readonly _workRepository: IWorkRepository
     ) {}
  
     async execute(dto:GetWorkerAssignedWorksDto) {

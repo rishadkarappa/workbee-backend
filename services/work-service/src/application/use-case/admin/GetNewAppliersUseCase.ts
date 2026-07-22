@@ -10,7 +10,7 @@ import { IGetNewAppliersUseCase } from "../../ports/worker/IGetNewAppliersUseCas
 @injectable()
 export class GetNewAppliersUseCase implements IGetNewAppliersUseCase {
     constructor(
-        @inject("WorkerRepository") private _workerRepository: IWorkerRepository
+        @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
     ) { }
 
     async execute(page: number, limit: number, search: string): Promise<{

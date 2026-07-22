@@ -9,8 +9,8 @@ import { ICacheService } from '../../../domain/services/ICacheService';
 @injectable()
 export class GetUserChatsUseCase implements IGetUserChatsUseCase {
   constructor(
-    @inject("ChatRepository") private chatRepository: IChatRepository,
-    @inject("CacheService") private cacheService: ICacheService
+    @inject("ChatRepository") private readonly _chatRepository: IChatRepository,
+    @inject("CacheService") private readonly _cacheService: ICacheService
   ) {}
 
   async execute(data: GetUserChatsDTO): Promise<Chat[]> {
@@ -19,8 +19,8 @@ export class GetUserChatsUseCase implements IGetUserChatsUseCase {
     // Raw chats from DB — contain unreadCount
     const chats =
       role === 'user'
-        ? await this.chatRepository.findByUserId(userId)
-        : await this.chatRepository.findByWorkerId(userId);
+        ? await this._chatRepository.findByUserId(userId)
+        : await this._chatRepository.findByWorkerId(userId);
 
     // Build unread lookup by id BEFORE ChatMapper (mapper may change order)
     const unreadMap = new Map<string, { userId: number; workerId: number }>();
@@ -36,7 +36,7 @@ export class GetUserChatsUseCase implements IGetUserChatsUseCase {
     // Enrich with participant details
     const chatsWithParticipants = await ChatMapper.toChatListWithParticipants(
       chats,
-      this.cacheService
+      this._cacheService
     );
 
     // Attach myUnreadCount matched by id — NOT by index

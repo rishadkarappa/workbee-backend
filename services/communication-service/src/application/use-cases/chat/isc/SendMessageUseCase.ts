@@ -13,13 +13,13 @@ export interface SendMessageResult extends Message {
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
-    @inject("MessageRepository") private messageRepository: IMessageRepository,
-    @inject("ChatRepository") private chatRepository: IChatRepository
+    @inject("MessageRepository") private readonly _messageRepository: IMessageRepository,
+    @inject("ChatRepository") private readonly _chatRepository: IChatRepository
   ) {}
 
   async execute(data: SendMessageDTO): Promise<SendMessageResult> {
     // Get chat to determine recipient
-    const chat = await this.chatRepository.findById(data.chatId);
+    const chat = await this._chatRepository.findById(data.chatId);
     
     if (!chat) {
       throw new Error('Chat not found');
@@ -43,9 +43,9 @@ export class SendMessageUseCase implements ISendMessageUseCase {
       isRead: false
     };
 
-    const savedMessage = await this.messageRepository.create(message);
+    const savedMessage = await this._messageRepository.create(message);
 
-    await this.chatRepository.updateLastMessage(data.chatId, data.content);
+    await this._chatRepository.updateLastMessage(data.chatId, data.content);
 
     return {
       ...savedMessage,

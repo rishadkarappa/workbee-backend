@@ -10,8 +10,8 @@ export class BlockUserUseCase implements IBlockUserUseCase {
   private redis = RedisClient.getInstance();
 
   constructor(
-    @inject("UserRepository") private _userRepository: IUserRepository,
-    @inject("TokenService") private _tokenService: ITokenService
+    @inject("UserRepository") private readonly _userRepository: IUserRepository,
+    @inject("TokenService") private readonly _tokenService: ITokenService
   ) {}
 
   async execute(userId: string): Promise<User> {

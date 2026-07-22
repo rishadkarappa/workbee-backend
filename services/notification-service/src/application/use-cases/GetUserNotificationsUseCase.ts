@@ -9,8 +9,7 @@ export class GetUserNotificationsUseCase
   implements IGetUserNotificationsUseCase
 {
   constructor(
-    @inject("NotificationRepository")
-    private notificationRepository: INotificationRepository
+    @inject("NotificationRepository") private readonly _notificationRepository: INotificationRepository
   ) {}
 
   async execute(dto: GetUserNotificationsDTO): Promise<Notification[]> {
@@ -20,7 +19,7 @@ export class GetUserNotificationsUseCase
       offset = 0
     } = dto;
 
-    return await this.notificationRepository.findByUserId(
+    return await this._notificationRepository.findByUserId(
       userId,
       limit,
       offset

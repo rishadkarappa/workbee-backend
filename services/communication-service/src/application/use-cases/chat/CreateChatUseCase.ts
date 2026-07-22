@@ -9,19 +9,19 @@ import { ICacheService } from '../../../domain/services/ICacheService';
 @injectable()
 export class CreateChatUseCase implements ICreateChatUseCase {
   constructor(
-    @inject("ChatRepository") private chatRepository: IChatRepository,
-    @inject("CacheService") private cacheService: ICacheService
+    @inject("ChatRepository") private readonly _chatRepository: IChatRepository,
+    @inject("CacheService") private readonly _cacheService: ICacheService
   ) { }
 
   async execute(data: CreateChatDTO): Promise<Chat> {
-    const existingChat = await this.chatRepository.findByParticipants(
+    const existingChat = await this._chatRepository.findByParticipants(
       data.userId,
       data.workerId
     );
 
     if (existingChat) {
-      const userProfile = await this.cacheService.getUserProfile(data.userId);
-      const workerProfile = await this.cacheService.getWorkerProfile(data.workerId);
+      const userProfile = await this._cacheService.getUserProfile(data.userId);
+      const workerProfile = await this._cacheService.getWorkerProfile(data.workerId);
 
       return {
         ...existingChat,
@@ -40,7 +40,7 @@ export class CreateChatUseCase implements ICreateChatUseCase {
       };
     }
 
-    const chat = existingChat ?? await this.chatRepository.create({
+    const chat = existingChat ?? await this._chatRepository.create({
       participants: {
         userId: data.userId,
         workerId: data.workerId
@@ -49,7 +49,7 @@ export class CreateChatUseCase implements ICreateChatUseCase {
 
     return ChatMapper.toChatWithParticipants(
       chat,
-      this.cacheService
+      this._cacheService
     );
 
   }

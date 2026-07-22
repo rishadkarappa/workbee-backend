@@ -18,7 +18,7 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 @injectable()
 export class WorkerLoginUseCase implements IWorkerLoginUseCase {
     constructor(
-        @inject("TokenService") private _tokenService: ITokenService
+        @inject("TokenService") private readonly _tokenService: ITokenService
     ) {}
 
     async execute(data: WorkerLoginRequestDTO): Promise<WorkerLoginResponseDTO> {

@@ -9,8 +9,8 @@ import { IApplyWorkerUseCase } from "../../ports/worker/IApplyWorkerUseCase";
 @injectable()
 export class ApplyWorkerUseCase implements IApplyWorkerUseCase{
     constructor(
-        @inject("WorkerRepository") private _workerRepository: IWorkerRepository,
-        @inject("HashService") private _hashService: IHashService
+        @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository,
+        @inject("HashService") private readonly _hashService: IHashService
     ) {}
 
     async execute(dto: ApplyWorkerDto): Promise<WorkerResponseDto> {

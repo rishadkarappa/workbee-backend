@@ -10,9 +10,9 @@ import { IForgotPasswordUseCase } from "../../ports/user/IForgotPasswordUseCase"
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase{
     constructor(
-        @inject("UserRepository") private _userRepository:IUserRepository,
-        @inject("TokenService") private _tokenService:ITokenService,
-        @inject("EmailService") private _emailService:IEmailService
+        @inject("UserRepository") private readonly _userRepository:IUserRepository,
+        @inject("TokenService") private readonly _tokenService:ITokenService,
+        @inject("EmailService") private readonly _emailService:IEmailService
     ){}
 
     async execute(email:string){

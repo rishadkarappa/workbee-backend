@@ -7,8 +7,8 @@ import { Worker } from "../../../domain/entities/Worker";
 @injectable()
 export class BlockWorkerUseCase implements IBlockWorkerUseCase {
   constructor(
-    @inject("WorkerRepository") private _workerRepository: IWorkerRepository,
-    @inject("WorkerEventPublisher") private _eventPublisher: WorkerEventPublisher
+    @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository,
+    @inject("WorkerEventPublisher") private readonly _eventPublisher: WorkerEventPublisher
   ) {}
 
   async execute(workerId: string): Promise<Worker> {

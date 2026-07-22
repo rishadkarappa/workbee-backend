@@ -7,10 +7,10 @@ import { MarkNotificationAsReadDTO } from "../dtos/MarkNotificationAsReadDTO";
 export class MarkNotificationAsReadUseCase implements IMarkNotificationAsReadUseCase{
   constructor(
     @inject("NotificationRepository")
-    private notificationRepository: INotificationRepository
+    private readonly _notificationRepository: INotificationRepository
   ) {}
 
   async execute(dto: MarkNotificationAsReadDTO): Promise<boolean> {
-    return await this.notificationRepository.markAsRead(dto.notificationId);
+    return await this._notificationRepository.markAsRead(dto.notificationId);
   }
 }

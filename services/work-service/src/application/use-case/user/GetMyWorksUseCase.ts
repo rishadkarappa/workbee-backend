@@ -5,7 +5,7 @@ import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 @injectable()
 export class GetMyWorksUseCase implements IGetMyWorksUseCase {
     constructor(
-        @inject("WorkRepository") private _workRepository: IWorkRepository
+        @inject("WorkRepository") private readonly _workRepository: IWorkRepository
     ) {}
 
     async execute(userId: string) {

@@ -6,7 +6,7 @@ import { GetWorkerProfilesBatchDto, GetWorkerProfilesBatchResponseDto } from '..
 @injectable()
 export class GetWorkerProfilesBatchUseCase implements IGetWorkerProfileBatchUseCase{
   constructor(
-    @inject("WorkerRepository") private workerRepository: IWorkerRepository
+    @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
   ) { }
 
   async execute(dto:GetWorkerProfilesBatchDto) : Promise<GetWorkerProfilesBatchResponseDto>{
@@ -17,7 +17,7 @@ export class GetWorkerProfilesBatchUseCase implements IGetWorkerProfileBatchUseC
       return [];
     }
 
-    const workers = await this.workerRepository.findByIds(workerIds);
+    const workers = await this._workerRepository.findByIds(workerIds);
 
     return workers.map(worker => ({
       id: worker.id,

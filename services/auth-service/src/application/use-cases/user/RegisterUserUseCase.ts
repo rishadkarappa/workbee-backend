@@ -15,11 +15,11 @@ import { IRegisterUserUseCase } from "../../ports/user/IRegisterUserUseCase";
 @injectable()
 export class RegisterUserUseCase implements IRegisterUserUseCase{
   constructor(
-    @inject("UserRepository") private _userRepository:IUserRepository,
-    @inject("OtpRepository") private _otpRepository:IOtpRepository,
-    @inject("HashService") private _hashService:IHashService,
-    @inject("OtpService") private _otpService:IOtpService,
-    @inject("EmailService") private _emailService:IEmailService
+    @inject("UserRepository") private readonly _userRepository:IUserRepository,
+    @inject("OtpRepository") private readonly _otpRepository:IOtpRepository,
+    @inject("HashService") private readonly _hashService:IHashService,
+    @inject("OtpService") private readonly _otpService:IOtpService,
+    @inject("EmailService") private readonly _emailService:IEmailService
   ){}
 
   async execute(data:RegisterUserRequestDTO):Promise<RegisterUserResponseDTO> {

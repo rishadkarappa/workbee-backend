@@ -6,11 +6,11 @@ import { IGetWorkerProfileUseCase } from '../../ports/worker/IGetWorkerProfileUs
 @injectable()
 export class GetWorkerProfileUseCase implements IGetWorkerProfileUseCase{
   constructor(
-    @inject("WorkerRepository") private workerRepository: IWorkerRepository
+    @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
   ) { }
 
   async execute(dto:GetWorkerProfileDto) : Promise<GetWorkerProfileReponseDto> {
-    const worker = await this.workerRepository.findById(dto.workerId);
+    const worker = await this._workerRepository.findById(dto.workerId);
 
     if (!worker) {
       throw new Error('Worker not found');

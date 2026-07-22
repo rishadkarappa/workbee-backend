@@ -7,7 +7,7 @@ import { IMarkChatAsReadUseCase } from '../../ports/chat/IMarkChatAsReadUseCase'
 @injectable()
 export class MarkChatAsReadUseCase implements IMarkChatAsReadUseCase {
   constructor(
-    @inject("ChatRepository") private chatRepository: IChatRepository
+    @inject("ChatRepository") private readonly _chatRepository: IChatRepository
   ) {}
 
   async execute(dto: MarkChatAsReadDTO): Promise<void> {
@@ -16,6 +16,6 @@ export class MarkChatAsReadUseCase implements IMarkChatAsReadUseCase {
     const readerRole: 'userId' | 'workerId' =
       dto.role === 'user' ? 'userId' : 'workerId';
 
-    await this.chatRepository.resetUnreadCount(dto.chatId, readerRole);
+    await this._chatRepository.resetUnreadCount(dto.chatId, readerRole);
   }
 }

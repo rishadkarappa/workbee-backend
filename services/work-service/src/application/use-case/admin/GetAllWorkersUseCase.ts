@@ -7,7 +7,7 @@ import { IGetAllWorkersUseCase } from "../../ports/worker/IGetAllWorkersUseCase"
 @injectable()
 export class GetAllWorkersUseCase implements IGetAllWorkersUseCase {
     constructor(
-        @inject("WorkerRepository") private _workerRepository: IWorkerRepository
+        @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
     ) {}
 
     async execute(page: number, limit: number, search: string, status: string = "all"): Promise<{

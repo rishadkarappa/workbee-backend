@@ -5,7 +5,7 @@ import { IGetUsersUseCase } from "../../ports/admin/IGetUsersUseCase";
 @injectable()
 export class GetUsersUseCase implements IGetUsersUseCase {
     constructor(
-        @inject("UserRepository") private _userRepository: IUserRepository
+        @inject("UserRepository") private readonly _userRepository: IUserRepository
     ) {}
 
     async execute(page: number, limit: number, search: string, status: string = "all") {

@@ -7,10 +7,10 @@ import { GetUnreadCountDTO } from "../dtos/GetUnreadCountDTO";
 export class GetUnreadCountUseCase implements IGetUnreadCountUseCase{
   constructor(
     @inject("NotificationRepository")
-    private notificationRepository: INotificationRepository
+    private readonly _notificationRepository: INotificationRepository
   ) {}
 
   async execute(dto: GetUnreadCountDTO): Promise<number> {
-    return await this.notificationRepository.getUnreadCount(dto.userId);
+    return await this._notificationRepository.getUnreadCount(dto.userId);
   }
 }

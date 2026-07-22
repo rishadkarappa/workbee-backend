@@ -11,10 +11,10 @@ import { IResendOtpUseCase } from "../../ports/user/IResendOtpUseCase";
 @injectable()
 export class ResendOtpUseCase implements IResendOtpUseCase {
     constructor(
-        @inject("UserRepository") private _userRepository: IUserRepository,
-        @inject("OtpRepository") private _otpRepository: IOtpRepository,
-        @inject("OtpService") private _otpService: IOtpService,
-        @inject("EmailService") private _emailService: IEmailService
+        @inject("UserRepository") private readonly _userRepository: IUserRepository,
+        @inject("OtpRepository") private readonly _otpRepository: IOtpRepository,
+        @inject("OtpService") private readonly _otpService: IOtpService,
+        @inject("EmailService") private readonly _emailService: IEmailService
     ) {}
 
     async execute(data: ResendOtpRequestDTO): Promise<ResendOtpResponseDTO> {

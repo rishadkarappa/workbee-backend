@@ -8,8 +8,8 @@ import { RefreshTokenRequestDTO, RefreshTokenResponseDTO } from "../../dtos/user
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
   constructor(
-    @inject("UserRepository") private _userRepository: IUserRepository,
-    @inject("TokenService") private _tokenService: ITokenService
+    @inject("UserRepository") private readonly _userRepository: IUserRepository,
+    @inject("TokenService") private readonly _tokenService: ITokenService
   ) {}
 
   async execute(data: RefreshTokenRequestDTO): Promise<RefreshTokenResponseDTO> {

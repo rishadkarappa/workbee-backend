@@ -7,7 +7,7 @@ import { IGetAllWorksUseCase } from "../../ports/work/IGetAllWorksUseCase";
 @injectable()
 export class GetAllWorksUseCase implements IGetAllWorksUseCase {
     constructor(
-        @inject("WorkRepository") private _workRepository: IWorkRepository
+        @inject("WorkRepository") private readonly _workRepository: IWorkRepository
     ) {}
 
     async execute(filters?: {

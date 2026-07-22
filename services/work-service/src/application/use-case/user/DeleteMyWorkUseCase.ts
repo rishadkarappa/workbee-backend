@@ -6,7 +6,7 @@ import { DeleteWorkDto } from "../../dtos/work/WorkDTO";
 @injectable()
 export class DeleteMyWorkUseCase implements IDeleteMyWorkUseCase {
     constructor(
-        @inject("WorkRepository") private _workRepository: IWorkRepository
+        @inject("WorkRepository") private readonly _workRepository: IWorkRepository
     ) { }
 
     async execute(dto: DeleteWorkDto): Promise<boolean> {

@@ -9,10 +9,10 @@ export class MarkAllAsReadUseCase
 {
   constructor(
     @inject("NotificationRepository")
-    private notificationRepository: INotificationRepository
+    private readonly _notificationRepository: INotificationRepository
   ) {}
 
   async execute(dto: MarkAllAsReadDTO): Promise<boolean> {
-    return await this.notificationRepository.markAllAsRead(dto.userId);
+    return await this._notificationRepository.markAllAsRead(dto.userId);
   }
 }

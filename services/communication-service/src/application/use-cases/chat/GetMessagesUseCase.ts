@@ -10,12 +10,12 @@ import { ICacheService } from '../../../domain/services/ICacheService';
 @injectable()
 export class GetMessagesUseCase implements IGetMessagesUseCase {
   constructor(
-    @inject("MessageRepository") private messageRepository: IMessageRepository,
-    @inject("CacheService") private cacheService: ICacheService
+    @inject("MessageRepository") private readonly _messageRepository: IMessageRepository,
+    @inject("CacheService") private readonly _cacheService: ICacheService
   ) { }
 
   async execute(data: GetMessagesDTO): Promise<Message[]> {
-    const messages = await this.messageRepository.findByChatId(
+    const messages = await this._messageRepository.findByChatId(
       data.chatId,
       data.limit,   // undefined = no limit = fetch all
       data.offset   // undefined = no skip
@@ -23,7 +23,7 @@ export class GetMessagesUseCase implements IGetMessagesUseCase {
 
     return ChatMapper.toMessageListWithSender(
       messages,
-      this.cacheService
+      this._cacheService
     );
   }
 }

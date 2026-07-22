@@ -9,7 +9,7 @@ import { IPostWorkUseCase } from "../../ports/work/IPostWorkUseCase";
 @injectable()
 export class PostWorkUseCase implements IPostWorkUseCase{
     constructor(
-        @inject("WorkRepository") private _workRepository: IWorkRepository
+        @inject("WorkRepository") private readonly _workRepository: IWorkRepository
     ) {}
 
     async execute(dto: PostWorkDto): Promise<WorkResponseDto> {

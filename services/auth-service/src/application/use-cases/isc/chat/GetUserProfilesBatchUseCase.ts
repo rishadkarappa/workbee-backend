@@ -9,7 +9,7 @@ import { IUserRepository } from '../../../../domain/repositories/IUserRepository
 @injectable()
 export class GetUserProfilesBatchUseCase {
     constructor(
-        @inject("UserRepository") private userRepository: IUserRepository
+        @inject("UserRepository") private readonly _userRepository: IUserRepository
     ) { }
 
     async execute(userIds: string[]) {
@@ -17,7 +17,7 @@ export class GetUserProfilesBatchUseCase {
             return [];
         }
 
-        const users = await this.userRepository.findByIds(userIds);
+        const users = await this._userRepository.findByIds(userIds);
 
         // Map to safe profile data
         return users.map(user => ({

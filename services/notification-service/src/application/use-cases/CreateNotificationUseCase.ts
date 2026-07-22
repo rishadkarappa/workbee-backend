@@ -9,8 +9,7 @@ export class CreateNotificationUseCase
   implements ICreateNotificationUseCase
 {
   constructor(
-    @inject("NotificationRepository")
-    private notificationRepository: INotificationRepository
+    @inject("NotificationRepository") private readonly _notificationRepository: INotificationRepository
   ) {}
 
   async execute(dto: CreateNotificationDTO): Promise<Notification> {
@@ -24,6 +23,6 @@ export class CreateNotificationUseCase
       createdAt: new Date()
     };
 
-    return await this.notificationRepository.create(notification);
+    return await this._notificationRepository.create(notification);
   }
 }

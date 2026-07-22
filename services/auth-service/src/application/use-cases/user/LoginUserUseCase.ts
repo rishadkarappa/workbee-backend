@@ -10,9 +10,9 @@ import { ILoginUserUseCase } from "../../ports/user/ILoginUserUseCase";
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {
   constructor(
-    @inject("UserRepository") private _userRepository: IUserRepository,
-    @inject("HashService") private _hashService: IHashService,
-    @inject("TokenService") private _tokenService: ITokenService
+    @inject("UserRepository") private readonly _userRepository: IUserRepository,
+    @inject("HashService") private readonly _hashService: IHashService,
+    @inject("TokenService") private readonly _tokenService: ITokenService
   ) { }
 
   async execute(data: LoginUserRequestDTO): Promise<LoginUserResponseDTO> {

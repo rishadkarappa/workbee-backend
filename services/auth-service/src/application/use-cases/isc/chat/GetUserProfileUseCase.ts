@@ -8,11 +8,11 @@ import { IUserRepository } from '../../../../domain/repositories/IUserRepository
 @injectable()
 export class GetUserProfileUseCase {
   constructor(
-    @inject("UserRepository") private userRepository: IUserRepository
+    @inject("UserRepository") private readonly _userRepository: IUserRepository
   ) {}
 
   async execute(userId: string) {
-    const user = await this.userRepository.findById(userId);
+    const user = await this._userRepository.findById(userId);
     
     if (!user) {
       throw new Error('User not found');

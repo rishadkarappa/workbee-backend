@@ -12,9 +12,9 @@ import { IVerifyOtpUseCase } from "../../ports/user/IVerifyOtpUseCase";
 @injectable()
 export class VerifyOtpUseCase implements IVerifyOtpUseCase {
     constructor(
-        @inject("UserRepository") private _userRepository: IUserRepository,
-        @inject("OtpRepository") private _otpRepository: IOtpRepository,
-        @inject("TokenService") private _tokenService: ITokenService
+        @inject("UserRepository") private readonly _userRepository: IUserRepository,
+        @inject("OtpRepository") private readonly _otpRepository: IOtpRepository,
+        @inject("TokenService") private readonly _tokenService: ITokenService
     ) {}
 
     async execute(data: VerifyOtpRequestDTO): Promise<VerifyOtpResponseDTO> {

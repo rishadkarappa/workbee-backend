@@ -12,9 +12,9 @@ import { IResetPasswordUseCase } from "../../ports/user/IResetPasswordUseCase";
 @injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase{
     constructor(
-        @inject("UserRepository") private _userRepository:IUserRepository,
-        @inject("TokenService") private _tokenService:ITokenService,
-        @inject("HashService") private _hashService:IHashService
+        @inject("UserRepository") private readonly _userRepository:IUserRepository,
+        @inject("TokenService") private readonly _tokenService:ITokenService,
+        @inject("HashService") private readonly _hashService:IHashService
     ){}
 
     async execute(token:string, password:string){

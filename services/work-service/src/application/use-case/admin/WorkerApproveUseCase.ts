@@ -9,8 +9,8 @@ import { WorkerStatus } from "../../../infrastructure/database/models/WorkerSche
 @injectable()
 export class WorkerApproveUseCase implements IWorkerApproveUseCase {
     constructor(
-        @inject("WorkerRepository") private _workerRepository: IWorkerRepository,
-        @inject("EmailService") private _emailService: IEmailService
+        @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository,
+        @inject("EmailService") private readonly _emailService: IEmailService
     ) {}
 
     async execute(dto: WorkerApproveDto): Promise<WorkerResponseDto> {

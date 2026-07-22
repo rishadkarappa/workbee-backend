@@ -8,8 +8,8 @@ import { IVerifyUserUseCase } from "../../ports/user/IVerifyUserUseCase";
 @injectable()
 export class VerifyUserUseCase implements IVerifyUserUseCase{
     constructor(
-        @inject("UserRepository") private _userRepository:IUserRepository,
-        @inject("TokenService") private _tokenService:ITokenService
+        @inject("UserRepository") private readonly _userRepository:IUserRepository,
+        @inject("TokenService") private readonly _tokenService:ITokenService
     ){}
     async execute(authHeader?:string){
         if(!authHeader) throw new Error(ErrorMessages.AUTH.ATUH_HEADER_IS_MISSING)
