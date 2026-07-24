@@ -19,40 +19,40 @@ interface AuthenticatedSocket extends Socket {
 
 // Payload shape the client sends via send_message
 interface SendMessagePayload {
-  chatId:       string;
-  content:      string;
-  type?:        'text' | 'image' | 'video' | 'file';
+  chatId: string;
+  content: string;
+  type?: 'text' | 'image' | 'video' | 'file';
   recipientId?: string;
-  mediaUrl?:      string;
+  mediaUrl?: string;
   mediaPublicId?: string;
 }
 
 // New payload shapes for work confirmation flow
 interface AskForConfirmPayload {
-  chatId:     string;
-  workId:     string;
-  workTitle:  string;
-  workerId:   string;
+  chatId: string;
+  workId: string;
+  workTitle: string;
+  workerId: string;
   workerName: string;
-  userId:     string;
+  userId: string;
 }
 
 interface ConfirmResponsePayload {
-  chatId:     string;
-  workId:     string;
-  workTitle:  string;
-  accepted:   boolean;
-  userId:     string;
+  chatId: string;
+  workId: string;
+  workTitle: string;
+  accepted: boolean;
+  userId: string;
   workerName: string;
-  workerId?:  string;
+  workerId?: string;
 }
 
 interface WorkProgressUpdatePayload {
-  chatId:    string;
-  workId:    string;
+  chatId: string;
+  workId: string;
   workTitle: string;
-  progress:  string;
-  workerId:  string;
+  progress: string;
+  workerId: string;
 }
 
 export class SocketManager {
@@ -64,14 +64,14 @@ export class SocketManager {
   constructor(httpServer: HttpServer) {
     this.io = new Server(httpServer, {
       cors: {
-        origin:      process.env.CORS_ORIGIN || 'http://localhost:5173',
+        origin: process.env.CORS_ORIGIN,
         credentials: true,
-        methods:     ['GET', 'POST'],
+        methods: ['GET', 'POST'],
       },
     });
 
-    this.cacheService           = container.resolve(CacheService);
-    this.messageEventPublisher  = container.resolve(MessageEventPublisher);
+    this.cacheService = container.resolve(CacheService);
+    this.messageEventPublisher = container.resolve(MessageEventPublisher);
 
     this.setupMiddleware();
     this.setupEventHandlers();
@@ -86,9 +86,9 @@ export class SocketManager {
       }
 
       try {
-        const decoded    = jwt.verify(token, JWT_SECRET) as any;
-        socket.userId    = decoded.id || decoded.userId;
-        socket.userRole  = decoded.role;
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        socket.userId = decoded.id || decoded.userId;
+        socket.userRole = decoded.role;
         next();
       } catch {
         next(new Error('Authentication error: Invalid token'));
@@ -128,12 +128,12 @@ export class SocketManager {
           const sendMessageUseCase = container.resolve(SendMessageUseCase);
 
           const savedMessage = await sendMessageUseCase.execute({
-            chatId:        data.chatId,
-            senderId:      socket.userId,
-            senderRole:    socket.userRole as 'user' | 'worker',
-            content:       data.content,
-            type:          data.type,
-            mediaUrl:      data.mediaUrl,
+            chatId: data.chatId,
+            senderId: socket.userId,
+            senderRole: socket.userRole as 'user' | 'worker',
+            content: data.content,
+            type: data.type,
+            mediaUrl: data.mediaUrl,
             mediaPublicId: data.mediaPublicId,
           });
 
@@ -161,7 +161,7 @@ export class SocketManager {
             const recipientSocketId = this.userSockets.get(data.recipientId);
             if (recipientSocketId) {
               const recipientSocket = this.io.sockets.sockets.get(recipientSocketId);
-              const isInChatRoom    = recipientSocket?.rooms.has(`chat:${data.chatId}`);
+              const isInChatRoom = recipientSocket?.rooms.has(`chat:${data.chatId}`);
 
               if (!isInChatRoom) {
                 this.io.to(`user:${data.recipientId}`).emit('new_message', enrichedMessage);
@@ -173,17 +173,17 @@ export class SocketManager {
           if (data.recipientId && senderProfile) {
             const previewContent =
               data.type === 'image' ? '📷 Image'
-              : data.type === 'video' ? '🎥 Video'
-              : data.content;
+                : data.type === 'video' ? '🎥 Video'
+                  : data.content;
 
             await this.messageEventPublisher.publishNewMessage({
-              userId:         data.recipientId,
-              senderId:       socket.userId,
-              senderName:     senderProfile.name,
-              senderRole:     socket.userRole as 'user' | 'worker',
-              chatId:         data.chatId,
+              userId: data.recipientId,
+              senderId: socket.userId,
+              senderName: senderProfile.name,
+              senderRole: socket.userRole as 'user' | 'worker',
+              chatId: data.chatId,
               messageContent: previewContent,
-              timestamp:      new Date(),
+              timestamp: new Date(),
             });
           }
         } catch (error: any) {
@@ -205,13 +205,13 @@ export class SocketManager {
           const sendMessageUseCase = container.resolve(SendMessageUseCase);
 
           const savedMessage = await sendMessageUseCase.execute({
-            chatId:     data.chatId,
-            senderId:   data.workerId,
+            chatId: data.chatId,
+            senderId: data.workerId,
             senderRole: 'worker',
-            content:    JSON.stringify({
-              type:       'WORK_CONFIRM_REQUEST',
-              workId:     data.workId,
-              workTitle:  data.workTitle,
+            content: JSON.stringify({
+              type: 'WORK_CONFIRM_REQUEST',
+              workId: data.workId,
+              workTitle: data.workTitle,
               workerName: data.workerName,
             }),
             type: 'system',
@@ -248,19 +248,19 @@ export class SocketManager {
 
           const content = data.accepted
             ? JSON.stringify({
-                type:      'WORK_CONFIRM_ACCEPTED',
-                workId:    data.workId,
-                workTitle: data.workTitle,
-              })
+              type: 'WORK_CONFIRM_ACCEPTED',
+              workId: data.workId,
+              workTitle: data.workTitle,
+            })
             : JSON.stringify({
-                type:      'WORK_CONFIRM_REJECTED',
-                workId:    data.workId,
-                workTitle: data.workTitle,
-              });
+              type: 'WORK_CONFIRM_REJECTED',
+              workId: data.workId,
+              workTitle: data.workTitle,
+            });
 
           const savedMessage = await sendMessageUseCase.execute({
-            chatId:     data.chatId,
-            senderId:   data.userId,
+            chatId: data.chatId,
+            senderId: data.userId,
             senderRole: 'user',
             content,
             type: 'system',
@@ -298,14 +298,14 @@ export class SocketManager {
           const sendMessageUseCase = container.resolve(SendMessageUseCase);
 
           const savedMessage = await sendMessageUseCase.execute({
-            chatId:     data.chatId,
-            senderId:   data.workerId,
+            chatId: data.chatId,
+            senderId: data.workerId,
             senderRole: 'worker',
-            content:    JSON.stringify({
-              type:      'WORK_PROGRESS_UPDATE',
-              workId:    data.workId,
+            content: JSON.stringify({
+              type: 'WORK_PROGRESS_UPDATE',
+              workId: data.workId,
               workTitle: data.workTitle,
-              progress:  data.progress,
+              progress: data.progress,
             }),
             type: 'system',
           });
@@ -321,7 +321,7 @@ export class SocketManager {
           // 2. Dedicated progress event — LiveWorks page listens to this
           //    for instant UI update without needing chat open
           this.io.to(`chat:${data.chatId}`).emit('work_progress_changed', {
-            workId:   data.workId,
+            workId: data.workId,
             progress: data.progress,
           });
 
@@ -356,9 +356,9 @@ export class SocketManager {
             createdAt: new Date(),
           };
 
-          // ✅ FIX: use the same room convention as every other event
+          // FIX: use the same room convention as every other event
           this.io.to(`chat:${bid.chatId}`).emit('new_message', message);
-          // ✅ also push to both personal rooms so it lands even if chat isn't open
+          // also push to both personal rooms so it lands even if chat isn't open
           this.io.to(`user:${bid.userId}`).emit('new_message', message);
           this.io.to(`user:${bid.workerId}`).emit('new_message', message);
         } catch (err: any) {
@@ -427,7 +427,6 @@ export class SocketManager {
             createdAt: new Date(),
           };
 
-          // ✅ FIX: correct room prefix
           this.io.to(`chat:${data.chatId}`).emit('new_message', message);
           this.io.to(`user:${data.userId}`).emit('new_message', message);
           this.io.to(`user:${data.workerId}`).emit('new_message', message);
@@ -439,7 +438,7 @@ export class SocketManager {
       // ─ typing indicator
       socket.on('typing', (data: { chatId: string; isTyping: boolean }) => {
         socket.to(`chat:${data.chatId}`).emit('user_typing', {
-          userId:   socket.userId,
+          userId: socket.userId,
           isTyping: data.isTyping,
         });
       });

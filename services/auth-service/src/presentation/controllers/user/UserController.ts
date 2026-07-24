@@ -3,11 +3,14 @@ import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 import { RegisterUserRequestDTO } from "../../../application/dtos/user/RegisterUserDTO";
 import { LoginUserRequestDTO } from "../../../application/dtos/user/LoginUserDTO";
 import { VerifyOtpRequestDTO } from "../../../application/dtos/user/VerifyOtpDTO";
 import { GoogleLoginRequestDTO } from "../../../application/dtos/user/GoogleLoginDTO";
+import { ResendOtpRequestDTO } from "../../../application/dtos/user/ResendOtpDTO";
+import { RefreshTokenRequestDTO } from "../../../application/dtos/user/RefreshTokenDTO";
 
 import { IRegisterUserUseCase } from "../../../application/ports/user/IRegisterUserUseCase";
 import { ILoginUserUseCase } from "../../../application/ports/user/ILoginUserUseCase";
@@ -16,15 +19,13 @@ import { IVerifyUserUseCase } from "../../../application/ports/user/IVerifyUserU
 import { IGoogleLoginUserUseCase } from "../../../application/ports/user/IGoogleLoginUserUseCase";
 import { IForgotPasswordUseCase } from "../../../application/ports/user/IForgotPasswordUseCase";
 import { IResetPasswordUseCase } from "../../../application/ports/user/IResetPasswordUseCase";
-import { IUserController } from "../../ports/IUserContoller";
-import { RefreshTokenRequestDTO } from "../../../application/dtos/user/RefreshTokenDTO";
-import { RefreshTokenUseCase } from "../../../application/use-cases/user/RefreshTokenUseCase";
-import { LogoutUserUseCase } from "../../../application/use-cases/user/LogoutUserUseCase";
 import { IResendOtpUseCase } from "../../../application/ports/user/IResendOtpUseCase";
-import { ResendOtpRequestDTO } from "../../../application/dtos/user/ResendOtpDTO";
-import { GetUserProfileUseCase } from "../../../application/use-cases/isc/chat/GetUserProfileUseCase";
-import { GetUserProfilesBatchUseCase } from "../../../application/use-cases/isc/chat/GetUserProfilesBatchUseCase";
-import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { IRefreshTokenUseCase } from "../../../application/ports/user/IRefreshTokenUseCase";
+import { ILogoutUserUseCase } from "../../../application/ports/user/ILogoutUserUseCase";
+import { IGetUserProfileUseCase } from "../../../application/ports/isc/IGetUserProfileUseCase";
+import { IGetUserProfilesBatchUseCase } from "../../../application/ports/isc/IGetUserProfilesBatchUseCase";
+
+import { IUserController } from "../../ports/IUserContoller";
 
 @injectable()
 export class UserController implements IUserController {
@@ -37,10 +38,10 @@ export class UserController implements IUserController {
     @inject("GoogleLoginUserUseCase") private readonly _googleLoginUserUseCase: IGoogleLoginUserUseCase,
     @inject("ForgotPasswordUseCase") private readonly _forgotPasswordUseCase: IForgotPasswordUseCase,
     @inject("ResetPasswordUseCase") private readonly _resetPasswordUseCase: IResetPasswordUseCase,
-    @inject("RefreshTokenUseCase") private readonly _refreshTokenUseCase: RefreshTokenUseCase,
-    @inject("LogoutUserUseCase") private readonly _logoutUserUseCase: LogoutUserUseCase,
-    @inject("GetUserProfileUseCase") private readonly _getUserProfileUseCase: GetUserProfileUseCase,
-    @inject("GetUserProfilesBatchUseCase") private readonly _getUserProfilesBatchUseCase: GetUserProfilesBatchUseCase,
+    @inject("RefreshTokenUseCase") private readonly _refreshTokenUseCase: IRefreshTokenUseCase,
+    @inject("LogoutUserUseCase") private readonly _logoutUserUseCase: ILogoutUserUseCase,
+    @inject("GetUserProfileUseCase") private readonly _getUserProfileUseCase: IGetUserProfileUseCase,
+    @inject("GetUserProfilesBatchUseCase") private readonly _getUserProfilesBatchUseCase: IGetUserProfilesBatchUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -135,7 +136,7 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success({ result }, ResponseMessage.USER.SENT_RESET_LINK, HttpStatus.OK))
-    } catch (error: any) {
+    } catch (error) {
       next(error)
     }
   }
@@ -213,7 +214,7 @@ export class UserController implements IUserController {
       const { userId } = req.params;
       const profile = await this._getUserProfileUseCase.execute(userId);
       res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.USER.USER_PROFILE_RETRIEVED));
-    } catch (error: any) {
+    } catch (error) {
      next(error);
     }
   }
@@ -230,7 +231,7 @@ export class UserController implements IUserController {
 
       const profiles = await this._getUserProfilesBatchUseCase.execute(userIds);
       res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, ResponseMessage.USER.USER_PROFILES_ARE_RETRIEVED));
-    } catch (error: any) {
+    } catch (error) {
      next(error);
     }
   }

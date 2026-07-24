@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { IUserRepository } from '../../../../domain/repositories/IUserRepository';
+import { IGetUserProfilesBatchUseCase, IUserProfiles } from '../../../ports/isc/IGetUserProfilesBatchUseCase';
 
 /**
  * Use case for fetching multiple user profiles safely
@@ -7,12 +8,12 @@ import { IUserRepository } from '../../../../domain/repositories/IUserRepository
  */
 
 @injectable()
-export class GetUserProfilesBatchUseCase {
+export class GetUserProfilesBatchUseCase implements IGetUserProfilesBatchUseCase {
     constructor(
         @inject("UserRepository") private readonly _userRepository: IUserRepository
     ) { }
 
-    async execute(userIds: string[]) {
+    async execute(userIds: string[]): Promise<IUserProfiles[]> {
         if (!userIds || userIds.length === 0) {
             return [];
         }

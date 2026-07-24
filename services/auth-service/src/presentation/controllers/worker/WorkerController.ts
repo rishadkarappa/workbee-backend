@@ -24,7 +24,7 @@ export class WorkerController implements IWorkerController{
 
             res.status(HttpStatus.OK)
                 .json(ResponseHelper.success(worker, ResponseMessage.AUTH.WORKER_LOGGED));
-        } catch (err: any) {
+        } catch (err) {
             next(err)
         }
     }
