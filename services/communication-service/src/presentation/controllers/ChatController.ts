@@ -7,9 +7,9 @@ import { IChatController } from '../ports/IChatController';
 import { ICreateChatUseCase } from '../../application/ports/chat/ICreateChatUseCase';
 import { IGetUserChatsUseCase } from '../../application/ports/chat/IGetUserChatsUseCase';
 import { IGetMessagesUseCase } from '../../application/ports/chat/IGetMessagesUseCase';
-import { MarkChatAsReadUseCase } from '../../application/use-cases/chat/MarkChatAsReadUseCase';
 import { ResponseMessage } from '../../shared/constants/ResponseMessages';
 import { ErrorMessages } from '../../shared/constants/ErrorMessages';
+import { IMarkChatAsReadUseCase } from '../../application/ports/chat/IMarkChatAsReadUseCase';
 
 @injectable()
 export class ChatController implements IChatController {
@@ -17,7 +17,7 @@ export class ChatController implements IChatController {
     @inject("CreateChatUseCase") private readonly _createChatUseCase: ICreateChatUseCase,
     @inject("GetUserChatsUseCase") private readonly _getUserChatsUseCase: IGetUserChatsUseCase,
     @inject("GetMessagesUseCase") private readonly _getMessagesUseCase: IGetMessagesUseCase,
-    @inject("MarkChatAsReadUseCase") private readonly _markChatAsReadUseCase: MarkChatAsReadUseCase
+    @inject("MarkChatAsReadUseCase") private readonly _markChatAsReadUseCase: IMarkChatAsReadUseCase
   ) { }
 
   async createChat(req: Request, res: Response, next: NextFunction): Promise<void> {
