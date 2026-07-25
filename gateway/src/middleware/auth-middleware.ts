@@ -43,11 +43,15 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     if (payload.email) req.headers["x-user-email"] = payload.email;
     if (role) req.headers["x-user-role"] = role;
 
-    (req as any).user = payload;
+    req.user = payload;
     return next();
 
-  } catch (e: any) {
-    console.log(`Token verification failed for ${req.method} ${req.path}:`, e.message);
+  } catch (error: unknown) {
+
+    const message = error instanceof Error ? error.message : "unknown error";
+
+    console.log(`Token verification failed for ${req.method} ${req.path}: ${message}`);
+    
     return res.status(403).json({ error: ErrorMessages.AUTH.INVALID_OR_EXPIRED_TOKEN});
   }
 };

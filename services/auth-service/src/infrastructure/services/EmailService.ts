@@ -7,7 +7,7 @@ export class EmailService implements IEmailService{
     private transporter;
 
     constructor(){
-        console.log('hited email service transporter seviceeeee');
+        // console.log('hited email service transporter seviceeeee');
         
         this.transporter = nodemailer.createTransport({
             service:'gmail',
