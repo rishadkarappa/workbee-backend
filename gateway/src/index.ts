@@ -1,12 +1,15 @@
 import dotenv from "dotenv";
+// env config
+dotenv.config();
+
 import express from "express";
+
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { httpLogger } from "./middleware/centralized-logging";
 import { verifyToken } from "./middleware/auth-middleware";
 
-// env config
-dotenv.config();
+
 
 // gateway port
 const PORT = process.env.PORT;

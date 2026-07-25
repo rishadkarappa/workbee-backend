@@ -2,8 +2,9 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { isPublic } from "../utils/public-routes";
 import { getRedisClient } from "../config/RedisClient";
-
-const JWT_SECRET = process.env.JWT_SECRET || "jwtsecret2233";
+import { ENV } from "../config/env";
+import { IJwtPayload } from "../types/IJwtPayload";
+import { ErrorMessages } from "../shared/constants/ErrorMessages";
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   if (isPublic(req)) {
@@ -14,12 +15,12 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     console.log(`No token provided for ${req.method} ${req.path}`);
-    return res.status(401).json({ error: "Access denied. No token provided." });
+    return res.status(401).json({ error: ErrorMessages.AUTH.NO_TOKEN_PROVIDED });
   }
 
   try {
     const token = authHeader.split(" ")[1];
-    const payload = jwt.verify(token, JWT_SECRET) as any;
+    const payload = jwt.verify(token, ENV.JWT_SECRET) as IJwtPayload;
 
     const userId = payload.userId || payload.id;
     const role = payload.role;
@@ -32,7 +33,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     if (isBlocked) {
       console.log(`Blocked ${role} attempted access: ${userId} — ${req.method} ${req.path}`);
       return res.status(401).json({ 
-        error: "Account has been blocked. Please contact support.",
+        error: ErrorMessages.AUTH.ACCOUNT_HAS_BEEN_BLOCKED,
         code: "ACCOUNT_BLOCKED"
       });
     }
@@ -47,6 +48,6 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 
   } catch (e: any) {
     console.log(`Token verification failed for ${req.method} ${req.path}:`, e.message);
-    return res.status(403).json({ error: "Invalid or expired token" });
+    return res.status(403).json({ error: ErrorMessages.AUTH.INVALID_OR_EXPIRED_TOKEN});
   }
 };
