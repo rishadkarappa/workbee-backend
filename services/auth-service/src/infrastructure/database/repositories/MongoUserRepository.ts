@@ -1,18 +1,17 @@
 import { injectable } from "tsyringe";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { User } from "../../../domain/entities/User";
-import { UserModel } from "../models/UserSchema";
+import { UserDocument, UserModel } from "../models/UserSchema";
 import { MongoBaseRepository } from "./MongoBaseRepository";
 
 @injectable()
-export class MongoUserRepository extends MongoBaseRepository<User, any> implements IUserRepository {
+export class MongoUserRepository extends MongoBaseRepository<User, UserDocument> implements IUserRepository {
     constructor() {
         super(UserModel)
     }
 
-    protected map(user: any): User {
+    protected map(user: UserDocument): User {
         return {
-            // id: user.id,
             id: user._id?.toString() || user.id?.toString(),
             name: user.name,
             email: user.email,

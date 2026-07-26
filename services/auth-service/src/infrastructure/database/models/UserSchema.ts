@@ -1,3 +1,4 @@
+import { UserRole } from "@workbee/common";
 import mongoose, { Document, ObjectId, Schema } from "mongoose";
 
 export interface UserDocument extends Document {
@@ -7,7 +8,7 @@ export interface UserDocument extends Document {
   password: string;
   isVerified: boolean;
   isBlocked:boolean;
-  role: string;
+  role: UserRole;
   createdAt: Date;
 }
 
@@ -20,9 +21,9 @@ const UserSchema = new Schema<UserDocument>(
     isBlocked: { type: Boolean, default: false },
     role: {
       type: String,
-      enum:["user","admin"],
+      enum:UserRole,
       required: true,
-      default: 'user'
+      default: UserRole.USER
     }
   },
   { timestamps: true }
