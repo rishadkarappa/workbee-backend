@@ -9,5 +9,7 @@ function getEnv(name:string):string{
 }
 
 export const ENV = {
-    PORT:getEnv("PORT")
+    PORT:getEnv("PORT"),
+    RABBITMQ_URL:getEnv("RABBITMQ_URL"),
+
 }
