@@ -2,18 +2,18 @@ import { injectable } from "tsyringe";
 import { MongoBaseRepository } from "./MongoBaseRepository";
 import { Worker } from "../../../domain/entities/Worker";
 import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
-import { WorkerModel } from "../models/WorkerSchema";
-import mongoose from "mongoose";
+import { WorkerModel, WorkerDocument, WorkerStatus } from "../models/WorkerSchema";
+import mongoose, { FilterQuery } from "mongoose";
 
 @injectable()
-export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> implements IWorkerRepository {
+export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDocument> implements IWorkerRepository {
   constructor() {
     super(WorkerModel);
   }
 
-  protected map(worker: any): Worker {
+  protected map(worker: WorkerDocument): Worker {
     return {
-      id: worker._id?.toString() || worker.id,
+      id: worker._id.toString() || worker.id,
       name: worker.name,
       email: worker.email,
       phone: worker.phone,
@@ -35,7 +35,10 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
   async save(worker: Worker): Promise<Worker> {
     if (worker.id) {
       const updated = await WorkerModel.findByIdAndUpdate(worker.id, worker, { new: true });
-      return this.map(updated!);
+      if (!updated) {
+        throw new Error(`Worker not found for update: ${worker.id}`);
+      }
+      return this.map(updated);
     } else {
       const newWorker = new WorkerModel(worker);
       const saved = await newWorker.save();
@@ -63,8 +66,9 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
   ): Promise<{ workers: Worker[]; total: number }> {
     const skip = (page - 1) * limit;
 
-    // Build search query for pending and rejected workers
-    const searchQuery: any = { status: { $in: ["pending", "rejected"] } };
+    const searchQuery: FilterQuery<WorkerDocument> = {
+      status: { $in: ["pending", "rejected"] }
+    };
 
     if (search) {
       searchQuery.$or = [
@@ -79,13 +83,13 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
       WorkerModel.find(searchQuery)
         .skip(skip)
         .limit(limit)
-        .sort({ createdAt: -1 }) // Latest first
+        .sort({ createdAt: -1 })
         .lean(),
       WorkerModel.countDocuments(searchQuery)
     ]);
 
     return {
-      workers: workers.map(w => this.map(w)),
+      workers: workers.map(w => this.map(w as unknown as WorkerDocument)),
       total
     };
   }
@@ -98,10 +102,8 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
   ): Promise<{ workers: Worker[]; total: number }> {
     const skip = (page - 1) * limit;
 
-    // Build search query for approved workers
-    const searchQuery: any = { status: "approved" };
+    const searchQuery: FilterQuery<WorkerDocument> = { status: WorkerStatus.APPROVED };
 
-    // Search filter
     if (search) {
       searchQuery.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -111,7 +113,6 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
       ];
     }
 
-    // Status filter (isBlocked)
     if (status !== "all") {
       searchQuery.isBlocked = status === "blocked";
     }
@@ -125,22 +126,21 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, any> impl
     ]);
 
     return {
-      workers: workers.map(w => this.map(w)),
+      workers: workers.map(w => this.map(w as unknown as WorkerDocument)),
       total
     };
   }
 
   async findByIds(ids: string[]): Promise<Worker[]> {
-  const workers = await WorkerModel.find({
-    _id: { $in: ids }
-  }).select('-password').lean();
-  
+    const workers = await WorkerModel.find({
+      _id: { $in: ids }
+    }).select('-password').lean();
 
-  return workers.map(worker => this.map(worker));
-}
+    return workers.map(worker => this.map(worker as unknown as WorkerDocument));
+  }
 
   async getWorkersCount(): Promise<number> {
-    const count = await WorkerModel.countDocuments({ status: "approved" });
+    const count = await WorkerModel.countDocuments({ status: WorkerStatus.APPROVED });
     return count;
   }
 }

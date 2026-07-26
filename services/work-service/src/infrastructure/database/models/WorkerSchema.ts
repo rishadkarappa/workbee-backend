@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export enum WorkerStatus {
   PENDING = "pending",
@@ -7,6 +7,7 @@ export enum WorkerStatus {
 }
 
 export interface WorkerDocument extends Document {
+  _id: Types.ObjectId; 
   name: string;
   email: string;
   phone: string;
