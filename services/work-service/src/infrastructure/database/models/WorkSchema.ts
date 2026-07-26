@@ -1,8 +1,10 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import { Work } from "../../../domain/entities/Work";
 
 
-export interface WorkTocument extends Omit<Work, 'id'>, Document { }
+export interface WorkTocument extends Omit<Work, 'id'>, Document {
+    _id: Types.ObjectId;
+}
 
 const WorkSchema = new Schema<WorkTocument>(
     {

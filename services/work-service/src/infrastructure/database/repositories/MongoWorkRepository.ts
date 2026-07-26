@@ -1,7 +1,11 @@
 import { injectable } from "tsyringe";
 import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { Work } from "../../../domain/entities/Work";
-import { WorkModel } from "../models/WorkSchema";
+import { WorkModel, WorkTocument } from "../models/WorkSchema";
+import { FilterQuery, PipelineStage } from "mongoose";
+
+// Shape returned by the $geoNear aggregation — adds calculatedDistance on top of the document
+type WorkGeoResult = WorkTocument & { calculatedDistance: number };
 
 @injectable()
 export class MongoWorkRepository implements IWorkRepository {
@@ -17,7 +21,7 @@ export class MongoWorkRepository implements IWorkRepository {
 
     async findByUserId(userId: string): Promise<Work[]> {
         const works = await WorkModel.find({ userId }).sort({ createdAt: -1 });
-        return works.map(this.mapToEntity);
+        return works.map(w => this.mapToEntity(w));
     }
 
     async findAll(filters?: {
@@ -41,32 +45,13 @@ export class MongoWorkRepository implements IWorkRepository {
 
         const skip = (page - 1) * limit;
 
-        //  Check if geospatial filtering is requested
         const hasGeoFilter = latitude !== undefined &&
             longitude !== undefined &&
             maxDistance !== undefined;
 
         if (hasGeoFilter) {
-            //  Use MongoDB $geoNear aggregation for distance-based queries
-            const pipeline: any[] = [
-                {
-                    $geoNear: {
-                        near: {
-                            type: "Point",
-                            coordinates: [longitude, latitude] // [lng, lat]
-                        },
-                        distanceField: "calculatedDistance",
-                        maxDistance: maxDistance! * 1000, // Convert km to meters
-                        spherical: true,
-                        query: {} // Will be populated below
-                    }
-                }
-            ];
+            const matchQuery: FilterQuery<WorkTocument> = {};
 
-            // Build additional filters
-            const matchQuery: any = {};
-
-            // Search filter
             if (search && search.trim()) {
                 matchQuery.$or = [
                     { workTitle: { $regex: search, $options: 'i' } },
@@ -77,35 +62,38 @@ export class MongoWorkRepository implements IWorkRepository {
                 ];
             }
 
-            // Status filter
             if (status !== 'all') {
-                matchQuery.status = status;
+                matchQuery.status = status as WorkTocument['status'];
             }
 
-            // Add match stage if we have additional filters
-            if (Object.keys(matchQuery).length > 0) {
-                pipeline[0].$geoNear.query = matchQuery;
-            }
-
-            // Add pagination stages
-            pipeline.push(
-                { $skip: skip },
-                { $limit: limit }
-            );
-
-            // Execute aggregation
-            const works = await WorkModel.aggregate(pipeline);
-
-            // Get total count for pagination
-            const countPipeline: any[] = [
+            const pipeline: PipelineStage[] = [
                 {
                     $geoNear: {
                         near: {
-                            type: "Point" as "Point",
-                            coordinates: [longitude, latitude] as [number, number]
+                            type: "Point",
+                            coordinates: [longitude, latitude]
                         },
                         distanceField: "calculatedDistance",
-                        maxDistance: maxDistance! * 1000,
+                        maxDistance: maxDistance * 1000, // Convert km to meters
+                        spherical: true,
+                        query: matchQuery
+                    }
+                },
+                { $skip: skip },
+                { $limit: limit }
+            ];
+
+            const works = await WorkModel.aggregate<WorkGeoResult>(pipeline);
+
+            const countPipeline: PipelineStage[] = [
+                {
+                    $geoNear: {
+                        near: {
+                            type: "Point",
+                            coordinates: [longitude, latitude]
+                        },
+                        distanceField: "calculatedDistance",
+                        maxDistance: maxDistance * 1000,
                         spherical: true,
                         query: matchQuery
                     }
@@ -113,20 +101,17 @@ export class MongoWorkRepository implements IWorkRepository {
                 { $count: "total" }
             ];
 
-
-            const countResult = await WorkModel.aggregate(countPipeline);
+            const countResult = await WorkModel.aggregate<{ total: number }>(countPipeline);
             const total = countResult.length > 0 ? countResult[0].total : 0;
 
             return {
-                works: works.map(this.mapToEntity),
+                works: works.map(w => this.mapToEntity(w)),
                 total
             };
         }
 
-        //  Regular query without geospatial filtering
-        const query: any = {};
+        const query: FilterQuery<WorkTocument> = {};
 
-        // Search filter
         if (search && search.trim()) {
             query.$or = [
                 { workTitle: { $regex: search, $options: 'i' } },
@@ -137,12 +122,10 @@ export class MongoWorkRepository implements IWorkRepository {
             ];
         }
 
-        // Status filter
         if (status !== 'all') {
-            query.status = status;
+            query.status = status as WorkTocument['status'];
         }
 
-        // Execute query with pagination
         const [works, total] = await Promise.all([
             WorkModel.find(query)
                 .sort({ createdAt: -1 })
@@ -152,7 +135,7 @@ export class MongoWorkRepository implements IWorkRepository {
         ]);
 
         return {
-            works: works.map(this.mapToEntity),
+            works: works.map(w => this.mapToEntity(w)),
             total
         };
     }
@@ -172,9 +155,9 @@ export class MongoWorkRepository implements IWorkRepository {
     }
 
     async getMyWorks(userId: string): Promise<{ works: Work[] | null }> {
-        const works = await WorkModel.find({ userId: userId }).sort({ createdAt: -1 });
+        const works = await WorkModel.find({ userId }).sort({ createdAt: -1 });
         return {
-            works: works.length > 0 ? works.map(this.mapToEntity) : null
+            works: works.length > 0 ? works.map(w => this.mapToEntity(w)) : null
         };
     }
 
@@ -184,10 +167,10 @@ export class MongoWorkRepository implements IWorkRepository {
             status: { $in: ['assigned', 'in-progress', 'completed'] }
         }).sort({ updatedAt: -1 });
 
-        return { works: works.map(this.mapToEntity.bind(this)) };
+        return { works: works.map(w => this.mapToEntity(w)) };
     }
 
-    private mapToEntity(doc: any): Work {
+    private mapToEntity(doc: WorkTocument | WorkGeoResult): Work {
         return {
             id: doc._id.toString(),
             userId: doc.userId,
