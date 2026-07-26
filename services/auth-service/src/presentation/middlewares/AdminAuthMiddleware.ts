@@ -23,9 +23,9 @@ export class AdminAuthMiddleware {
                 res.status(403).json({message:'only access admins'})
                 return;
             }
-            (req as any).user = payLoad
+            req.user = payLoad;
             next()
-        } catch (error: any) {
+        } catch (error) {
             console.log(error)
             res.status(401).json({message:'invalid or expired token'})
         }

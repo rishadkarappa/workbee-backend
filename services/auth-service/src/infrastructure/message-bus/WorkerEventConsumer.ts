@@ -7,6 +7,7 @@ import { injectable, inject } from "tsyringe";
 import { RabbitMQConnection } from "../config/rabbitmq";
 import { ITokenService } from "../../domain/services/ITokenService";
 import RedisClient from "../config/RedisClient";
+import { ConsumeMessage } from "amqplib";
 
 interface IWorkerBlockedEvent {
   workerId: string;
@@ -36,7 +37,7 @@ export class WorkerEventConsumer {
 
       channel.consume(
         this.QUEUE,
-        async (msg:any) => {
+        async (msg:ConsumeMessage | null) => {
           if (!msg) return;
           try {
             const event: IWorkerBlockedEvent = JSON.parse(msg.content.toString());
