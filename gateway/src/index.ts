@@ -9,8 +9,6 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { httpLogger } from "./middleware/centralized-logging";
 import { verifyToken } from "./middleware/auth-middleware";
 
-
-
 // gateway port
 const PORT = process.env.PORT;
 

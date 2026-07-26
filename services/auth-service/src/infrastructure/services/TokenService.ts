@@ -1,45 +1,48 @@
 import { injectable } from 'tsyringe';
 import jwt from 'jsonwebtoken';
-import { ITokenService } from '../../domain/services/ITokenService';
-import RedisClient from '../config/RedisClient';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'jwtrefreshsecret2233';
-const REFRESH_TOKEN_EXPIRY = 30 * 24 * 60 * 60; // 30 days in seconds
+import { ITokenService } from '../../domain/services/ITokenService';
+
+import RedisClient from '../config/RedisClient';
+import { ENV } from '../config/env';
+import { AUTH_CONFIG } from '../config/auth.config';
+
+import { ErrorMessages } from '../../shared/constants/ErrorMessages';
+import { UserRoles } from '../../shared/constants/UserRoles';
 
 @injectable()
 export class TokenService implements ITokenService {
     private redis = RedisClient.getInstance();
 
-    generateAccess(id: string, role?: "user" | "admin" | "worker"): string {
+    generateAccess(id: string, role?: UserRoles): string {
         const payload = role ? { id, role } : { id };
-        return jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' }); //access token in 15 mins
+        return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: AUTH_CONFIG.ACCESS_TOKEN_EXPIRY });
     }
 
-    generateRefresh(id: string, role?: "user" | "admin" | "worker"): string {
+    generateRefresh(id: string, role?: UserRoles): string {
         const payload = role ? { id, role } : { id };
-        return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '30d' }); //refresh token in 30 days
+        return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, { expiresIn: AUTH_CONFIG.REFRESH_TOKEN_EXPIRY });
     }
 
     verifyAccess(token: string): { id: string; role?: string } {
         try {
-            const payload = jwt.verify(token, JWT_SECRET) as { id: string; role?: string };
+            const payload = jwt.verify(token, ENV.JWT_SECRET) as { id: string; role?: string };
             return payload;
         } catch (error) {
-            throw new Error('Invalid or expired access token');
+            throw new Error(ErrorMessages.AUTH.INVALID_OR_EXPIRED_ACCESS_TOKEN);
         }
     }
 
     verifyRefresh(token: string): { id: string; role?: string } {
         try {
-            const payload = jwt.verify(token, JWT_REFRESH_SECRET) as { id: string; role?: string };
+            const payload = jwt.verify(token, ENV.JWT_REFRESH_SECRET) as { id: string; role?: string };
             return payload;
         } catch (error) {
-            throw new Error('Invalid or expired refresh token');
+            throw new Error(ErrorMessages.AUTH.INVALID_OR_EXPIRED_ACCESS_TOKEN);
         }
     }
 
-    async storeRefreshToken(userId: string, token: string, expiresIn: number = REFRESH_TOKEN_EXPIRY): Promise<void> {
+    async storeRefreshToken(userId: string, token: string, expiresIn: number = AUTH_CONFIG.REFRESH_TOKEN_TTL): Promise<void> {
         const key = `refresh_token:${userId}`;
         await this.redis.setex(key, expiresIn, token);
     }
