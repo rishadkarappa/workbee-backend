@@ -2,40 +2,37 @@
 //  * rabbitmq connection and client intialization also in this file
 //  */
 
-import amqp from 'amqplib';
+import amqp, { Channel, ChannelModel } from 'amqplib';
+import { ENV } from './env';
 
-// How long to wait before trying to reconnect after a dropped connection
 const RECONNECT_DELAY_MS = 5000;
 
 export class RabbitMQConnection {
-  private static connection: any = null;
-  private static channel: any = null;
+  private static connection: ChannelModel | null = null;
+  private static channel: Channel | null = null;
   private static isReconnecting = false;
-
 
   static async connect(): Promise<void> {
     try {
-      const url = process.env.RABBITMQ_URL || 'amqp://localhost';
+      const url = ENV.RABBITMQ_URL;
 
-      // heartbeat:120 gives 2 minutes tolerance instead of 60s
-      RabbitMQConnection.connection = await amqp.connect(url, { heartbeat: 120 });
-      RabbitMQConnection.channel = await RabbitMQConnection.connection.createChannel();
+      const connection = await amqp.connect(url, { heartbeat: 120 });
+      const channel = await connection.createChannel();
+
+      RabbitMQConnection.connection = connection;
+      RabbitMQConnection.channel = channel;
 
       console.log('-- RabbitMQ connected successfully');
       RabbitMQConnection.isReconnecting = false;
 
-      // Handle connection errors (network blip, RabbitMQ restart)
-      RabbitMQConnection.connection.on('error', (err: Error) => {
+      connection.on('error', (err: Error) => {
         console.error('-- RabbitMQ connection error:', err.message);
         RabbitMQConnection.connection = null;
         RabbitMQConnection.channel = null;
         RabbitMQConnection.scheduleReconnect();
       });
 
-      // Handle heartbeat timeout — RabbitMQ fires 'close' when
-      // the heartbeat is missed. Without this handler the dead connection
-      // stays in memory and every subsequent getChannel() call uses it.
-      RabbitMQConnection.connection.on('close', () => {
+      connection.on('close', () => {
         console.warn('-- RabbitMQ connection closed — scheduling reconnect...');
         RabbitMQConnection.connection = null;
         RabbitMQConnection.channel = null;
@@ -51,16 +48,17 @@ export class RabbitMQConnection {
     }
   }
 
-  static async getChannel(): Promise<any> {
-    // Check both connection AND channel — both can die independently
+  static async getChannel(): Promise<Channel> {
     if (!RabbitMQConnection.connection || !RabbitMQConnection.channel) {
       await RabbitMQConnection.connect();
+    }
+    if (!RabbitMQConnection.channel) {
+      throw new Error('RabbitMQ channel unavailable after connect attempt');
     }
     return RabbitMQConnection.channel;
   }
 
   private static scheduleReconnect(): void {
-    // Guard: don't stack multiple reconnect timers
     if (RabbitMQConnection.isReconnecting) return;
 
     RabbitMQConnection.isReconnecting = true;
@@ -72,8 +70,6 @@ export class RabbitMQConnection {
         console.log('-- RabbitMQ reconnected successfully');
       } catch (err) {
         console.error('-- RabbitMQ reconnect attempt failed:', err);
-        // connect() will call scheduleReconnect() again on failure,
-        // so we reset the flag here to allow that
         RabbitMQConnection.isReconnecting = false;
       }
     }, RECONNECT_DELAY_MS);

@@ -9,6 +9,7 @@ import { IMessageRepository } from '../../domain/repositories/IMessageRepository
 import { IChatRepository } from '../../domain/repositories/IChatRepository';
 import { IRespondToBidUseCase } from '../../application/ports/bid/IRespondToBidUseCase';
 import { ISendBidOfferUseCase } from '../../application/ports/bid/ISendBidOfferUseCase';
+import { getErrorMessage, IJwtPayload } from '@workbee/common';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
@@ -86,7 +87,7 @@ export class SocketManager {
       }
 
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        const decoded = jwt.verify(token, JWT_SECRET) as IJwtPayload;
         socket.userId = decoded.id || decoded.userId;
         socket.userRole = decoded.role;
         next();
@@ -186,9 +187,9 @@ export class SocketManager {
               timestamp: new Date(),
             });
           }
-        } catch (error: any) {
+        } catch (error) {
           console.error('[Socket] send_message error:', error);
-          socket.emit('error', { message: error.message });
+          socket.emit('error', { message: getErrorMessage(error) });
         }
       });
 
@@ -228,9 +229,9 @@ export class SocketManager {
           // Also push to user's personal room in case they don't have the chat open
           this.io.to(`user:${data.userId}`).emit('new_message', enrichedMessage);
 
-        } catch (error: any) {
+        } catch (error) {
           console.error('[Socket] ask_for_confirm error:', error);
-          socket.emit('error', { message: error.message });
+          socket.emit('error', { message: getErrorMessage(error) });
         }
       });
 
@@ -279,9 +280,9 @@ export class SocketManager {
             this.io.to(`user:${data.workerId}`).emit('new_message', enrichedMessage);
           }
 
-        } catch (error: any) {
+        } catch (error) {
           console.error('[Socket] confirm_response error:', error);
-          socket.emit('error', { message: error.message });
+          socket.emit('error', { message: getErrorMessage(error) });
         }
       });
 
@@ -325,9 +326,9 @@ export class SocketManager {
             progress: data.progress,
           });
 
-        } catch (error: any) {
+        } catch (error) {
           console.error('[Socket] work_progress_update error:', error);
-          socket.emit('error', { message: error.message });
+          socket.emit('error', { message: getErrorMessage(error)});
         }
       });
 
@@ -361,8 +362,8 @@ export class SocketManager {
           // also push to both personal rooms so it lands even if chat isn't open
           this.io.to(`user:${bid.userId}`).emit('new_message', message);
           this.io.to(`user:${bid.workerId}`).emit('new_message', message);
-        } catch (err: any) {
-          socket.emit('error', { message: err.message || 'Failed to send offer' });
+        } catch (err) {
+          socket.emit('error', { message: getErrorMessage(err) || 'Failed to send offer' });
         }
       });
 
@@ -392,8 +393,8 @@ export class SocketManager {
           this.io.to(`chat:${bid.chatId}`).emit('new_message', message);
           this.io.to(`user:${bid.userId}`).emit('new_message', message);
           this.io.to(`user:${bid.workerId}`).emit('new_message', message);
-        } catch (err: any) {
-          socket.emit('error', { message: err.message || 'Failed to respond to offer' });
+        } catch (err) {
+          socket.emit('error', { message: getErrorMessage(err) || 'Failed to respond to offer' });
         }
       });
 
@@ -430,8 +431,8 @@ export class SocketManager {
           this.io.to(`chat:${data.chatId}`).emit('new_message', message);
           this.io.to(`user:${data.userId}`).emit('new_message', message);
           this.io.to(`user:${data.workerId}`).emit('new_message', message);
-        } catch (err: any) {
-          socket.emit('error', { message: err.message || 'Failed to record payment' });
+        } catch (err) {
+          socket.emit('error', { message: getErrorMessage(err) || 'Failed to record payment' });
         }
       });
 

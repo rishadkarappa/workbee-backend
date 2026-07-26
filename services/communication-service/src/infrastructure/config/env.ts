@@ -1,0 +1,13 @@
+function getEnv(name:string):string{
+    const value = process.env[name];
+
+    if (!value) {
+        throw new Error(`${value} is missing`)
+    }
+
+    return value
+}
+
+export const ENV = {
+    PORT:getEnv("PORT")
+}
