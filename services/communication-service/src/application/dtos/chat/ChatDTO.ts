@@ -1,3 +1,5 @@
+import { UserRole } from "@workbee/common";
+
 export interface CreateChatDTO {
   userId: string;
   workerId: string;
@@ -27,7 +29,8 @@ export interface GetUserChatsDTO {
   role: "user" | "worker";
 }
 
+
 export interface MarkChatAsReadDTO {
   chatId: string;
-  role: "user" | "worker";
+  role: UserRole.USER | UserRole.WORKER;
 }

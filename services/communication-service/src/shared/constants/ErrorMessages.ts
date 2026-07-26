@@ -9,6 +9,7 @@ export const ErrorMessages = {
             INVALID_OTP:'invalid otp',
             OTP_EXPIRED:"otp expired",
             TOKEN_IS_MISSING:"token is missing",
+            INVALID_USER:"invalid user"
     },
 
     AUTH:{

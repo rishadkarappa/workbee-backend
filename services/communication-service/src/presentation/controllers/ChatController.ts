@@ -10,6 +10,7 @@ import { IGetMessagesUseCase } from '../../application/ports/chat/IGetMessagesUs
 import { ResponseMessage } from '../../shared/constants/ResponseMessages';
 import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 import { IMarkChatAsReadUseCase } from '../../application/ports/chat/IMarkChatAsReadUseCase';
+import { UserRole } from '@workbee/common';
 
 @injectable()
 export class ChatController implements IChatController {
@@ -32,13 +33,17 @@ export class ChatController implements IChatController {
 
   async getUserChats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = (req as any).user;
+      const user = req.user;
 
       if (!user || !user.id || !user.role) {
         res.status(HttpStatus.UNAUTHORIZED).json(
           ResponseHelper.error(ErrorMessages.AUTH.USER_UNAUTHENTICATED, HttpStatus.UNAUTHORIZED)
         );
         return
+      }
+
+      if(user.role !== UserRole.USER && user.role !== UserRole.WORKER) {
+        throw new Error(ErrorMessages.USER.INVALID_USER)
       }
 
       const chats = await this._getUserChatsUseCase.execute({
@@ -71,7 +76,7 @@ export class ChatController implements IChatController {
 
   async markChatAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = (req as any).user;
+      const user = req.user;
       const { chatId } = req.params;
 
       if (!user || !user.id || !user.role) {
@@ -79,6 +84,10 @@ export class ChatController implements IChatController {
           ResponseHelper.error(ErrorMessages.AUTH.USER_UNAUTHENTICATED, HttpStatus.UNAUTHORIZED)
         );
         return
+      }
+
+      if (user.role !== UserRole.USER && user.role !== UserRole.WORKER) {
+        throw new Error(ErrorMessages.USER.INVALID_USER);
       }
 
       await this._markChatAsReadUseCase.execute({

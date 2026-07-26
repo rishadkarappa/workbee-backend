@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { injectable } from 'tsyringe';
 import { UserProfile, WorkerProfile } from "../../domain/entities/Profile";
+import { getErrorMessage } from '@workbee/common';
 
 
 @injectable()
@@ -30,8 +31,8 @@ export class HttpClientService {
     try {
       const response = await this.authServiceClient.get(`/get-user-profile/${userId}`);
       return response.data.data || response.data;
-    } catch (error: any) {
-      console.error(`Failed to fetch user profile for ${userId}:`, error.message);
+    } catch (error) {
+      console.error(`Failed to fetch user profile for ${userId}:`, getErrorMessage(error));
       return null;
     }
   }
@@ -46,8 +47,8 @@ export class HttpClientService {
     try {
       const response = await this.workServiceClient.get(`/get-worker-profile/${workerId}`);
       return response.data.data || response.data;
-    } catch (error: any) {
-      console.error(`Failed to fetch worker profile for ${workerId}:`, error.message);
+    } catch (error) {
+      console.error(`Failed to fetch worker profile for ${workerId}:`, getErrorMessage(error));
       return null;
     }
   }
@@ -62,8 +63,8 @@ export class HttpClientService {
     try {
       const response = await this.authServiceClient.post('/get-user-profile/batch', { userIds });
       return response.data.data || response.data;
-    } catch (error: any) {
-      console.error('Failed to fetch user profiles batch:', error.message);
+    } catch (error) {
+      console.error('Failed to fetch user profiles batch:', getErrorMessage(error));
       return [];
     }
   }
@@ -78,8 +79,8 @@ export class HttpClientService {
     try {
       const response = await this.workServiceClient.post('/get-worker-profile/batch', { workerIds });
       return response.data.data || response.data;
-    } catch (error: any) {
-      console.error('Failed to fetch worker profiles batch:', error.message);
+    } catch (error) {
+      console.error('Failed to fetch worker profiles batch:', getErrorMessage(error));
       return [];
     }
   }
