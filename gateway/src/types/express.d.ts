@@ -1,11 +1,11 @@
-import type { IJwtPayload } from "@workbee/common";
+// import type { IJwtPayload } from "@workbee/common";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: IJwtPayload;
-    }
-  }
-}
+// declare global {
+//   namespace Express {
+//     interface Request {
+//       user?: IJwtPayload;
+//     }
+//   }
+// }
 
-export {};
+// export {};

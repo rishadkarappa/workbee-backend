@@ -1,17 +1,17 @@
 import { injectable } from "tsyringe";
-import { OtpModel } from "../models/OtpSchema";
+import { OtpDocument, OtpModel } from "../models/OtpSchema";
 import { IOtpRepository } from "../../../domain/repositories/IOtpRepository";
 import { Otp } from "../../../domain/entities/Otp";
 import { MongoBaseRepository } from "./MongoBaseRepository";
 
 @injectable()
-export class MongoOtpRepository extends MongoBaseRepository<Otp, any> implements IOtpRepository{
+export class MongoOtpRepository extends MongoBaseRepository<Otp, OtpDocument> implements IOtpRepository{
 
     constructor() {
         super(OtpModel)
     }
 
-    protected map(otp: any): Otp {
+    protected map(otp: OtpDocument): Otp {
         return {
             id:otp.id,
             userId:otp.userId.toString(),

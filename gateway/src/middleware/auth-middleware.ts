@@ -46,7 +46,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     req.user = payload;
     return next();
 
-  } catch (error: unknown) {
+  } catch (error) {
 
     const message = error instanceof Error ? error.message : "unknown error";
 

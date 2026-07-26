@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { ENV } from '../../infrastructure/config/env';
+import { IJwtPayload } from '@workbee/common';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
+const JWT_SECRET = ENV.JWT_SECRET;
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(' ')[1];
@@ -15,7 +17,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        const decoded = jwt.verify(token, JWT_SECRET) as IJwtPayload;
         
         (req as any).user = {
             id: decoded.id || decoded.userId,
@@ -23,7 +25,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
             email: decoded.email
         };
 
-        console.log('Token verified, user:', (req as any).user);
+        console.log('Token verified, user:', req.user);
         next();
     } catch (error) {
         console.error('Token verification failed:', error);

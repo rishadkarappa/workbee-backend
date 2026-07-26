@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
+import { IJwtPayload } from "@workbee/common";
 
 import { INotificationController } from "../ports/INotificationController";
 
@@ -24,20 +25,20 @@ export class NotificationController implements INotificationController {
     @inject("MarkNotificationAsReadUseCase") private readonly _markNotificationAsReadUseCase: IMarkNotificationAsReadUseCase,
     @inject("MarkAllAsReadUseCase") private readonly _markAllAsReadUseCase: IMarkAllAsReadUseCase,
     @inject("GetUnreadCountUseCase") private readonly _getUnreadCountUseCase: IGetUnreadCountUseCase
-  ) {}
+  ) { }
 
-  async getNotifications(req: Request, res: Response, next:NextFunction): Promise<void> {
+  async getNotifications(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = (req as any).user;
+      const user = req.user;
       const { limit, offset } = req.query;
 
-      if (!user?.id) {
+      if (!user?.userId) {
         res.status(HttpStatus.UNAUTHERIZED).json(ResponseHelper.error(ErrorMessage.AUTH.UNAUTHENTICATED));
         return;
       }
 
       const dto: GetUserNotificationsDTO = {
-        userId: user.id,
+        userId: user.userId,
         limit: limit ? parseInt(limit as string, 10) : 50,
         offset: offset ? parseInt(offset as string, 10) : 0
       };
@@ -45,11 +46,11 @@ export class NotificationController implements INotificationController {
       const notifications = await this._getUserNotificationsUseCase.execute(dto);
       res.status(HttpStatus.OK).json(ResponseHelper.success(notifications, ResponseMessage.NOTIFICATION.NOTIFICATION_RETRIEVED));
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
-  async markAsRead(req: Request, res: Response, next:NextFunction): Promise<void> {
+  async markAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       let { notificationId } = req.params;
 
@@ -66,40 +67,39 @@ export class NotificationController implements INotificationController {
     }
   }
 
-  async markAllAsRead(req: Request, res: Response, next:NextFunction): Promise<void> {
+  async markAllAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = (req as any).user;
+      const user = req.user;
 
-      if (!user?.id) {
+      if (!user?.userId) {
         res.status(HttpStatus.UNAUTHERIZED).json(ResponseHelper.error(ErrorMessage.AUTH.UNAUTHENTICATED));
         return;
       }
 
-      const dto: MarkAllAsReadDTO = { userId: user.id };
-
+      const dto: MarkAllAsReadDTO = { userId: user.userId };
       const result = await this._markAllAsReadUseCase.execute(dto);
 
       res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.NOTIFICATION.MARKED_ALL_AS_READ));
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
-  async getUnreadCount(req: Request, res: Response, next:NextFunction): Promise<void> {
+  async getUnreadCount(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = (req as any).user;
+      const user = req.user;
 
-      if (!user?.id) {
+      if (!user?.userId) {
         res.status(HttpStatus.UNAUTHERIZED).json(ResponseHelper.error(ErrorMessage.AUTH.UNAUTHENTICATED));
         return;
       }
 
-      const dto: GetUnreadCountDTO = { userId: user.id };
-      const count =await this._getUnreadCountUseCase.execute(dto);
+      const dto: GetUnreadCountDTO = { userId: user.userId };
+      const count = await this._getUnreadCountUseCase.execute(dto);
 
       res.status(HttpStatus.OK).json(ResponseHelper.success(count, ResponseMessage.NOTIFICATION.UNREAD_COUNT_RETRIEVED));
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 }

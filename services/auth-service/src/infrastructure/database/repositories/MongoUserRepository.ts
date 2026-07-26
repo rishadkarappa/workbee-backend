@@ -3,6 +3,7 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { User } from "../../../domain/entities/User";
 import { UserDocument, UserModel } from "../models/UserSchema";
 import { MongoBaseRepository } from "./MongoBaseRepository";
+import { FilterQuery } from "mongoose";
 
 @injectable()
 export class MongoUserRepository extends MongoBaseRepository<User, UserDocument> implements IUserRepository {
@@ -37,7 +38,7 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
         const skip = (page - 1) * limit;
 
         // Build query object
-        const query: any = {};
+        const query: FilterQuery<UserDocument> = {};
 
         // Search filter
         if (search) {

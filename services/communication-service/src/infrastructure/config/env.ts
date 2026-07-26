@@ -11,5 +11,6 @@ function getEnv(name:string):string{
 export const ENV = {
     PORT:getEnv("PORT"),
     RABBITMQ_URL:getEnv("RABBITMQ_URL"),
+    JWT_SECRET:getEnv("JWT_SECRET"),
 
 }
