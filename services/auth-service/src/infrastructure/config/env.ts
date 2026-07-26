@@ -10,5 +10,6 @@ function getEnv(name:string):string {
 
 export const ENV = {
     JWT_SECRET: getEnv("JWT_SECRET"),
-    JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET")
+    JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
+    PORT: getEnv("PORT")
 }

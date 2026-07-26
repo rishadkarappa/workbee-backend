@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@workbee/common": "file:../../../common",
     "amqplib": "^0.10.9",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import jwt from 'jsonwebtoken';
-
+import { IJwtPayload, UserRole } from "@workbee/common";
 import { ITokenService } from '../../domain/services/ITokenService';
 
 import RedisClient from '../config/RedisClient';
@@ -8,36 +8,33 @@ import { ENV } from '../config/env';
 import { AUTH_CONFIG } from '../config/auth.config';
 
 import { ErrorMessages } from '../../shared/constants/ErrorMessages';
-import { UserRoles } from '../../shared/constants/UserRoles';
 
 @injectable()
 export class TokenService implements ITokenService {
     private redis = RedisClient.getInstance();
 
-    generateAccess(id: string, role?: UserRoles): string {
+    generateAccess(id: string, role?: UserRole): string {
         const payload = role ? { id, role } : { id };
         return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: AUTH_CONFIG.ACCESS_TOKEN_EXPIRY });
     }
 
-    generateRefresh(id: string, role?: UserRoles): string {
+    generateRefresh(id: string, role?: UserRole): string {
         const payload = role ? { id, role } : { id };
         return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, { expiresIn: AUTH_CONFIG.REFRESH_TOKEN_EXPIRY });
     }
 
-    verifyAccess(token: string): { id: string; role?: string } {
+    verifyAccess(token: string): IJwtPayload {
         try {
-            const payload = jwt.verify(token, ENV.JWT_SECRET) as { id: string; role?: string };
-            return payload;
-        } catch (error) {
+            return jwt.verify(token, ENV.JWT_SECRET) as IJwtPayload;
+        } catch {
             throw new Error(ErrorMessages.AUTH.INVALID_OR_EXPIRED_ACCESS_TOKEN);
         }
     }
 
-    verifyRefresh(token: string): { id: string; role?: string } {
+    verifyRefresh(token: string): IJwtPayload {
         try {
-            const payload = jwt.verify(token, ENV.JWT_REFRESH_SECRET) as { id: string; role?: string };
-            return payload;
-        } catch (error) {
+            return jwt.verify(token, ENV.JWT_REFRESH_SECRET) as IJwtPayload;
+        } catch {
             throw new Error(ErrorMessages.AUTH.INVALID_OR_EXPIRED_ACCESS_TOKEN);
         }
     }

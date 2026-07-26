@@ -11,7 +11,7 @@ function requiredEnv(key:string):string {
 export const ENV = {
     SERVER_PORT:process.env.PORT,
     JWT_SECRET : requiredEnv("JWT_SECRET"),
-    JWT_REFRESH_SECRET:process.env.JWT_REFRESH_SECRET,
+    JWT_REFRESH_SECRET : requiredEnv("JWT_REFRESH_SECRET"),
     
 } as const;
 

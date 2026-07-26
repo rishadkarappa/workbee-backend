@@ -1,8 +1,7 @@
 import "reflect-metadata"
-import "./infrastructure/di/container"
+import "dotenv/config";
 
-import dotenv from "dotenv";
-dotenv.config();
+import "./infrastructure/di/container"
 
 import express from "express";
 import { connectDatabase } from "./infrastructure/config/connectMongo";
@@ -14,8 +13,7 @@ import WorkerRoutes from './presentation/routes/worker/WorkerRoutes'
 import RedisClient from "./infrastructure/config/RedisClient";
 
 import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
-
-const PORT = process.env.PORT
+import { ENV } from "./infrastructure/config/env";
 
 const app = express();
 app.use(express.json());
@@ -37,7 +35,7 @@ const startServer = async () => {
         RedisClient.getInstance();
         console.log('Redis initialized');
         
-        app.listen(PORT, () => console.log(`Auth Service running on port ${PORT}`));
+        app.listen(ENV.PORT, () => console.log(`Auth Service running on port ${ENV.PORT}`));
     } catch (error) {
         console.error('Failed to start server:', error);
         process.exit(1);
