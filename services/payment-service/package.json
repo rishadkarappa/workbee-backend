@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@workbee/common": "file:../../../common",
     "amqplib": "^1.0.3",
     "axios": "^1.15.0",
     "bullmq": "^5.73.4",

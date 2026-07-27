@@ -2,27 +2,33 @@ import { injectable } from "tsyringe";
 import { getPool } from "../../config/connectDB";
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
 import { Payment } from "../../../domain/entities/Payment";
+import { PaymentRow } from "../row/PaymentRow";
 
 @injectable()
 export class PaymentRepository implements IPaymentRepository {
     private get db() { return getPool(); }
 
-    private mapPayment(row: any): Payment {
+    private mapPayment(row: PaymentRow): Payment {
         return {
             id: row.id,
             workId: row.work_id,
             userId: row.user_id,
             workerId: row.worker_id,
-            razorpayOrderId: row.razorpay_order_id,
-            razorpayPaymentId: row.razorpay_payment_id,
-            amount: parseFloat(row.amount),
-            platformFee: parseFloat(row.platform_fee),
-            workerPayout: parseFloat(row.worker_payout),
+
+            razorpayOrderId: row.razorpay_order_id ?? undefined,
+            razorpayPaymentId: row.razorpay_payment_id ?? undefined,
+
+            amount: Number(row.amount),
+            platformFee: Number(row.platform_fee),
+            workerPayout: Number(row.worker_payout),
+
             currency: row.currency,
             status: row.status,
-            workCompletedAt: row.work_completed_at,
-            payoutScheduledAt: row.payout_scheduled_at,
-            payoutCompletedAt: row.payout_completed_at,
+
+            workCompletedAt: row.work_completed_at ?? undefined,
+            payoutScheduledAt: row.payout_scheduled_at ?? undefined,
+            payoutCompletedAt: row.payout_completed_at ?? undefined,
+
             createdAt: row.created_at,
             updatedAt: row.updated_at,
         };

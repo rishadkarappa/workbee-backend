@@ -1,24 +1,28 @@
 import { injectable } from "tsyringe";
 import { getPool } from "../../config/connectDB";
 import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
-import { Transaction } from "../../../domain/entities/Transaction";
+import { Transaction, TransactionStatus, TransactionType } from "../../../domain/entities/Transaction";
+import { TransactionRow } from "../row/TransactionRow";
 
 @injectable()
 export class TransactionRepository implements ITransactionRepository {
     private get db() { return getPool(); }
 
-    private mapTx(row: any): Transaction {
+    private mapTx(row: TransactionRow): Transaction {
         return {
             id: row.id,
             walletId: row.wallet_id,
-            workId: row.work_id,
-            razorpayPaymentId: row.razorpay_payment_id,
-            type: row.type,
-            amount: parseFloat(row.amount),
+            workId: row.work_id ?? undefined,
+            razorpayPaymentId: row.razorpay_payment_id ?? undefined,
+
+            type: row.type as TransactionType,
+            amount: Number(row.amount),
             currency: row.currency,
-            status: row.status,
-            description: row.description,
-            metadata: row.metadata,
+            status: row.status as TransactionStatus,
+
+            description: row.description ?? undefined,
+            metadata: row.metadata ?? undefined,
+
             createdAt: row.created_at,
         };
     }

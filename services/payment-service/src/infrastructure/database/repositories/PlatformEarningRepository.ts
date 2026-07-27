@@ -5,6 +5,7 @@ import {
   IPlatformEarningRepository,
 } from "../../../domain/repositories/IPlatformEarningRepository";
 import { PlatformEarning } from "../../../domain/entities/Platform";
+import { PlatformEarningRow } from "../row/PlatformEarningRow";
 
 // Platform Earning Repository
 
@@ -12,7 +13,7 @@ import { PlatformEarning } from "../../../domain/entities/Platform";
 export class PlatformEarningRepository implements IPlatformEarningRepository {
   private get db() { return getPool(); }
 
-  private mapEarning(row: any): PlatformEarning {
+  private mapEarning(row: PlatformEarningRow): PlatformEarning {
     return {
       id: row.id,
       paymentId: row.payment_id,
@@ -24,7 +25,7 @@ export class PlatformEarningRepository implements IPlatformEarningRepository {
   }
 
   async create(data: Omit<PlatformEarning, "id" | "collectedAt">): Promise<PlatformEarning> {
-    const { rows } = await this.db.query(
+    const { rows } = await this.db.query<PlatformEarningRow>(
       `INSERT INTO platform_earnings (payment_id, work_id, fee_amount, currency)
        VALUES ($1, $2, $3, $4) RETURNING *`,
       [data.paymentId, data.workId, data.feeAmount, data.currency]

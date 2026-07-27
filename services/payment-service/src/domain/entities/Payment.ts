@@ -1,17 +1,12 @@
-export type PaymentStatus =
-    | "pending"
-    | "paid"
-    | "worker_credited"
-    | "refunded"
-    | "failed";
+import { PaymentStatus } from "./PaymentStatus";
 
 export interface Payment {
     id: string;
     workId: string;
     userId: string;
     workerId: string;
-    razorpayOrderId?:     string;
-    razorpayPaymentId?:   string;  
+    razorpayOrderId?:string;
+    razorpayPaymentId?:string;  
     amount: number;
     platformFee: number;
     workerPayout: number;
