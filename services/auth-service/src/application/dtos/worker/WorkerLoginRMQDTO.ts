@@ -1,3 +1,5 @@
+import { AuthenticatedWorkerDTO } from "./AuthenticatedWorkerDTO";
+
 export interface WorkerLoginRequestRMQDTO {
   email: string;
   password: string;
@@ -6,6 +8,6 @@ export interface WorkerLoginRequestRMQDTO {
 
 export interface WorkerLoginResponseRMQDTO {
   success: boolean;
-  data?: any; 
+  data?: AuthenticatedWorkerDTO; 
   error?: string;
 }

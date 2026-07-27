@@ -28,22 +28,24 @@ export class WorkerLoginUseCase implements IWorkerLoginUseCase {
 
         const channel = await RabbitMQConnection.getChannel();
         const client = new WorkerValidationClient(channel);
-
+        
         const response: WorkerLoginResponseRMQDTO = await client.validateWorker(email, password);
-
+        
         if (!response.success) {
             throw new Error(response.error || ErrorMessages.WORKER.WORKER_VALIDATION_FAILED);
         }
-
+        
+        const worker = response.data!;
+        
         // Generate  access and refresh tokens
-        const accessToken = this._tokenService.generateAccess(response.data.id, UserRole.WORKER);
-        const refreshToken = this._tokenService.generateRefresh(response.data.id, UserRole.WORKER);
+        const accessToken = this._tokenService.generateAccess(worker.id, UserRole.WORKER);
+        const refreshToken = this._tokenService.generateRefresh(worker.id, UserRole.WORKER);
 
         // Store refresh token in Redis
-        await this._tokenService.storeRefreshToken(response.data.id, refreshToken);
+        await this._tokenService.storeRefreshToken(worker.id, refreshToken);
 
         return WorkerMapper.toLoginResponse({
-            ...response.data,
+            ...worker,
             accessToken,
             refreshToken
         });

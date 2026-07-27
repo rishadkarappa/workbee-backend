@@ -1,5 +1,5 @@
-import { GetWorkerAssignedWorksDto } from "../../dtos/worker/GetWorkerAssignedWorks.Dtos";
+import { GetWorkerAssignedWorksDto, GetWorkerAssignedWorksResponseDto } from "../../dtos/worker/GetWorkerAssignedWorks.dtos";
 
 export interface IGetWorkerAssignedWorksUseCase {
-    execute (dto:GetWorkerAssignedWorksDto): Promise<any>;
+    execute (dto:GetWorkerAssignedWorksDto): Promise<GetWorkerAssignedWorksResponseDto[]>;
 }

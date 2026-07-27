@@ -24,6 +24,8 @@ import { IGetWorkerProfileUseCase } from "../../application/ports/worker/IGetWor
 import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetWorkerProfilesBatchUseCase";
 import { IGetWorkerAssignedWorksUseCase } from "../../application/ports/isc/IGetWorkerAssignedWorksUseCase";
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
+import { GetAllWorksFilterDto } from "../../application/dtos/work/GetAllWorksFilterDto";
+import { WorkUploadFiles } from "../types/WorkUploadFiles";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -129,7 +131,7 @@ export class WorkController implements IWorkController {
     async postWork(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const rawData = req.body;
-            const files = req.files as any;
+            const files = req.files as WorkUploadFiles;
 
             // Handle file uploads
             if (files) {
@@ -184,7 +186,7 @@ export class WorkController implements IWorkController {
                 maxDistance
             } = req.query;
 
-            const filters: any = {
+            const filters: GetAllWorksFilterDto = {
                 search: search as string,
                 status: status as string,
                 page: parseInt(page as string),

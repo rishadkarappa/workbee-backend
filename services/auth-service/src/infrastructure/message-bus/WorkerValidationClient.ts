@@ -5,12 +5,8 @@
 
 import { Channel } from 'amqplib';
 import { v4 as uuidv4 } from 'uuid';
+import { WorkerLoginResponseRMQDTO } from '../../application/dtos/worker/WorkerLoginRMQDTO';
 
-interface WorkerLoginResponse {
-    success: boolean;
-    data?: any;
-    error?: string;
-}
 
 export class WorkerValidationClient {
     private readonly REQUEST_QUEUE = 'worker.validate.request';
@@ -19,7 +15,7 @@ export class WorkerValidationClient {
 
     constructor(private channel: Channel) {}
 
-    async validateWorker(email: string, password: string): Promise<WorkerLoginResponse> {
+    async validateWorker(email: string, password: string): Promise<WorkerLoginResponseRMQDTO> {
         const correlationId = uuidv4();
 
         return new Promise(async (resolve, reject) => {

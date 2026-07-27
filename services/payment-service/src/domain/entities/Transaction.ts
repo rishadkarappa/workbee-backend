@@ -1,3 +1,15 @@
+export type JsonValue =
+    | string
+    | number
+    | boolean
+    | null
+    | JsonObject
+    | JsonValue[];
+
+export interface JsonObject {
+    [key: string]: JsonValue;
+}
+
 export type TransactionType =
     | "payment"
     | "credit"
@@ -6,18 +18,23 @@ export type TransactionType =
     | "hold"
     | "release";
 
-export type TransactionStatus = "pending" | "completed" | "failed" | "refunded";
+export type TransactionStatus =
+    | "pending"
+    | "completed"
+    | "failed"
+    | "refunded";
+
 
 export interface Transaction {
     id: string;
     walletId: string;
     workId?: string;
-    razorpayPaymentId?: string; 
+    razorpayPaymentId?: string;
     type: TransactionType;
     amount: number;
     currency: string;
     status: TransactionStatus;
     description?: string;
-    metadata?: Record<string, any>;
+    metadata?: JsonObject;
     createdAt: Date;
 }

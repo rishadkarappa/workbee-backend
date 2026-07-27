@@ -1,37 +1,33 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { ENV } from '../../infrastructure/config/env';
-import { IJwtPayload } from '@workbee/common';
+import { Request, Response, NextFunction } from "express";
+import { IJwtPayload } from "@workbee/common";
 
-const JWT_SECRET = ENV.JWT_SECRET;
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(' ')[1];
+export const authMiddleware = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
 
-    if (!token) {
-        console.log('No token provided');
+    const userId = req.headers["x-user-id"];
+    const email = req.headers["x-user-email"];
+    const role = req.headers["x-user-role"];
+
+
+    if (!userId || !role) {
         return res.status(401).json({
             success: false,
-            message: 'Access denied. No token provided.'
+            message: "Unauthorized request"
         });
     }
 
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET) as IJwtPayload;
-        
-        (req as any).user = {
-            id: decoded.id || decoded.userId,
-            role: decoded.role,
-            email: decoded.email
-        };
 
-        console.log('Token verified, user:', req.user);
-        next();
-    } catch (error) {
-        console.error('Token verification failed:', error);
-        return res.status(401).json({
-            success: false,
-            message: 'Invalid token'
-        });
-    }
+    req.user = {
+        id: userId as string,
+        userId: userId as string,
+        email: email as string,
+        role: role as IJwtPayload["role"]
+    };
+
+
+    next();
 };

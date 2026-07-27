@@ -9,7 +9,7 @@ import { IMessageRepository } from '../../domain/repositories/IMessageRepository
 import { IChatRepository } from '../../domain/repositories/IChatRepository';
 import { IRespondToBidUseCase } from '../../application/ports/bid/IRespondToBidUseCase';
 import { ISendBidOfferUseCase } from '../../application/ports/bid/ISendBidOfferUseCase';
-import { getErrorMessage, IJwtPayload } from '@workbee/common';
+import { getErrorMessage, IJwtPayload, NotificationDTO } from '@workbee/common';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
@@ -452,7 +452,7 @@ export class SocketManager {
     });
   }
 
-  public emitNotificationToUser(userId: string, notification: any) {
+  public emitNotificationToUser(userId: string, notification: NotificationDTO) {
     this.io.to(`user:${userId}`).emit('new_notification', notification);
   }
 

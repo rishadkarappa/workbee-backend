@@ -1,22 +1,19 @@
+import { AuthenticatedWorkerDTO } from "../dtos/worker/AuthenticatedWorkerDTO";
 import { WorkerLoginResponseDTO } from "../dtos/worker/LoginWorkerDTO";
 
+type WorkerLoginMapperInput = AuthenticatedWorkerDTO & {
+  accessToken: string;
+  refreshToken: string;
+};
+
 export class WorkerMapper {
-  static toLoginResponse(data: any): WorkerLoginResponseDTO {
+  static toLoginResponse(data: WorkerLoginMapperInput): WorkerLoginResponseDTO {
+    const { accessToken, refreshToken, ...worker } = data;
+
     return {
-      worker: {
-        id: data.id,
-        _id: data._id,
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        role: data.role,
-        location: data.location,
-        workType: data.workType,
-        preferredWorks: data.preferredWorks,
-        status: data.status
-      },
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken
+      worker,
+      accessToken,
+      refreshToken,
     };
   }
 }
