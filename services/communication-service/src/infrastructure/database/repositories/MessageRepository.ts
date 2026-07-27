@@ -1,7 +1,7 @@
 import { injectable } from 'tsyringe';
 import { IMessageRepository } from '../../../domain/repositories/IMessageRepository';
 import { Message } from '../../../domain/entities/Message';
-import { MessageModel } from '../../database/models/MessageModel';
+import { IMessageDocument, MessageModel } from '../../database/models/MessageModel';
 
 @injectable()
 export class MessageRepository implements IMessageRepository {
@@ -36,7 +36,7 @@ export class MessageRepository implements IMessageRepository {
     );
   }
 
-  private toEntity(doc: any): Message {
+  private toEntity(doc: IMessageDocument): Message {
     return {
       id: doc._id.toString(),
       chatId: doc.chatId,

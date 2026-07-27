@@ -4,6 +4,7 @@ import multer from 'multer';
 import { CloudinaryService } from '../../infrastructure/services/CloudinaryService';
 import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/responseHelper';
+import { getErrorMessage } from '@workbee/common';
 
 // ─── Multer config: memory storage (no disk writes) 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -71,10 +72,10 @@ export class UploadController {
       return res.status(HttpStatus.OK).json(
         ResponseHelper.success(result, 'File uploaded successfully')
       );
-    } catch (error: any) {
+    } catch (error) {
       console.error('[UploadController] uploadChatMedia error:', error);
       return res.status(HttpStatus.BAD_REQUEST).json(
-        ResponseHelper.error(error.message, HttpStatus.BAD_REQUEST)
+        ResponseHelper.error(getErrorMessage(error), HttpStatus.BAD_REQUEST)
       );
     }
   }

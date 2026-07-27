@@ -1,7 +1,7 @@
 import { injectable } from 'tsyringe';
 import { IBidRepository } from '../../../domain/repositories/IBidRepository';
 import { Bid } from '../../../domain/entities/Bid';
-import { BidModel } from '../../database/models/BidModel';
+import { BidDocument, BidModel } from '../../database/models/BidModel';
 
 @injectable()
 export class BidRepository implements IBidRepository {
@@ -28,7 +28,7 @@ export class BidRepository implements IBidRepository {
     return updated ? this.toEntity(updated) : null;
   }
 
-  private toEntity(doc: any): Bid {
+  private toEntity(doc: BidDocument): Bid {
     return {
       id: doc._id.toString(),
       chatId: doc.chatId,
