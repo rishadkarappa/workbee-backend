@@ -1,6 +1,8 @@
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
+import { IJwtPayload } from '@workbee/common';
+import { Notification } from '../../domain/entities/Notification';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
@@ -35,7 +37,7 @@ export class SocketManager {
       }
 
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        const decoded = jwt.verify(token, JWT_SECRET) as IJwtPayload;
         socket.userId = decoded.id || decoded.userId;
         socket.userRole = decoded.role;
         next();
@@ -65,13 +67,13 @@ export class SocketManager {
   }
 
   // Emit notification to specific user
-  public emitNotificationToUser(userId: string, notification: any): void {
+  public emitNotificationToUser(userId: string, notification: Notification): void {
     console.log(`Emitting notification to user: ${userId}`);
     this.io.to(`user:${userId}`).emit('new_notification', notification);
   }
 
   // Broadcast to all connected clients (if needed)
-  public broadcast(event: string, data: any): void {
+  public broadcast(event: string, data: Notification): void {
     this.io.emit(event, data);
   }
 

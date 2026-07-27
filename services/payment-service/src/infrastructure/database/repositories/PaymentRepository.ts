@@ -92,7 +92,7 @@ export class PaymentRepository implements IPaymentRepository {
     }
 
     async findAllPaginated(page: number, limit: number): Promise<{
-        payments: any[];
+        payments: Payment[];
         total: number;
         totalPages: number;
     }> {
@@ -120,7 +120,7 @@ export class PaymentRepository implements IPaymentRepository {
 
     async updateStatus(id: string, status: string, extra: Partial<Payment> = {}): Promise<Payment> {
         const setClauses: string[] = ["status = $2", "updated_at = NOW()"];
-        const values: any[] = [id, status];
+        const values: (string | number | Date | null)[] = [id, status];
         let idx = 3;
 
         if (extra.razorpayPaymentId) {
