@@ -1,7 +1,7 @@
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
 
 export interface Worker {
-    id?: string;
+    id: string;
     name: string;
     email: string;
     phone: string;

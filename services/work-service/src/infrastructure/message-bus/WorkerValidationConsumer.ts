@@ -9,6 +9,7 @@ import { injectable, inject } from "tsyringe";
 import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
 import { IHashService } from "../../domain/services/IHashService";
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
+import { getErrorMessage } from "@workbee/common";
 
 interface WorkerLoginRequest {
     email: string;
@@ -20,7 +21,6 @@ interface WorkerLoginResponse {
     success: boolean;
     data?: {
         id: string;
-        _id: string;
         name: string;
         email: string;
         phone: string;
@@ -68,12 +68,12 @@ export class WorkerValidationConsumer {
 
                 console.log(`Sent validation response for: ${request.email}`);
                 channel.ack(msg);
-            } catch (err: any) {
+            } catch (err) {
                 console.error("Worker validation error:", err);
 
                 const errorResponse: WorkerLoginResponse = {
                     success: false,
-                    error: err.message || "Internal worker validation error"
+                    error: getErrorMessage(err) || "Internal worker validation error"
                 };
 
                 channel.sendToQueue(
@@ -133,14 +133,13 @@ export class WorkerValidationConsumer {
         }
 
         // get worker ID (MongoDB _id or id)
-        const workerId = (worker as any)._id?.toString() || worker.id;
+        const workerId = worker.id;
 
         // Return worker data 
         return {
             success: true,
             data: {
                 id: workerId,
-                _id: workerId,
                 name: worker.name,
                 email: worker.email,
                 phone: worker.phone,
