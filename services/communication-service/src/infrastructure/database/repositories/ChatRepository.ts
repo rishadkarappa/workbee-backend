@@ -1,7 +1,7 @@
 import { injectable } from 'tsyringe';
 import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { Chat } from '../../../domain/entities/Chat';
-import { ChatModel } from '../models/ChatModel';
+import { ChatModel, IChatDocument } from '../models/ChatModel';
 
 @injectable()
 export class ChatRepository implements IChatRepository {
@@ -53,7 +53,7 @@ export class ChatRepository implements IChatRepository {
     await ChatModel.findByIdAndUpdate(chatId, { $set: { [field]: 0 } });
   }
 
-  private toEntity(doc: any): Chat {
+  private toEntity(doc: IChatDocument): Chat {
     return {
       id: doc._id.toString(),
       participants: doc.participants,

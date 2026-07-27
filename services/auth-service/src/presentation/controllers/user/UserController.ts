@@ -219,14 +219,15 @@ export class UserController implements IUserController {
     }
   }
 
-  async getUserProfilesBatch(req: Request, res: Response, next: NextFunction): Promise<any> {
+  async getUserProfilesBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userIds } = req.body;
       
       if (!Array.isArray(userIds)) {
-        return res.status(HttpStatus.BAD_REQUEST).json(
+        res.status(HttpStatus.BAD_REQUEST).json(
           ResponseHelper.error(ErrorMessages.AUTH.USERIDS_MUST_BE_ARRAY, HttpStatus.BAD_REQUEST)
         );
+        return;
       }
 
       const profiles = await this._getUserProfilesBatchUseCase.execute(userIds);

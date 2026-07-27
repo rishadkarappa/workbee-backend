@@ -26,6 +26,10 @@ export const ErrorMessages = {
         WRONG_PASSWORD:"provided admin password was wrong"
     },
 
+    WORKER:{
+        WORKER_VALIDATION_FAILED:"Worker validation failed"
+    },
+
     GENERAL:{
         SERVER_ERROR:"Something went wrong, Please try again later",
         INTERNAL_SERVER_ERROR:"something went wrong, Internal server error accured",

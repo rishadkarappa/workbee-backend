@@ -14,6 +14,8 @@ import { WorkerValidationClient } from "../../../infrastructure/message-bus/Work
 import { WorkerMapper } from "../../mappers/WorkerMapper";
 import { IWorkerLoginUseCase } from "../../ports/worker/IWorkerLoginUseCase";
 import { ITokenService } from "../../../domain/services/ITokenService";
+import { UserRole } from "@workbee/common";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class WorkerLoginUseCase implements IWorkerLoginUseCase {
@@ -30,12 +32,12 @@ export class WorkerLoginUseCase implements IWorkerLoginUseCase {
         const response: WorkerLoginResponseRMQDTO = await client.validateWorker(email, password);
 
         if (!response.success) {
-            throw new Error(response.error || "Worker validation failed");
+            throw new Error(response.error || ErrorMessages.WORKER.WORKER_VALIDATION_FAILED);
         }
 
         // Generate  access and refresh tokens
-        const accessToken = this._tokenService.generateAccess(response.data.id, "worker");
-        const refreshToken = this._tokenService.generateRefresh(response.data.id, "worker");
+        const accessToken = this._tokenService.generateAccess(response.data.id, UserRole.WORKER);
+        const refreshToken = this._tokenService.generateRefresh(response.data.id, UserRole.WORKER);
 
         // Store refresh token in Redis
         await this._tokenService.storeRefreshToken(response.data.id, refreshToken);
