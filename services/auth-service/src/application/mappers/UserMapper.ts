@@ -9,12 +9,12 @@ export class UserMapper {
   static toSafeUser(user: User) {
     return {
       id: user.id,
-      _id: user.id, 
       name: user.name,
       email: user.email,
       role: user.role,
       isVerified: user.isVerified,
-      createdAt: user.createdAt,
+      isBlocked: user.isBlocked ?? false,
+      createdAt: user.createdAt ?? false,
       updatedAt: user.updatedAt
     };
   }

@@ -22,7 +22,6 @@ export class PaymentController implements IPaymentController {
     @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: GetAdminPaymentsListUseCase,
   ) { }
 
-  // POST /payment/create-order
   async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.headers["x-user-id"] as string;
@@ -63,7 +62,6 @@ export class PaymentController implements IPaymentController {
     }
   }
 
-  // POST /payment/verify
   async verifyPayment(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.headers["x-user-id"] as string;
@@ -88,45 +86,40 @@ export class PaymentController implements IPaymentController {
       });
 
       res.status(200).json({ success: true, data: result });
-    } catch (err: any) {
-      if (err.message === "Payment signature verification failed") {
-        res.status(400).json({ success: false, message: err.message });
-        return;
-      }
+    } catch (err) {
       next(err);
     }
   }
 
   async workCompleted(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const userId = req.headers["x-user-id"] as string;
-    const userRole = req.headers["x-user-role"] as string;
+    try {
+      const userId = req.headers["x-user-id"] as string;
+      const userRole = req.headers["x-user-role"] as string;
 
-    // Only workers (or admins) should trigger payouts
-    if (!userId || (userRole !== "worker" && userRole !== "admin")) {
-      res.status(401).json({ success: false, message: "Unauthorized" });
-      return;
-    }
+      // Only workers (or admins) should trigger payouts
+      if (!userId || (userRole !== "worker" && userRole !== "admin")) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
 
-    const { workId } = req.body;
-    if (!workId) {
-      res.status(400).json({ success: false, message: "workId required" });
-      return;
-    }
+      const { workId } = req.body;
+      if (!workId) {
+        res.status(400).json({ success: false, message: "workId required" });
+        return;
+      }
 
-    const result = await this._schedulePayoutUseCase.execute(workId);
-    if (result) {
-      await scheduleWorkerPayout(result.paymentId);
-      res.status(200).json({ success: true, message: "Payout scheduled in 1 hour" });
-    } else {
-      res.status(200).json({ success: true, message: "No paid payment found, skipped" });
+      const result = await this._schedulePayoutUseCase.execute(workId);
+      if (result) {
+        await scheduleWorkerPayout(result.paymentId);
+        res.status(200).json({ success: true, message: "Payout scheduled in 1 hour" });
+      } else {
+        res.status(200).json({ success: true, message: "No paid payment found, skipped" });
+      }
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
   }
-}
 
-  // GET /payment/wallet
   async getWallet(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.headers["x-user-id"] as string;
@@ -144,7 +137,6 @@ export class PaymentController implements IPaymentController {
     }
   }
 
-  // GET /payment/admin/summary
   async getAdminSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userRole = req.headers["x-user-role"] as string;

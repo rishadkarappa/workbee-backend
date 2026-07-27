@@ -1,14 +1,13 @@
 import { UserRole } from "@workbee/common";
 
 export interface User {
-  id?: string;
-  _id?: any; 
+  id: string;
   name: string;
   email: string;
   password?: string;
-  isVerified?: boolean;
-  isBlocked?: boolean;
-  role: UserRole
+  isVerified: boolean;
+  isBlocked: boolean;
+  role: UserRole;
   phone?: string; 
   countofpost?: number;
   numberOfComplaints?: number;

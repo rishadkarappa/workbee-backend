@@ -18,18 +18,9 @@ app.use(cors({
   credentials: true,
 }));
 
-// All other routes get JSON body
 app.use(express.json());
 
-
-// ── Routes
 app.use("/", paymentRoutes);
-
-// ── Error handler
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error("[PaymentService] Error:", err);
-  res.status(err.status || 500).json({ success: false, message: err.message || "Internal server error" });
-});
 
 const PORT = Number(process.env.PORT);
 
