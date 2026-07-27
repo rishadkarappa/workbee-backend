@@ -17,7 +17,7 @@ export class CloudinaryService {
   constructor() {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key:    process.env.CLOUDINARY_API_KEY,
+      api_key: process.env.CLOUDINARY_API_KEY,
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
   }
@@ -46,14 +46,14 @@ export class CloudinaryService {
             return reject(error || new Error('Cloudinary upload failed'));
           }
           resolve({
-            url:          result.secure_url,
-            publicId:     result.public_id,
+            url: result.secure_url,
+            publicId: result.public_id,
             resourceType: resourceType,
-            format:       result.format,
-            width:        result.width,
-            height:       result.height,
-            duration:     (result as any).duration,
-            bytes:        result.bytes,
+            format: result.format,
+            width: result.width,
+            height: result.height,
+            duration: resourceType === "video" ? result.duration : undefined,
+            bytes: result.bytes,
           });
         }
       );

@@ -3,6 +3,7 @@ import { RabbitMQConnection } from '../config/rabbitmq';
 import { CreateNotificationUseCase } from '../../application/use-cases/CreateNotificationUseCase';
 import { SocketManager } from '../socket/NotificationSocketManager';
 import { INewMessageEvent } from '../../domain/message-contracts/INewMessageEvent';
+import { ConsumeMessage } from 'amqplib';
 
 @injectable()
 export class MessageEventConsumer {
@@ -33,7 +34,7 @@ export class MessageEventConsumer {
       // Consume messages
       channel.consume(
         this.QUEUE,
-        async (msg: any) => {
+        async (msg: ConsumeMessage | null) => {
           if (msg) {
             try {
               const event: INewMessageEvent = JSON.parse(msg.content.toString());
