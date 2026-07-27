@@ -2,9 +2,7 @@ import "reflect-metadata";
 import "./infrastructure/di/container"
 
 import express from "express";
-import dotenv from "dotenv"
 import path from "path";
-dotenv.config()
 
 import { connectDatabase } from "./infrastructure/config/connectMongo";
 import { RabbitMQClient } from "./infrastructure/message-bus/client";

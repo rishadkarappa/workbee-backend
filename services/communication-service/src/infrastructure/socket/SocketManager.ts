@@ -1,5 +1,6 @@
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
+import { ENV } from '../config/env';
 import jwt from 'jsonwebtoken';
 import { container } from 'tsyringe';
 import { SendMessageUseCase } from '../../application/use-cases/chat/SendMessageUseCase';
@@ -11,7 +12,6 @@ import { IRespondToBidUseCase } from '../../application/ports/bid/IRespondToBidU
 import { ISendBidOfferUseCase } from '../../application/ports/bid/ISendBidOfferUseCase';
 import { getErrorMessage, IJwtPayload, NotificationDTO } from '@workbee/common';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
@@ -87,7 +87,7 @@ export class SocketManager {
       }
 
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as IJwtPayload;
+        const decoded = jwt.verify(token, ENV.JWT_SECRET) as IJwtPayload;
         socket.userId = decoded.id || decoded.userId;
         socket.userRole = decoded.role;
         next();
