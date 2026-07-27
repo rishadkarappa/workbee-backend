@@ -3,5 +3,5 @@ export interface ApiResponse<T>{
     statusCode:number;
     message:String;
     data?:T;
-    errors?:any
+    errors?:unknown
 }

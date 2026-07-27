@@ -18,7 +18,7 @@ export class ResponseHelper{
     static error(
         message:string,
         statusCode:number = HttpStatus.INTERNAL_SERVER_ERROR,
-        errors?:any
+        errors?:unknown
     ):ApiResponse<null>{
         return {
             success:false,

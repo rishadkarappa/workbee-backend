@@ -1,7 +1,7 @@
 import { injectable } from 'tsyringe';
 import { INotificationRepository } from '../../../domain/repositories/INotificationRepository';
 import { Notification } from '../../../domain/entities/Notification';
-import { NotificationModel } from '../models/NotificationModel';
+import { NotificationDocument, NotificationModel } from '../models/NotificationModel';
 
 @injectable()
 export class NotificationRepository implements INotificationRepository {
@@ -50,7 +50,7 @@ export class NotificationRepository implements INotificationRepository {
     return await NotificationModel.countDocuments({ userId, isRead: false });
   }
 
-  private toEntity(doc: any): Notification {
+  private toEntity(doc: NotificationDocument): Notification {
     return {
       id: doc._id.toString(),
       userId: doc.userId,

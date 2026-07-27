@@ -13,7 +13,7 @@ import { MessageEventConsumer } from "./infrastructure/message-bus/MessageEventC
 import notificationRoutes from "./presentation/routes/notificationRoutes";
 import { extractUser } from "./presentation/middlewares/extractUser";
 
-const PORT = process.env.PORT || 4004;
+const PORT = process.env.PORT;
 
 const app = express();
 const httpServer = http.createServer(app);
