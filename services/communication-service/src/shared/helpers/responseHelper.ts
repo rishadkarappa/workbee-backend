@@ -1,11 +1,12 @@
-import { ApiResponse } from "./ApiResponseModel";
+
+import { IApiResponse } from "@workbee/common";
 import { HttpStatus } from "../enums/HttpStatus";
 
 
 export class ResponseHelper{
 
     // if res was sucess
-    static success<T>( data:T, message= "Request successfull", statusCode:number = HttpStatus.OK):ApiResponse<T>{
+    static success<T>( data:T, message= "Request successfull", statusCode:number = HttpStatus.OK):IApiResponse<T>{
         return {
             success:true,
             statusCode,
@@ -19,7 +20,7 @@ export class ResponseHelper{
         message:string,
         statusCode:number = HttpStatus.INTERNAL_SERVER_ERROR,
         errors?:unknown
-    ):ApiResponse<null>{
+    ):IApiResponse<null>{
         return {
             success:false,
             statusCode,
