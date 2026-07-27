@@ -2,7 +2,9 @@
 
 export const ErrorMessage = {
     AUTH:{
-        UNAUTHENTICATED:"User not authenticated"
+        UNAUTHENTICATED:"User not authenticated",
+        INVALID_OR_EXPIRED_TOKEN:'Invalid or expired token',
+        NO_TOKEN_PROVIDED:'No token provided',
 
     },
     GENERAL : {

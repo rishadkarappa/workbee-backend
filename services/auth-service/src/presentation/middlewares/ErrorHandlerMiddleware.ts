@@ -2,18 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/responseHelper';
 import { ErrorMessages } from '../../shared/constants/ErrorMessages';
+import { AppError } from '@workbee/common';
 
-export class AppError extends Error {
-    statusCode: number;
-    isOperational: boolean;
-
-    constructor(message: string, statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR) {
-        super(message);
-        this.statusCode = statusCode;
-        this.isOperational = true;
-        Error.captureStackTrace(this, this.constructor);
-    }
-}
 
 export const errorHandler = (err: Error | AppError, req: Request, res: Response, next: NextFunction): void => {
     if (err instanceof AppError) {

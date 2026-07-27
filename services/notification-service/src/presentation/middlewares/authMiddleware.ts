@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
+import { ENV } from '../../infrastructure/config/env';
+import { IJwtPayload } from '@workbee/common';
+import { ErrorMessage } from '../../shared/constants/ErrorMessages';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -10,25 +11,25 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'No token provided'
+        message: ErrorMessage.AUTH.NO_TOKEN_PROVIDED
       });
     }
 
     const token = authHeader.substring(7);
 
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, ENV.JWT_SECRET) as IJwtPayload;
 
-    (req as any).user = {
-      id: decoded.id || decoded.userId,
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email,
       role: decoded.role,
-      email: decoded.email
     };
 
     next();
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Invalid or expired token'
+      message: ErrorMessage.AUTH.INVALID_OR_EXPIRED_TOKEN
     });
   }
 };
