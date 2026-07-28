@@ -1,9 +1,11 @@
+import { UserRole } from "@workbee/common";
+
 export interface UserProfile {
   id: string;
   name: string;
   email: string;
   avatar?: string;
-  role: 'user';
+  role: UserRole.USER;
 }
 
 export interface WorkerProfile {
@@ -11,6 +13,6 @@ export interface WorkerProfile {
   name: string;
   email: string;
   avatar?: string;
-  role: 'worker';
+  role: UserRole.WORKER;
   skills?: string[];
 }

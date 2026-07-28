@@ -8,7 +8,7 @@ export interface BidHistoryItem {
 }
 
 export interface Bid {
-  id?: string;
+  id: string;
   chatId: string;
   workId: string;
   workTitle: string;

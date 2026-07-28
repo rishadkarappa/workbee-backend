@@ -13,7 +13,7 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
 
     protected map(user: UserDocument): User {
         return {
-            id: user.id?.toString(),
+            id: user.id,
             name: user.name,
             email: user.email,
             password: user.password,
