@@ -148,6 +148,10 @@ export class UserController implements IUserController {
       const { password } = req.body
       // console.log(password)
       // console.log('passssss', req.body.passoword)
+      if (typeof token !== 'string') {
+        res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.AUTH.INVALID_TOKEN, HttpStatus.BAD_REQUEST));
+        return;
+      }
 
       const result = await this._resetPasswordUseCase.execute(token, password)
       res
@@ -208,21 +212,25 @@ export class UserController implements IUserController {
    * 
    * 
    */
-  
+
   async getUserProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId } = req.params;
+      if (typeof userId !== 'string') {
+        res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.AUTH.INVALID_USER_ID, HttpStatus.BAD_REQUEST));
+        return;
+      }
       const profile = await this._getUserProfileUseCase.execute(userId);
       res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.USER.USER_PROFILE_RETRIEVED));
     } catch (error) {
-     next(error);
+      next(error);
     }
   }
 
   async getUserProfilesBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userIds } = req.body;
-      
+
       if (!Array.isArray(userIds)) {
         res.status(HttpStatus.BAD_REQUEST).json(
           ResponseHelper.error(ErrorMessages.AUTH.USERIDS_MUST_BE_ARRAY, HttpStatus.BAD_REQUEST)
@@ -233,7 +241,7 @@ export class UserController implements IUserController {
       const profiles = await this._getUserProfilesBatchUseCase.execute(userIds);
       res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, ResponseMessage.USER.USER_PROFILES_ARE_RETRIEVED));
     } catch (error) {
-     next(error);
+      next(error);
     }
   }
 }

@@ -1,6 +1,5 @@
 import { inject, injectable } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-import { UserRoles } from "../../../shared/constants/UserRoles";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { IHashService } from "../../../domain/services/IHashService";
@@ -10,6 +9,7 @@ import { LoginAdminRequestDTO, LoginAdminResponseDTO } from "../../dtos/admin/Lo
 import { AdminMapper } from "../../mappers/AdminMapper";
 
 import { ILoginAdminUseCase } from "../../ports/admin/ILoginAdminUseCase";
+import { UserRole } from "workbee-common";
 
 @injectable()
 export class LoginAdminUseCase implements ILoginAdminUseCase {
@@ -24,7 +24,7 @@ export class LoginAdminUseCase implements ILoginAdminUseCase {
 
         const admin = await this._userRepository.findByEmail(email);
         
-        if (!admin || admin.role !== UserRoles.ADMIN) {
+        if (!admin || admin.role !== UserRole.ADMIN) {
             throw new Error(ErrorMessages.ADMIN.ADMIN_NOT_FOUND);
         }
 
@@ -34,8 +34,8 @@ export class LoginAdminUseCase implements ILoginAdminUseCase {
         }
 
         // Generate both access and refresh tokens
-        const accessToken = this._tokenService.generateAccess(admin.id!, "admin");
-        const refreshToken = this._tokenService.generateRefresh(admin.id!, "admin");
+        const accessToken = this._tokenService.generateAccess(admin.id!, UserRole.ADMIN);
+        const refreshToken = this._tokenService.generateRefresh(admin.id!, UserRole.ADMIN);
 
         // Store refresh token in Redis
         await this._tokenService.storeRefreshToken(admin.id!, refreshToken);

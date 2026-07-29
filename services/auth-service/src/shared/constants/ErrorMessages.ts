@@ -18,7 +18,9 @@ export const ErrorMessages = {
         INVALID_REFRESH_TOKEN:"invalid refresh token",
         INVALID_OR_EXPIRED_ACCESS_TOKEN:"Invalid or expired access token",
         REFRESH_TOKEN_NOT_FOUND:"refresh token not fond",
-        USERIDS_MUST_BE_ARRAY:'userIds must be an array'
+        USERIDS_MUST_BE_ARRAY:'userIds must be an array',
+        INVALID_TOKEN:'Invalid token',
+        INVALID_USER_ID:'Invalid user id',
     },
 
     ADMIN:{
