@@ -1,6 +1,6 @@
 
 import { inject, injectable } from 'tsyringe';
-import { IMessageRepository } from '../../../../domain/repositories/IMessageRepository';
+import { IMessageRepository, NewMessage } from '../../../../domain/repositories/IMessageRepository';
 import { IChatRepository } from '../../../../domain/repositories/IChatRepository';
 import { SendMessageDTO } from '../../../dtos/chat/ChatDTO';
 import { Message } from '../../../../domain/entities/Message';
@@ -34,7 +34,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     }
 
     // Create message
-    const message: Message = {
+    const message: NewMessage = {
       chatId: data.chatId,
       senderId: data.senderId,
       senderRole: data.senderRole,

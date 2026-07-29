@@ -5,7 +5,6 @@ export interface Message {
   senderRole: string;
   content: string;
   type: 'text' | 'image' | 'video' | 'file'| 'system';
-  // set for image/video messages
   mediaUrl?: string;
   mediaPublicId?: string;
   isRead: boolean;

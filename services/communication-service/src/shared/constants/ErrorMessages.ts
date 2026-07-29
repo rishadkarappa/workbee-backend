@@ -31,6 +31,9 @@ export const ErrorMessages = {
         INTERNAL_SERVER_ERROR:"Someting wrong Internal server error",
         BAD_REQUEST:"Invalid request",
         NOT_FOUND_OTP:'user not found when sent otp'
+    },
+    CHAT:{
+        INVALID_CHAT_ID:"invalid chat id"
     }
 
 

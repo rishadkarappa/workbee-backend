@@ -6,17 +6,17 @@ export interface CreateChatDTO {
 }
 
 export interface SendMessageDTO {
-  chatId:      string;
-  senderId:    string;
-  senderRole:  'user' | 'worker';
-  content:     string;
-  type?:       'text' | 'image' | 'video' | 'file'| 'system';
+  chatId: string;
+  senderId: string;
+  senderRole: 'user' | 'worker';
+  content: string;
+  type?: 'text' | 'image' | 'video' | 'file' | 'system';
   // uploads to Cloudinary
-  mediaUrl?:      string;
+  mediaUrl?: string;
   mediaPublicId?: string;
-  recipientId?:   string;
+  recipientId?: string;
 }
- 
+
 
 export interface GetMessagesDTO {
   chatId: string;

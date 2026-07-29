@@ -42,7 +42,7 @@ export class ChatController implements IChatController {
         return
       }
 
-      if(user.role !== UserRole.USER && user.role !== UserRole.WORKER) {
+      if (user.role !== UserRole.USER && user.role !== UserRole.WORKER) {
         throw new Error(ErrorMessages.USER.INVALID_USER)
       }
 
@@ -62,6 +62,11 @@ export class ChatController implements IChatController {
       const { chatId } = req.params;
       const { limit, offset } = req.query;
 
+      if (typeof chatId !== "string") {
+        res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.CHAT.INVALID_CHAT_ID))
+        return;
+      }
+
       const messages = await this._getMessagesUseCase.execute({
         chatId,
         limit: limit ? parseInt(limit as string, 10) : undefined,
@@ -78,6 +83,11 @@ export class ChatController implements IChatController {
     try {
       const user = req.user;
       const { chatId } = req.params;
+
+      if (typeof chatId !== "string") {
+        res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.CHAT.INVALID_CHAT_ID))
+        return;
+      }
 
       if (!user || !user.id || !user.role) {
         res.status(HttpStatus.UNAUTHORIZED).json(
