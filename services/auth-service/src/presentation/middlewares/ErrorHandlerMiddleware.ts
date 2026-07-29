@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/responseHelper';
 import { ErrorMessages } from '../../shared/constants/ErrorMessages';
-import { AppError } from '@workbee/common';
+import { AppError } from 'workbee-common';
 
 
 export const errorHandler = (err: Error | AppError, req: Request, res: Response, _next: NextFunction): void => {

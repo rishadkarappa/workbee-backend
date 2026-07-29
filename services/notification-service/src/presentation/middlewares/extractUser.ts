@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRole } from "@workbee/common";
+import { UserRole } from "workbee-common";
  
 export const extractUser = (req: Request, res: Response, next: NextFunction) => {
   const userId = req.headers["x-user-id"] as string;

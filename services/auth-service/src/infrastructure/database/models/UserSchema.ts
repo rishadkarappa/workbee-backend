@@ -1,4 +1,4 @@
-import { UserRole } from "@workbee/common";
+import { UserRole } from "workbee-common";
 import mongoose, { Document, ObjectId, Schema } from "mongoose";
 
 export interface UserDocument extends Document {

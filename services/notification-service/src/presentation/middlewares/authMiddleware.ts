@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { ENV } from '../../infrastructure/config/env';
-import { IJwtPayload } from '@workbee/common';
+import { IJwtPayload } from 'workbee-common';
 import { ErrorMessage } from '../../shared/constants/ErrorMessages';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {

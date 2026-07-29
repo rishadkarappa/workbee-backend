@@ -10,7 +10,7 @@ import { IGetMessagesUseCase } from '../../application/ports/chat/IGetMessagesUs
 import { ResponseMessage } from '../../shared/constants/ResponseMessages';
 import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 import { IMarkChatAsReadUseCase } from '../../application/ports/chat/IMarkChatAsReadUseCase';
-import { UserRole } from '@workbee/common';
+import { UserRole } from 'workbee-common';
 
 @injectable()
 export class ChatController implements IChatController {

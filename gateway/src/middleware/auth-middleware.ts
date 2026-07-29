@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { isPublic } from "../utils/public-routes";
 import { getRedisClient } from "../config/RedisClient";
 import { ENV } from "../config/env";
-import { IJwtPayload } from "@workbee/common";
+import { IJwtPayload } from "workbee-common";
 import { ErrorMessages } from "../shared/constants/ErrorMessages";
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {

@@ -8,7 +8,7 @@ import { VerifyOtpRequestDTO, VerifyOtpResponseDTO } from "../../dtos/user/Verif
 import { UserMapper } from "../../mappers/UserMapper";
 
 import { IVerifyOtpUseCase } from "../../ports/user/IVerifyOtpUseCase";
-import { UserRole } from "@workbee/common";
+import { UserRole } from "workbee-common";
 
 @injectable()
 export class VerifyOtpUseCase implements IVerifyOtpUseCase {

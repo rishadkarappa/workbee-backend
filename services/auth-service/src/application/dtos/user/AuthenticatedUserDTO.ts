@@ -1,4 +1,4 @@
-import { UserRole } from "@workbee/common";
+import { UserRole } from "workbee-common";
 
 export interface AuthenticatedUserDTO {
   id: string;

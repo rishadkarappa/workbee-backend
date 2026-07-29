@@ -1,4 +1,4 @@
-export default {
+const colors = {
 	aliceblue: [240, 248, 255],
 	antiquewhite: [250, 235, 215],
 	aqua: [0, 255, 255],
@@ -146,5 +146,8 @@ export default {
 	white: [255, 255, 255],
 	whitesmoke: [245, 245, 245],
 	yellow: [255, 255, 0],
-	yellowgreen: [154, 205, 50]
+	yellowgreen: [154, 205, 50],
 }
+
+for (const key in colors) Object.freeze(colors[key]);
+export default Object.freeze(colors);

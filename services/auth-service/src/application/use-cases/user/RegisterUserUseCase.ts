@@ -12,7 +12,7 @@ import { IOtpService } from "../../../domain/services/IOtpService";
 import { IEmailService } from "../../../domain/services/IEmailService";
 import { UserMapper } from "../../mappers/UserMapper";
 import { IRegisterUserUseCase } from "../../ports/user/IRegisterUserUseCase";
-import { UserRole } from "@workbee/common";
+import { UserRole } from "workbee-common";
 
 @injectable()
 export class RegisterUserUseCase implements IRegisterUserUseCase{

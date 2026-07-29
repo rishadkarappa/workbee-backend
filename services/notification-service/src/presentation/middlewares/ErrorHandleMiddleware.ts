@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/ResponseHelper';
-import { AppError } from '@workbee/common';
+import { AppError } from 'workbee-common';
 import { ErrorMessage } from '../../shared/constants/ErrorMessages';
 
 

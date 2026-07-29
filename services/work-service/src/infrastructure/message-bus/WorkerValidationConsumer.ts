@@ -9,7 +9,7 @@ import { injectable, inject } from "tsyringe";
 import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
 import { IHashService } from "../../domain/services/IHashService";
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
-import { getErrorMessage } from "@workbee/common";
+import { getErrorMessage } from "workbee-common";
 
 interface WorkerLoginRequest {
     email: string;

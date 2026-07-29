@@ -1,5 +1,5 @@
 import { HttpStatus } from "../enums/HttpStatus";
-import { IApiResponse } from "@workbee/common";
+import { IApiResponse } from "workbee-common";
 
 export class ResponseHelper {
     static success<T>(data: T, message:string, statusCode: number = HttpStatus.OK): IApiResponse<T> {

@@ -304,7 +304,6 @@ declare module "v8" {
      * ```
      * @param ctor The constructor that can be used to search on the prototype chain in order to filter target objects in the heap.
      * @since v20.13.0
-     * @experimental
      */
     function queryObjects(ctor: Function): number | string[];
     function queryObjects(ctor: Function, options: { format: "count" }): number;
@@ -402,6 +401,21 @@ declare module "v8" {
      */
     function getHeapCodeStatistics(): HeapCodeStatistics;
     /**
+     * @since v24.12.0
+     */
+    interface SyncCPUProfileHandle {
+        /**
+         * Stopping collecting the profile and return the profile data.
+         * @since v24.12.0
+         */
+        stop(): string;
+        /**
+         * Stopping collecting the profile and the profile will be discarded.
+         * @since v24.12.0
+         */
+        [Symbol.dispose](): void;
+    }
+    /**
      * @since v24.8.0
      */
     interface CPUProfileHandle {
@@ -466,6 +480,17 @@ declare module "v8" {
      * @since v23.10.0, v22.15.0
      */
     function isStringOneByteRepresentation(content: string): boolean;
+    /**
+     * Starting a CPU profile then return a `SyncCPUProfileHandle` object. This API supports `using` syntax.
+     *
+     * ```js
+     * const handle = v8.startCpuProfile();
+     * const profile = handle.stop();
+     * console.log(profile);
+     * ```
+     * @since v24.12.0
+     */
+    function startCpuProfile(): SyncCPUProfileHandle;
     /**
      * @since v8.0.0
      */
@@ -706,6 +731,11 @@ declare module "v8" {
          * @since v19.6.0, v18.15.0
          */
         stop(): GCProfilerResult;
+        /**
+         * Stop collecting GC data, and discard the profile.
+         * @since v24.13.0
+         */
+        [Symbol.dispose](): void;
     }
     interface GCProfilerResult {
         version: number;

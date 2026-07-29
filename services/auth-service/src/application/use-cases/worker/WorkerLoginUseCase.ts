@@ -14,7 +14,7 @@ import { WorkerValidationClient } from "../../../infrastructure/message-bus/Work
 import { WorkerMapper } from "../../mappers/WorkerMapper";
 import { IWorkerLoginUseCase } from "../../ports/worker/IWorkerLoginUseCase";
 import { ITokenService } from "../../../domain/services/ITokenService";
-import { UserRole } from "@workbee/common";
+import { UserRole } from "workbee-common";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()

@@ -1,4 +1,4 @@
-import type { IJwtPayload, UserRole } from "@workbee/common";
+import type { IJwtPayload, UserRole } from "workbee-common";
 
 export interface ITokenService {
     generateAccess(id: string, role?: UserRole): string;

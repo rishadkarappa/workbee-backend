@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { IJwtPayload } from "@workbee/common";
+import { IJwtPayload } from "workbee-common";
 
 
 export const authMiddleware = (

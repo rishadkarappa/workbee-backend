@@ -200,6 +200,8 @@ declare namespace multer {
             fieldSize?: number | undefined;
             /** Maximum number of non-file form fields. (Default: Infinity) */
             fields?: number | undefined;
+            /** Maximum number of nesting levels for field names, e.g. `a[b][c]` has 2 levels. (Default: Infinity) */
+            fieldNestingDepth?: number | undefined;
             /** Maximum size of each file in bytes. (Default: Infinity) */
             fileSize?: number | undefined;
             /** Maximum number of file fields. (Default: Infinity) */
@@ -211,6 +213,12 @@ declare namespace multer {
         } | undefined;
         /** Preserve the full path of the original filename rather than the basename. (Default: false) */
         preservePath?: boolean | undefined;
+        /**
+         * For multipart forms, the default character set to use for values of
+         * part header parameters (e.g. filename) that are not extended
+         * parameters (that contain an explicit charset). (Default: latin1)
+         */
+        defParamCharset?: string | undefined;
         /**
          * Optional function to control which files are uploaded. This is called
          * for every file that is processed.

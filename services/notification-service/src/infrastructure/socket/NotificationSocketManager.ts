@@ -1,7 +1,7 @@
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { IJwtPayload } from '@workbee/common';
+import { IJwtPayload } from 'workbee-common';
 import { Notification } from '../../domain/entities/Notification';
 import { ENV } from '../config/env';
 

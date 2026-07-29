@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import { HttpStatus } from "../../shared/enums/HttpStatus"
 import { ErrorMessages } from "../../shared/constants/ErrorMessages"
 import { ResponseHelper } from "../../shared/helpers/responseHelper"
-import { AppError } from "@workbee/common";
+import { AppError } from "workbee-common";
 
 /**
  * Global error handling middlwere that come/catch infra errors 

@@ -4,7 +4,7 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IRefreshTokenUseCase } from "../../ports/user/IRefreshTokenUseCase";
 import { RefreshTokenRequestDTO, RefreshTokenResponseDTO } from "../../dtos/user/RefreshTokenDTO";
-import { IJwtPayload, UserRole } from "@workbee/common";
+import { IJwtPayload, UserRole } from "workbee-common";
 
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {

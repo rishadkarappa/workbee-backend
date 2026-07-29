@@ -13,7 +13,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@workbee/common": "file:../../../common",
     "amqplib": "^0.10.9",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -30,7 +29,8 @@
     "tsyringe": "^4.10.0",
     "uuid": "^13.0.0",
     "winston": "^3.18.3",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "workbee-common": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

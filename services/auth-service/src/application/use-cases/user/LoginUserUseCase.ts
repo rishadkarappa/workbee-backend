@@ -6,7 +6,7 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 import { IHashService } from "../../../domain/services/IHashService";
 import { UserMapper } from "../../mappers/UserMapper";
 import { ILoginUserUseCase } from "../../ports/user/ILoginUserUseCase";
-import { UserRole } from "@workbee/common";
+import { UserRole } from "workbee-common";
 
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {

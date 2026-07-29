@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import jwt from 'jsonwebtoken';
-import { IJwtPayload, UserRole } from "@workbee/common";
+import { IJwtPayload, UserRole } from "workbee-common";
 import { ITokenService } from '../../domain/services/ITokenService';
 
 import RedisClient from '../config/RedisClient';

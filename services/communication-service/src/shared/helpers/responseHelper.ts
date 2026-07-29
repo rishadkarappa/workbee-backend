@@ -1,5 +1,5 @@
 
-import { IApiResponse } from "@workbee/common";
+import { IApiResponse } from "workbee-common";
 import { HttpStatus } from "../enums/HttpStatus";
 
 

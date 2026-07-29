@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "@types/amqplib": "^0.10.8",
-    "@workbee/common": "file:../../../common",
     "amqplib": "^0.10.9",
     "axios": "^1.13.2",
     "cloudinary": "^2.9.0",
@@ -28,7 +27,8 @@
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.3",
     "tsyringe": "^4.10.0",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "workbee-common": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

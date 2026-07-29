@@ -10,7 +10,7 @@ import { IMessageRepository } from '../../domain/repositories/IMessageRepository
 import { IChatRepository } from '../../domain/repositories/IChatRepository';
 import { IRespondToBidUseCase } from '../../application/ports/bid/IRespondToBidUseCase';
 import { ISendBidOfferUseCase } from '../../application/ports/bid/ISendBidOfferUseCase';
-import { getErrorMessage, IJwtPayload, NotificationDTO } from '@workbee/common';
+import { getErrorMessage, IJwtPayload, NotificationDTO } from 'workbee-common';
 
 
 interface AuthenticatedSocket extends Socket {

@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@workbee/common": "file:../../../common",
     "amqplib": "^1.0.3",
     "axios": "^1.15.0",
     "bullmq": "^5.73.4",
@@ -25,7 +24,8 @@
     "razorpay": "^2.9.6",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "workbee-common": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

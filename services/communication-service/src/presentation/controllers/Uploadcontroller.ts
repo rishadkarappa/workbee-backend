@@ -4,7 +4,7 @@ import multer from 'multer';
 import { CloudinaryService } from '../../infrastructure/services/CloudinaryService';
 import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/responseHelper';
-import { getErrorMessage } from '@workbee/common';
+import { getErrorMessage } from 'workbee-common';
 
 // ─── Multer config: memory storage (no disk writes) 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];

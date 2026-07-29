@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { injectable } from 'tsyringe';
 import { UserProfile, WorkerProfile } from "../../domain/entities/Profile";
-import { getErrorMessage } from '@workbee/common';
+import { getErrorMessage } from 'workbee-common';
 
 
 @injectable()
