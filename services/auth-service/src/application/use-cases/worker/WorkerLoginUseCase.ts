@@ -5,7 +5,7 @@ import {
 } from "../../dtos/worker/LoginWorkerDTO";
 
 import {
-    WorkerLoginRequestRMQDTO,
+    // WorkerLoginRequestRMQDTO,
     WorkerLoginResponseRMQDTO
 } from "../../dtos/worker/WorkerLoginRMQDTO";
 

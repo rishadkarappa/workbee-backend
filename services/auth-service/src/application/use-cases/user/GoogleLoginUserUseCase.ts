@@ -28,7 +28,7 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
         const payload = ticket.getPayload();
         if(!payload) throw new Error('Invalid google credential');
 
-        const { email, name, sub } = payload;
+        const { email, name } = payload;
 
         let user = await this._userRepository.findByEmail(email!);
 

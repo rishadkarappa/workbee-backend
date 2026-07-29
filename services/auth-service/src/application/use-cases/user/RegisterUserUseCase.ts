@@ -1,6 +1,6 @@
 import { injectable,inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-import { NewUser, User } from "../../../domain/entities/User";
+import { NewUser } from "../../../domain/entities/User";
 
 import { RegisterUserRequestDTO, RegisterUserResponseDTO } from "../../dtos/user/RegisterUserDTO";
 

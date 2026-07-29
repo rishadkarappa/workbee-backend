@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { AdminController } from "../../controllers/admin/AdminController";
-import { AdminAuthMiddleware } from "../../middlewares/AdminAuthMiddleware";
+// import { AdminAuthMiddleware } from "../../middlewares/AdminAuthMiddleware";
 import { container } from "tsyringe";
 
 const router = Router()

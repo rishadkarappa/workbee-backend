@@ -5,7 +5,7 @@ import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 import { AppError } from '@workbee/common';
 
 
-export const errorHandler = (err: Error | AppError, req: Request, res: Response, next: NextFunction): void => {
+export const errorHandler = (err: Error | AppError, req: Request, res: Response, _next: NextFunction): void => {
     if (err instanceof AppError) {
         res.status(err.statusCode).json(
             ResponseHelper.error(err.message, err.statusCode)
