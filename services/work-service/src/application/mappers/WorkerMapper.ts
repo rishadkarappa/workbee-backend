@@ -1,10 +1,10 @@
-import { Worker } from "../../domain/entities/Worker";
+import { NewWorker, Worker } from "../../domain/entities/Worker";
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
 import { ApplyWorkerDto } from "../dtos/worker/WorkerDTO";
 import { WorkerResponseDto } from "../dtos/worker/WorkerDTO";
 
 export class WorkerMapper {
-    static toEntity(dto: ApplyWorkerDto): Worker {
+    static toEntity(dto: ApplyWorkerDto): NewWorker {
         return {
             name: dto.name,
             email: dto.email,

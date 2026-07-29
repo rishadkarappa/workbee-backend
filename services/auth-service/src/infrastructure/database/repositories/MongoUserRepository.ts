@@ -56,8 +56,7 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
         const [users, total] = await Promise.all([
             UserModel.find(query)
                 .skip(skip)
-                .limit(limit)
-                .lean(),
+                .limit(limit),
             UserModel.countDocuments(query)
         ]);
 

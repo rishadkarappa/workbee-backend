@@ -22,3 +22,5 @@ export interface Worker {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export type NewWorker = Omit<Worker, 'id'>;

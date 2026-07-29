@@ -30,8 +30,12 @@ export const ErrorMessages = {
     },
 
     WORKER: {
-        WORKER_ID_MUST_BE_ARRAY:'workerIds must be an array'
-    }
+        WORKER_ID_MUST_BE_ARRAY:'workerIds must be an array',
+        WRONG_WORKER_ID:'wrong worker id',
+    },
+    WORK: {
+        WRONG_WORK_ID:'wrong work id',
+    },
 
 
 }

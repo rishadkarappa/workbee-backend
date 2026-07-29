@@ -2,7 +2,7 @@ import { UserRole } from "workbee-common";
 import mongoose, { Document, ObjectId, Schema } from "mongoose";
 
 export interface UserDocument extends Document {
-  _id: ObjectId;
+  _id: mongoose.Types.ObjectId;
   name: string;
   email: string;
   password: string;

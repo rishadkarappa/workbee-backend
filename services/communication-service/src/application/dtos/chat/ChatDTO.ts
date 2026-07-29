@@ -8,7 +8,7 @@ export interface CreateChatDTO {
 export interface SendMessageDTO {
   chatId: string;
   senderId: string;
-  senderRole: 'user' | 'worker';
+  senderRole: UserRole.USER | UserRole.WORKER;
   content: string;
   type?: 'text' | 'image' | 'video' | 'file' | 'system';
   // uploads to Cloudinary
@@ -26,7 +26,7 @@ export interface GetMessagesDTO {
 
 export interface GetUserChatsDTO {
   userId: string;
-  role: "user" | "worker";
+  role: UserRole.USER | UserRole.WORKER;
 }
 
 

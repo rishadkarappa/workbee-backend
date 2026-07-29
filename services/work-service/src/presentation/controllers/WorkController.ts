@@ -223,6 +223,10 @@ export class WorkController implements IWorkController {
     async blockWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const workerId = req.params.id;
+            if (typeof workerId !== 'string') {
+                res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.WORKER.WRONG_WORKER_ID, HttpStatus.BAD_REQUEST))
+                return
+            }
             const result = await this._blockWorkerUseCase.execute(workerId);
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.AUTH.BLOCKED_WORKER));
         } catch (err) {
@@ -282,6 +286,7 @@ export class WorkController implements IWorkController {
     async deleteMyWork(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.headers["x-user-id"] as string;
+            const { workId } = req.params;
 
             if (!userId) {
                 res.status(HttpStatus.UNAUTHORIZED).json(
@@ -290,8 +295,15 @@ export class WorkController implements IWorkController {
                 return;
             }
 
+            if (typeof workId !== "string") {
+                res.status(HttpStatus.BAD_REQUEST).json(
+                    ResponseHelper.error(ErrorMessages.WORK.WRONG_WORK_ID, HttpStatus.BAD_REQUEST)
+                );
+                return;
+            }
+
             const dto: DeleteWorkDto = {
-                workId: req.params.workId,
+                workId,
                 userId
             };
 
@@ -312,9 +324,13 @@ export class WorkController implements IWorkController {
      * ===========================================================
      */
 
-    async getWorkerProfile(req: Request, res: Response, next:NextFunction):Promise<void> {
+    async getWorkerProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { workerId } = req.params;
+            if (typeof workerId !== 'string') {
+                res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.WORKER.WRONG_WORKER_ID, HttpStatus.BAD_REQUEST))
+                return
+            }
             const profile = await this._getWorkerProfileUseCase.execute({ workerId });
             res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.WORKER.WORKER_PROFILE_RETRIEVED));
         } catch (error) {
@@ -322,7 +338,7 @@ export class WorkController implements IWorkController {
         }
     }
 
-    async getWorkerProfilesBatch(req: Request, res: Response, next:NextFunction):Promise<void> {
+    async getWorkerProfilesBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { workerIds } = req.body;
 
@@ -351,7 +367,7 @@ export class WorkController implements IWorkController {
                 return;
             }
 
-            const result = await this._getWorkerAssignedWorksUseCase.execute({workerId});
+            const result = await this._getWorkerAssignedWorksUseCase.execute({ workerId });
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_ASSIGNED_WORK_RETRIEVED)
             );

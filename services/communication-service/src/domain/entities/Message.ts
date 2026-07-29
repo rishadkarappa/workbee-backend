@@ -1,8 +1,10 @@
+import { UserRole } from "workbee-common";
+
 export interface Message {
   id: string;
   chatId: string;
   senderId: string;
-  senderRole: string;
+  senderRole: UserRole.USER | UserRole.USER;
   content: string;
   type: 'text' | 'image' | 'video' | 'file'| 'system';
   mediaUrl?: string;

@@ -10,7 +10,7 @@ import { IMessageRepository } from '../../domain/repositories/IMessageRepository
 import { IChatRepository } from '../../domain/repositories/IChatRepository';
 import { IRespondToBidUseCase } from '../../application/ports/bid/IRespondToBidUseCase';
 import { ISendBidOfferUseCase } from '../../application/ports/bid/ISendBidOfferUseCase';
-import { getErrorMessage, IJwtPayload, NotificationDTO } from 'workbee-common';
+import { getErrorMessage, IJwtPayload, NotificationDTO, UserRole } from 'workbee-common';
 
 
 interface AuthenticatedSocket extends Socket {
@@ -131,7 +131,7 @@ export class SocketManager {
           const savedMessage = await sendMessageUseCase.execute({
             chatId: data.chatId,
             senderId: socket.userId,
-            senderRole: socket.userRole as 'user' | 'worker',
+            senderRole: socket.userRole as UserRole.USER | UserRole.WORKER,
             content: data.content,
             type: data.type,
             mediaUrl: data.mediaUrl,
@@ -208,7 +208,7 @@ export class SocketManager {
           const savedMessage = await sendMessageUseCase.execute({
             chatId: data.chatId,
             senderId: data.workerId,
-            senderRole: 'worker',
+            senderRole: UserRole.WORKER,
             content: JSON.stringify({
               type: 'WORK_CONFIRM_REQUEST',
               workId: data.workId,
@@ -262,7 +262,7 @@ export class SocketManager {
           const savedMessage = await sendMessageUseCase.execute({
             chatId: data.chatId,
             senderId: data.userId,
-            senderRole: 'user',
+            senderRole: UserRole.USER,
             content,
             type: 'system',
           });
@@ -301,7 +301,7 @@ export class SocketManager {
           const savedMessage = await sendMessageUseCase.execute({
             chatId: data.chatId,
             senderId: data.workerId,
-            senderRole: 'worker',
+            senderRole: UserRole.WORKER,
             content: JSON.stringify({
               type: 'WORK_PROGRESS_UPDATE',
               workId: data.workId,
@@ -410,7 +410,7 @@ export class SocketManager {
           const saved = await messageRepository.create({
             chatId: data.chatId,
             senderId: data.userId,
-            senderRole: 'user',
+            senderRole: UserRole.USER,
             content: JSON.stringify(payload),
             type: 'system',
             isRead: false,

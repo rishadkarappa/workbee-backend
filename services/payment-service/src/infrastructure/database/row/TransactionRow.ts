@@ -1,3 +1,9 @@
+import { JsonValue } from "../../../domain/entities/Transaction";
+
+interface JsonObject {
+    [key: string]: JsonValue;
+}
+
 export interface TransactionRow {
   id: string;
   wallet_id: string;
@@ -8,6 +14,6 @@ export interface TransactionRow {
   currency: string;
   status: string;
   description: string | null;
-  metadata: Record<string, unknown> | null;
+  metadata: JsonObject;
   created_at: Date;
 }

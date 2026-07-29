@@ -1,7 +1,7 @@
-import { Worker } from "../entities/Worker";
+import { NewWorker, Worker } from "../entities/Worker";
 
 export interface IWorkerRepository{
-    save(worker:Worker):Promise<Worker>;
+    save(worker:NewWorker):Promise<Worker>;
     findByEmail(email:string):Promise<Worker|null>;
     findById(id:string):Promise<Worker|null>;
     getNewAppliers(page: number, limit: number, search: string): Promise<{ 
