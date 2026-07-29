@@ -5,7 +5,7 @@ function getEnvVariable(key: string): string {
   const value = process.env[key];
 
   if (!value) {
-    throw new Error(`Environment variable "${key}" is missing.`);
+    throw new Error(`env variable "${key}" is missing.`);
   }
 
   return value;
@@ -13,4 +13,7 @@ function getEnvVariable(key: string): string {
 
 export const ENV = {
   RABBITMQ_URL: getEnvVariable("RABBITMQ_URL"),
+  NODE_ENV: getEnvVariable("NODE_ENV"),
+  SERVICE_NAME: getEnvVariable("SERVICE_NAME"),
+  LOG_LEVEL: getEnvVariable("LOG_LEVEL"),
 };

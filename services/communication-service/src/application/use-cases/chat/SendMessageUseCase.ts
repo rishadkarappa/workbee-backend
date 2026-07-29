@@ -4,6 +4,7 @@ import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { SendMessageDTO } from '../../dtos/chat/ChatDTO';
 import { Message } from '../../../domain/entities/Message';
 import { ISendMessageUseCase } from '../../ports/chat/ISendMessageUseCase';
+import { logger } from '../../../infrastructure/config/logger';
 
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
@@ -72,7 +73,8 @@ export class SendMessageUseCase implements ISendMessageUseCase {
           default:
             return 'New update';
         }
-      } catch {
+      } catch (err) {
+        logger.error('send msg usecase breakd',err)
         return 'New update';
       }
     }

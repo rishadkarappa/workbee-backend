@@ -1,5 +1,5 @@
 export interface Chat {
-  id: string;
+  id?: string;
   participants: {
     userId: string;
     workerId: string;

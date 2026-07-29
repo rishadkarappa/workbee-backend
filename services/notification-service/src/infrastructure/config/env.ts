@@ -13,4 +13,7 @@ export const ENV = {
     PORT:getEnvVariable("PORT"),
     JWT_SECRET:getEnvVariable("JWT_SECRET"),
     CORS_ORIGIN:getEnvVariable("CORS_ORIGIN"),
+    NODE_ENV:getEnvVariable("NODE_ENV"),
+    LOG_LEVEL:getEnvVariable("LOG_LEVEL"),
+    SERVICE_NAME:getEnvVariable("SERVICE_NAME"),
 }

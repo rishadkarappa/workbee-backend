@@ -17,8 +17,8 @@ export class GetMessagesUseCase implements IGetMessagesUseCase {
   async execute(data: GetMessagesDTO): Promise<Message[]> {
     const messages = await this._messageRepository.findByChatId(
       data.chatId,
-      data.limit,   // undefined = no limit = fetch all
-      data.offset   // undefined = no skip
+      data.limit,   
+      data.offset
     );
 
     return ChatMapper.toMessageListWithSender(

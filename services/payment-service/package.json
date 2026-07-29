@@ -24,7 +24,8 @@
     "pg": "^8.20.0",
     "razorpay": "^2.9.6",
     "reflect-metadata": "^0.2.2",
-    "tsyringe": "^4.10.0"
+    "tsyringe": "^4.10.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
