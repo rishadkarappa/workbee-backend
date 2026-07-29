@@ -36,7 +36,7 @@ const startServer = async () => {
     await RabbitMQClient.initialize();
     console.log('-- Rabbitmq connected');
 
-    const socketManager = new SocketManager(httpServer);
+    new SocketManager(httpServer);
     console.log('-- Socket.IO initialized');
 
     httpServer.listen(PORT, () =>

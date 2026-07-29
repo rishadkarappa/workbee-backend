@@ -10,7 +10,7 @@ import { AppError } from "@workbee/common";
  * 
  */
 
-export const errorHandler = (err: unknown, req: Request, res: Response, next: NextFunction): void => {
+export const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunction): void => {
     console.error(err);
 
     if (err instanceof AppError) {
