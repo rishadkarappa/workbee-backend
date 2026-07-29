@@ -4,7 +4,7 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IRefreshTokenUseCase } from "../../ports/user/IRefreshTokenUseCase";
 import { RefreshTokenRequestDTO, RefreshTokenResponseDTO } from "../../dtos/user/RefreshTokenDTO";
-import { UserRole } from "@workbee/common";
+import { IJwtPayload, UserRole } from "@workbee/common";
 
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
@@ -17,7 +17,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     const { refreshToken } = data;
 
     // Step 1: Verify the refresh token signature
-    let payload: { id: string; role?: string };
+    let payload: IJwtPayload;
     try {
       payload = this._tokenService.verifyRefresh(refreshToken);
     } catch (error) {
