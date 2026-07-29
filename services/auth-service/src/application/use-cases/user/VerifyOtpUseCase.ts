@@ -8,6 +8,7 @@ import { VerifyOtpRequestDTO, VerifyOtpResponseDTO } from "../../dtos/user/Verif
 import { UserMapper } from "../../mappers/UserMapper";
 
 import { IVerifyOtpUseCase } from "../../ports/user/IVerifyOtpUseCase";
+import { UserRole } from "@workbee/common";
 
 @injectable()
 export class VerifyOtpUseCase implements IVerifyOtpUseCase {
@@ -33,8 +34,8 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
         await this._userRepository.save(user);
         
         // Generate both access and refresh tokens
-        const accessToken = this._tokenService.generateAccess(user.id!, user.role as "user" | "admin" | "worker");
-        const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as "user" | "admin" | "worker");
+        const accessToken = this._tokenService.generateAccess(user.id!, user.role as UserRole);
+        const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as UserRole);
 
         // Store refresh token in Redis
         await this._tokenService.storeRefreshToken(user.id!, refreshToken);

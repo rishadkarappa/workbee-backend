@@ -8,9 +8,11 @@ export interface User {
   isVerified: boolean;
   isBlocked: boolean;
   role: UserRole;
-  phone?: string; 
+  phone?: string;
   countofpost?: number;
   numberOfComplaints?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type NewUser = Omit<User, "id" | "isBlocked"> & { isBlocked?: boolean }

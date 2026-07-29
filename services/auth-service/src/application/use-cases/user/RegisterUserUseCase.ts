@@ -1,6 +1,6 @@
 import { injectable,inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-import { User } from "../../../domain/entities/User";
+import { NewUser, User } from "../../../domain/entities/User";
 
 import { RegisterUserRequestDTO, RegisterUserResponseDTO } from "../../dtos/user/RegisterUserDTO";
 
@@ -11,6 +11,7 @@ import { IOtpService } from "../../../domain/services/IOtpService";
 import { IEmailService } from "../../../domain/services/IEmailService";
 import { UserMapper } from "../../mappers/UserMapper";
 import { IRegisterUserUseCase } from "../../ports/user/IRegisterUserUseCase";
+import { UserRole } from "@workbee/common";
 
 @injectable()
 export class RegisterUserUseCase implements IRegisterUserUseCase{
@@ -30,12 +31,11 @@ export class RegisterUserUseCase implements IRegisterUserUseCase{
 
     const hashed = await this._hashService.hash(password);
 
-    const user:User = {
-      id:undefined,
+    const user:NewUser = {
       name,
       email,
       password:hashed,
-      role:'user',
+      role:UserRole.USER,
       isVerified:false,
     };
     // console.log(user)

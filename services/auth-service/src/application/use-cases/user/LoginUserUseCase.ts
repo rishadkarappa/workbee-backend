@@ -6,6 +6,7 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 import { IHashService } from "../../../domain/services/IHashService";
 import { UserMapper } from "../../mappers/UserMapper";
 import { ILoginUserUseCase } from "../../ports/user/ILoginUserUseCase";
+import { UserRole } from "@workbee/common";
 
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {
@@ -29,8 +30,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     }
 
     // Generate both tokens
-    const accessToken = this._tokenService.generateAccess(user.id!, user.role as "user" | "admin" | "worker");
-    const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as "user" | "admin" | "worker");
+    const accessToken = this._tokenService.generateAccess(user.id!, user.role as UserRole);
+    const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as UserRole);
 
     // Store refresh token in Redis
     await this._tokenService.storeRefreshToken(user.id!, refreshToken);

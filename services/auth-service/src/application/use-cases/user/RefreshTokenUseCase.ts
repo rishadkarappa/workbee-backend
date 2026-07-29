@@ -4,6 +4,7 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IRefreshTokenUseCase } from "../../ports/user/IRefreshTokenUseCase";
 import { RefreshTokenRequestDTO, RefreshTokenResponseDTO } from "../../dtos/user/RefreshTokenDTO";
+import { UserRole } from "@workbee/common";
 
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
@@ -56,12 +57,12 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     // Step 4: Generate new tokens
     const newAccessToken = this._tokenService.generateAccess(
       userId,
-      role as "user" | "admin" | "worker"
+      role as UserRole
     );
 
     const newRefreshToken = this._tokenService.generateRefresh(
       userId,
-      role as "user" | "admin" | "worker"
+      role as UserRole
     );
 
     // Step 5: Rotate refresh token in Redis

@@ -1,5 +1,5 @@
 import { OAuth2Client } from "google-auth-library";
-import { User } from "../../../domain/entities/User";
+import { NewUser } from "../../../domain/entities/User";
 import { inject, injectable } from "tsyringe";
 
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
@@ -7,6 +7,7 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 import { GoogleLoginRequestDTO, GoogleLoginResponseDTO } from "../../dtos/user/GoogleLoginDTO";
 import { UserMapper } from "../../mappers/UserMapper";
 import { IGoogleLoginUserUseCase } from "../../ports/user/IGoogleLoginUserUseCase";
+import { UserRole } from "@workbee/common";
 
 const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
@@ -32,19 +33,18 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
         let user = await this._userRepository.findByEmail(email!);
 
         if(!user){
-            const newUser: User = {
-                id: undefined,
+            const newUser: NewUser = {
                 name: name || 'Google Auth User',
                 email: email!,
                 isVerified: true,
-                role: 'user'
+                role: UserRole.USER
             };
             user = await this._userRepository.save(newUser);
         }
 
         // Generate both access and refresh tokens
-        const accessToken = this._tokenService.generateAccess(user.id!, user.role as "user" | "admin" | "worker");
-        const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as "user" | "admin" | "worker");
+        const accessToken = this._tokenService.generateAccess(user.id!, user.role as UserRole);
+        const refreshToken = this._tokenService.generateRefresh(user.id!, user.role as UserRole);
 
         // Store refresh token in Redis
         await this._tokenService.storeRefreshToken(user.id!, refreshToken);
