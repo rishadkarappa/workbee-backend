@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { IJwtPayload } from '@workbee/common';
 import { Notification } from '../../domain/entities/Notification';
+import { ENV } from '../config/env';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
@@ -18,7 +19,7 @@ export class SocketManager {
   constructor(httpServer: HttpServer) {
     this.io = new Server(httpServer, {
       cors: {
-        origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+        origin: ENV.CORS_ORIGIN,
         credentials: true,
         methods: ["GET", "POST"]
       }
@@ -42,6 +43,7 @@ export class SocketManager {
         socket.userRole = decoded.role;
         next();
       } catch (error) {
+        console.log(error);
         next(new Error('Authentication error: Invalid token'));
       }
     });

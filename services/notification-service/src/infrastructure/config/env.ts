@@ -12,4 +12,5 @@ export const ENV = {
     RABBITMQ_URL:getEnvVariable("RABBITMQ_URL"),
     PORT:getEnvVariable("PORT"),
     JWT_SECRET:getEnvVariable("JWT_SECRET"),
+    CORS_ORIGIN:getEnvVariable("CORS_ORIGIN"),
 }

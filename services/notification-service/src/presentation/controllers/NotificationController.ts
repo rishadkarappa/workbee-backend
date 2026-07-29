@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { IJwtPayload } from "@workbee/common";
 
 import { INotificationController } from "../ports/INotificationController";
 

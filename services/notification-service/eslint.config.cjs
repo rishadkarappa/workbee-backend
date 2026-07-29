@@ -25,7 +25,6 @@ module.exports = tseslint.config(
     },
 
     rules: {
-      // TypeScript
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -35,7 +34,6 @@ module.exports = tseslint.config(
         },
       ],
 
-      // JavaScript
       "no-console": "off",
       "no-unused-vars": "off",
     },
