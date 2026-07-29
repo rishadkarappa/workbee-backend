@@ -33,7 +33,7 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
       }
     }
 
-    const { workId, userId, ...updateData } = dto;
+    const { workId, ...updateData } = dto;
 
     const updatedWork = await this._workRepository.update(workId, updateData);
 
