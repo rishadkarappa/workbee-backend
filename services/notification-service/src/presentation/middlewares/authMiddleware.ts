@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import { ENV } from '../../infrastructure/config/env';
 import { IJwtPayload } from '@workbee/common';
 import { ErrorMessage } from '../../shared/constants/ErrorMessages';
-import { logger } from "@workbee/common";
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -27,8 +26,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     };
 
     next();
-  } catch (error) {
-    logger.error(error)
+  } catch {
     return res.status(401).json({
       success: false,
       message: ErrorMessage.AUTH.INVALID_OR_EXPIRED_TOKEN

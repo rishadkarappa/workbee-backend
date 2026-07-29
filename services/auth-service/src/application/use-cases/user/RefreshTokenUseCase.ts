@@ -4,7 +4,7 @@ import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { IRefreshTokenUseCase } from "../../ports/user/IRefreshTokenUseCase";
 import { RefreshTokenRequestDTO, RefreshTokenResponseDTO } from "../../dtos/user/RefreshTokenDTO";
-import { IJwtPayload, logger, UserRole } from "@workbee/common";
+import { IJwtPayload, UserRole } from "@workbee/common";
 
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
@@ -20,8 +20,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     let payload: IJwtPayload;
     try {
       payload = this._tokenService.verifyRefresh(refreshToken);
-    } catch (error){
-      logger.error('failed verify refresh token', error);
+    } catch {
       throw new Error(ErrorMessages.AUTH.INVALID_REFRESH_TOKEN);
     }
 

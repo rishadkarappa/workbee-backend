@@ -1,6 +1,7 @@
 import { injectable,inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { NewUser } from "../../../domain/entities/User";
+import { logger } from "../../../infrastructure/config/logger";
 
 import { RegisterUserRequestDTO, RegisterUserResponseDTO } from "../../dtos/user/RegisterUserDTO";
 
@@ -51,6 +52,8 @@ export class RegisterUserUseCase implements IRegisterUserUseCase{
     });
     // console.log(savedUser,'nnnnnnnnn');
     await this._emailService.sendOtp(email, otp)
+
+    logger.info(`otp sent to ${email}`);
     
     return UserMapper.toRegisterResponse(savedUser.id!);
 
