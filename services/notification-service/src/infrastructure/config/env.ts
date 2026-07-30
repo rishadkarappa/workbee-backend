@@ -16,4 +16,6 @@ export const ENV = {
     NODE_ENV:getEnvVariable("NODE_ENV"),
     LOG_LEVEL:getEnvVariable("LOG_LEVEL"),
     SERVICE_NAME:getEnvVariable("SERVICE_NAME"),
+    LOGSTASH_HOST:getEnvVariable("LOGSTASH_HOST"),
+    LOGSTASH_PORT:getEnvVariable("LOGSTASH_PORT"),
 }

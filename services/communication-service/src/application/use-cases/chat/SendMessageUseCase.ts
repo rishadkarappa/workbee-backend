@@ -4,7 +4,7 @@ import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { SendMessageDTO } from '../../dtos/chat/ChatDTO';
 import { Message } from '../../../domain/entities/Message';
 import { ISendMessageUseCase } from '../../ports/chat/ISendMessageUseCase';
-import { logger } from '../../../infrastructure/config/logger';
+import { logger } from '../../../infrastructure/logger/logger';
 import { UserRole } from 'workbee-common';
 
 @injectable()
