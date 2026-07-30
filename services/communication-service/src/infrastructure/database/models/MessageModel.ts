@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { UserRole } from 'workbee-common';
 
 export interface IMessageDocument extends Document {
   chatId: string;
   senderId: string;
-  senderRole: 'user' | 'worker';
+  senderRole: UserRole.USER | UserRole.WORKER;
   content: string;
-  type: 'text' | 'image' | 'video' | 'file'| 'system';
+  type: 'text' | 'image' | 'video' | 'file' | 'system';
   mediaUrl?: string;
   mediaPublicId?: string;
   isRead: boolean;
@@ -14,16 +15,16 @@ export interface IMessageDocument extends Document {
 
 const MessageSchema = new Schema<IMessageDocument>(
   {
-    chatId:    { type: String, required: true, index: true },
-    senderId:  { type: String, required: true },
-    senderRole: { type: String, enum: ['user', 'worker'], required: true },
-    content:   { type: String, required: true },
+    chatId: { type: String, required: true, index: true },
+    senderId: { type: String, required: true },
+    senderRole: { type: String, enum: [UserRole.USER, UserRole.WORKER], required: true },
+    content: { type: String, required: true },
     type: {
-      type:    String,
-      enum:    ['text', 'image', 'video', 'file','system'],
+      type: String,
+      enum: ['text', 'image', 'video', 'file', 'system'],
       default: 'text',
     },
-    mediaUrl:      { type: String },
+    mediaUrl: { type: String },
     mediaPublicId: { type: String },
     isRead: { type: Boolean, default: false },
   },

@@ -4,6 +4,7 @@ import { IMessageRepository } from '../../../domain/repositories/IMessageReposit
 import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { ISendBidOfferUseCase } from '../../ports/bid/ISendBidOfferUseCase';
 import { SendBidOfferDTO, BidActionResult } from '../../dtos/bid/BidDTO';
+import { UserRole } from 'workbee-common';
 
 @injectable()
 export class SendBidOfferUseCase implements ISendBidOfferUseCase {
@@ -24,7 +25,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
 
     if (!existing) {
       // No live bid — only the worker may open a negotiation.
-      if (data.offeredBy !== 'worker') {
+      if (data.offeredBy !== UserRole.WORKER) {
         throw new Error('Only the worker can make the first offer');
       }
 
@@ -37,9 +38,9 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
         workerName: data.workerName,
         amount: data.amount,
         status: 'pending',
-        awaitingResponseFrom: 'user',
-        lastOfferBy: 'worker',
-        history: [{ amount: data.amount, offeredBy: 'worker', at: new Date() }],
+        awaitingResponseFrom: UserRole.USER,
+        lastOfferBy: UserRole.WORKER,
+        history: [{ amount: data.amount, offeredBy: UserRole.WORKER, at: new Date() }],
       });
     } else {
       if (existing.status !== 'pending') {
@@ -54,7 +55,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
         throw new Error('Only one counter offer is allowed');
       }
 
-      const nextAwaiting = data.offeredBy === 'user' ? 'worker' : 'user';
+      const nextAwaiting = data.offeredBy === UserRole.USER ? UserRole.WORKER : UserRole.USER;
 
       const updated = await this._bidRepository.update(existing.id!, {
         amount: data.amount,
@@ -81,7 +82,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
 
     const systemMessageContent = JSON.stringify(payload);
 
-    const senderId = data.offeredBy === 'worker' ? bid.workerId : bid.userId;
+    const senderId = data.offeredBy === UserRole.WORKER ? bid.workerId : bid.userId;
     const senderRole = data.offeredBy;
 
     const message = await this._messageRepository.create({

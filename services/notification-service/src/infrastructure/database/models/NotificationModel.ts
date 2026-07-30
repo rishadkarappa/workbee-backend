@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { Notification } from '../../../domain/entities/Notification';
+import { UserRole } from 'workbee-common';
 
 export interface NotificationDocument extends Omit<Notification, 'id'>, Document {}
 
@@ -17,7 +18,7 @@ const NotificationSchema = new Schema<NotificationDocument>(
       chatId: String,
       senderId: String,
       senderName: String,
-      senderRole: { type: String, enum: ['user', 'worker'] }
+      senderRole: { type: String, enum: [UserRole.USER, UserRole.WORKER] }
     },
     isRead: { type: Boolean, default: false, index: true },
   },

@@ -5,6 +5,7 @@ import { IChatRepository } from '../../../../domain/repositories/IChatRepository
 import { SendMessageDTO } from '../../../dtos/chat/ChatDTO';
 import { Message } from '../../../../domain/entities/Message';
 import { ISendMessageUseCase } from '../../../ports/chat/ISendMessageUseCase';
+import { UserRole } from 'workbee-common';
 
 export interface SendMessageResult extends Message {
   recipientId?: string;
@@ -27,9 +28,9 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
     // Determine recipient based on sender role
     let recipientId: string | undefined;
-    if (data.senderRole === 'user') {
+    if (data.senderRole === UserRole.USER) {
       recipientId = chat.participants.workerId;
-    } else if (data.senderRole === 'worker') {
+    } else if (data.senderRole === UserRole.WORKER) {
       recipientId = chat.participants.userId;
     }
 

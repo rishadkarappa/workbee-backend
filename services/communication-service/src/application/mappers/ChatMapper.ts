@@ -1,3 +1,4 @@
+import { UserRole } from "workbee-common";
 import { Chat } from "../../domain/entities/Chat";
 import { Message } from "../../domain/entities/Message";
 import { ICacheService } from "../../domain/services/ICacheService";
@@ -61,7 +62,7 @@ export class ChatMapper {
   ): Promise<Message> {
     let senderProfile;
 
-    if (message.senderRole === "user") {
+    if (message.senderRole === UserRole.USER) {
       senderProfile = await cacheService.getUserProfile(message.senderId);
     } else {
       senderProfile = await cacheService.getWorkerProfile(message.senderId);

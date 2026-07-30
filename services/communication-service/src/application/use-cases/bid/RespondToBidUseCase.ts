@@ -4,6 +4,7 @@ import { IMessageRepository } from '../../../domain/repositories/IMessageReposit
 import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { IRespondToBidUseCase } from '../../ports/bid/IRespondToBidUseCase';
 import { RespondToBidDTO, BidActionResult } from '../../dtos/bid/BidDTO';
+import { UserRole } from 'workbee-common';
 
 @injectable()
 export class RespondToBidUseCase implements IRespondToBidUseCase {
@@ -37,7 +38,7 @@ export class RespondToBidUseCase implements IRespondToBidUseCase {
       respondedBy: data.respondedBy,
     };
 
-    const senderId = data.respondedBy === 'worker' ? bid.workerId : bid.userId;
+    const senderId = data.respondedBy === UserRole.WORKER ? bid.workerId : bid.userId;
 
     const message = await this._messageRepository.create({
       chatId: bid.chatId,

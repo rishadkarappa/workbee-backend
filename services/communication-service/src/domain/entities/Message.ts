@@ -4,7 +4,7 @@ export interface Message {
   id: string;
   chatId: string;
   senderId: string;
-  senderRole: UserRole.USER | UserRole.USER;
+  senderRole: UserRole.USER | UserRole.WORKER;
   content: string;
   type: 'text' | 'image' | 'video' | 'file'| 'system';
   mediaUrl?: string;

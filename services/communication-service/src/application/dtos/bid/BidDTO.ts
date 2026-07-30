@@ -1,3 +1,5 @@
+import { UserRole } from 'workbee-common';
+
 export interface SendBidOfferDTO {
   chatId: string;
   workId: string;
@@ -6,12 +8,12 @@ export interface SendBidOfferDTO {
   workerId: string;
   workerName: string;
   amount: number;
-  offeredBy: 'user' | 'worker';
+  offeredBy: UserRole.USER | UserRole.WORKER;
 }
 
 export interface RespondToBidDTO {
   bidId: string;
-  respondedBy: 'user' | 'worker';
+  respondedBy: UserRole.USER | UserRole.WORKER;
   action: 'accept' | 'reject';
 }
 

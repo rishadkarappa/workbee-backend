@@ -1,3 +1,5 @@
+import { UserRole } from "workbee-common";
+
 export interface Notification {
   id: string;
   userId: string;
@@ -8,7 +10,7 @@ export interface Notification {
     chatId?: string;
     senderId?: string;
     senderName?: string;
-    senderRole?: 'user' | 'worker';
+    senderRole?: UserRole.USER | UserRole.WORKER ;
   };
   isRead: boolean;
   createdAt: Date;

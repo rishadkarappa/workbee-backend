@@ -5,6 +5,7 @@ import { SendMessageDTO } from '../../dtos/chat/ChatDTO';
 import { Message } from '../../../domain/entities/Message';
 import { ISendMessageUseCase } from '../../ports/chat/ISendMessageUseCase';
 import { logger } from '../../../infrastructure/config/logger';
+import { UserRole } from 'workbee-common';
 
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
@@ -30,7 +31,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     await this._chatRepository.updateLastMessage(data.chatId, this.getPreviewText(data));
 
     const recipientRole: 'userId' | 'workerId' =
-      data.senderRole === 'user' ? 'workerId' : 'userId';
+      data.senderRole === UserRole.USER ? 'workerId' : 'userId';
 
     await this._chatRepository.incrementUnreadCount(data.chatId, recipientRole);
 

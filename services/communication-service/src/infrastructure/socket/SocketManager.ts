@@ -15,7 +15,7 @@ import { getErrorMessage, IJwtPayload, NotificationDTO, UserRole } from 'workbee
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
-  userRole?: 'user' | 'worker' | 'admin';
+  userRole?: UserRole;
 }
 
 // Payload shape the client sends via send_message
@@ -140,7 +140,7 @@ export class SocketManager {
 
           // Enrich with sender profile
           let senderProfile;
-          if (socket.userRole === 'user') {
+          if (socket.userRole === UserRole.USER) {
             senderProfile = await this.cacheService.getUserProfile(socket.userId);
           } else {
             senderProfile = await this.cacheService.getWorkerProfile(socket.userId);
@@ -181,7 +181,7 @@ export class SocketManager {
               userId: data.recipientId,
               senderId: socket.userId,
               senderName: senderProfile.name,
-              senderRole: socket.userRole as 'user' | 'worker',
+              senderRole: socket.userRole as UserRole.USER | UserRole.WORKER,
               chatId: data.chatId,
               messageContent: previewContent,
               timestamp: new Date(),
@@ -335,7 +335,7 @@ export class SocketManager {
       socket.on('send_bid_offer', async (data: {
         chatId: string; workId: string; workTitle: string;
         userId: string; workerId: string; workerName: string;
-        amount: number; offeredBy: 'user' | 'worker';
+        amount: number; offeredBy: UserRole.USER | UserRole.WORKER;
       }) => {
         try {
           if (!socket.userId) {
@@ -349,7 +349,7 @@ export class SocketManager {
           const message = {
             id: parsed.messageId,
             chatId: data.chatId,
-            senderId: data.offeredBy === 'worker' ? data.workerId : data.userId,
+            senderId: data.offeredBy === UserRole.WORKER ? data.workerId : data.userId,
             senderRole: data.offeredBy,
             content: JSON.stringify({ ...parsed, messageId: undefined }),
             type: 'system',
@@ -368,7 +368,7 @@ export class SocketManager {
       });
 
       socket.on('respond_bid', async (data: {
-        bidId: string; respondedBy: 'user' | 'worker'; action: 'accept' | 'reject';
+        bidId: string; respondedBy: UserRole.USER | UserRole.WORKER ; action: 'accept' | 'reject';
       }) => {
         try {
           if (!socket.userId) {
@@ -421,7 +421,7 @@ export class SocketManager {
             id: saved.id,
             chatId: data.chatId,
             senderId: data.userId,
-            senderRole: 'user',
+            senderRole: UserRole.USER,
             content: JSON.stringify(payload),
             type: 'system',
             isRead: false,

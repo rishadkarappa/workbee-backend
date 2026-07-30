@@ -5,6 +5,7 @@ import { GetUserChatsDTO } from '../../dtos/chat/ChatDTO';
 import { IGetUserChatsUseCase } from '../../ports/chat/IGetUserChatsUseCase';
 import { ChatMapper } from '../../mappers/ChatMapper';
 import { ICacheService } from '../../../domain/services/ICacheService';
+import { UserRole } from 'workbee-common';
 
 @injectable()
 export class GetUserChatsUseCase implements IGetUserChatsUseCase {
@@ -44,7 +45,7 @@ export class GetUserChatsUseCase implements IGetUserChatsUseCase {
       const unread = unreadMap.get(chat.id!);
       return {
         ...chat,
-        myUnreadCount: role === 'user'
+        myUnreadCount: role === UserRole.USER
           ? (unread?.userId   ?? 0)
           : (unread?.workerId ?? 0)
       };
