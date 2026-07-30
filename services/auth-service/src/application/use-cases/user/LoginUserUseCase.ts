@@ -7,6 +7,7 @@ import { IHashService } from "../../../domain/services/IHashService";
 import { UserMapper } from "../../mappers/UserMapper";
 import { ILoginUserUseCase } from "../../ports/user/ILoginUserUseCase";
 import { UserRole } from "workbee-common";
+import { logger } from "../../../infrastructure/logger/logger";
 
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {
@@ -26,6 +27,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     if (!isMatch) throw new Error(ErrorMessages.USER.INVALID_PASSWORD);
 
     if (user.isBlocked) {
+      logger.error("user wasw blocked");
       throw new Error("user wasw blocked")
     }
 
@@ -35,7 +37,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     // Store refresh token in Redis
     await this._tokenService.storeRefreshToken(user.id!, refreshToken);
-
+    logger.info('login usecase hited')
     return UserMapper.toLoginResponse(user, accessToken, refreshToken);
   }
 }

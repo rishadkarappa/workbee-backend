@@ -1,7 +1,7 @@
 import { injectable,inject } from "tsyringe";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { NewUser } from "../../../domain/entities/User";
-import { logger } from "../../../infrastructure/config/logger";
+import { logger } from "../../../infrastructure/logger/logger";
 
 import { RegisterUserRequestDTO, RegisterUserResponseDTO } from "../../dtos/user/RegisterUserDTO";
 

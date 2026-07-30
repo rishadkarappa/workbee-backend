@@ -1,6 +1,7 @@
 import { injectable, inject } from "tsyringe";
 import { ITokenService } from "../../../domain/services/ITokenService";
 import { ILogoutUserUseCase } from "../../ports/user/ILogoutUserUseCase";
+import { logger } from "../../../infrastructure/logger/logger";
 
 @injectable()
 export class LogoutUserUseCase implements ILogoutUserUseCase {
@@ -9,7 +10,8 @@ export class LogoutUserUseCase implements ILogoutUserUseCase {
   ) {}
 
   async execute(userId: string): Promise<void> {
-    // Delete refresh token from Redis
+    // delete refresh token from redis
+    logger.info('deleted refreshtoken')
     await this._tokenService.deleteRefreshToken(userId);
   }
 }
