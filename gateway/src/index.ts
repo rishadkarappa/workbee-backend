@@ -6,8 +6,9 @@ import express from "express";
 
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import { httpLogger } from "./middleware/gateway-logging";
+import { httpLogger } from "./middleware/gateway-http-logging";
 import { verifyToken } from "./middleware/auth-middleware";
+import { logger } from "./logger/logger";
 
 // gateway port
 const PORT = process.env.PORT;
@@ -65,4 +66,4 @@ services.forEach((service) => {
 });
 
 // gateway port litsening
-app.listen(PORT, () => console.log(`API Gateway running on ${PORT}`));
+app.listen(PORT, () => logger.info(`API Gateway running on ${PORT}`));
