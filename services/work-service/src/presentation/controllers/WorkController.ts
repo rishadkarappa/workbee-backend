@@ -87,6 +87,9 @@ export class WorkController implements IWorkController {
     }
 
     async approveWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
+        logger.info('req bodyyy',req.body)
+        console.log('BODY:', JSON.stringify(req.body));
+    console.log('CONTENT-TYPE:', req.headers['content-type']);
         try {
             const dto: WorkerApproveDto = {
                 workerId: req.body.workerId,

@@ -13,7 +13,7 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
 
   protected map(worker: WorkerDocument): Worker {
     return {
-      id: worker.id,
+      id: worker._id.toString(),
       name: worker.name,
       email: worker.email,
       phone: worker.phone,

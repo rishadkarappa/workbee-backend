@@ -38,6 +38,9 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     // Store refresh token in Redis
     await this._tokenService.storeRefreshToken(user.id!, refreshToken);
     logger.info('login usecase hited')
+    logger.info('new apeel')
+    logger.info('lvertheeeeee')
+
     return UserMapper.toLoginResponse(user, accessToken, refreshToken);
   }
 }

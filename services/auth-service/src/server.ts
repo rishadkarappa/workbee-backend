@@ -29,13 +29,13 @@ const startServer = async () => {
     try {
         await connectDatabase();
         logger.info('Auth Service Database connected');
-        
+
         await RabbitMQClient.initialize();
         logger.info('Auth Service RabbitMQ initialized');
 
         RedisClient.getInstance();
         logger.info('Auth Service Redis initialized');
-        
+
         app.listen(ENV.PORT, () => logger.info(`Auth Service running on port ${ENV.PORT}`));
     } catch (error) {
         logger.error('Failed to start server:', error);

@@ -5,6 +5,7 @@ import { WorkerApproveDto, WorkerResponseDto } from "../../dtos/worker/WorkerDTO
 import { WorkerMapper } from "../../mappers/WorkerMapper";
 import { IWorkerApproveUseCase } from "../../ports/worker/IWorkerApproveUseCase";
 import { WorkerStatus } from "../../../infrastructure/database/models/WorkerSchema";
+import { logger } from "../../../infrastructure/logger/logger";
 
 @injectable()
 export class WorkerApproveUseCase implements IWorkerApproveUseCase {
@@ -41,6 +42,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
             
         } else if (dto.status === "rejected") {
             if (!dto.rejectionReason || dto.rejectionReason.trim().length === 0) {
+                logger.error("Rejection reason is required when rejecting an application")
                 throw new Error("Rejection reason is required when rejecting an application");
             }
 
@@ -57,7 +59,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
             );
         }
 
-        console.log("WorkerApproveUseCase - Updating worker status to:", worker.status);
+        logger.log("WorkerApproveUseCase - Updating worker status to:", worker.status);
 
         const updatedWorker = await this._workerRepository.save(worker);
 

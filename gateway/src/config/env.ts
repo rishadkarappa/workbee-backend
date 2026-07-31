@@ -14,7 +14,7 @@ export const ENV = {
     JWT_REFRESH_SECRET : requiredEnv("JWT_REFRESH_SECRET"),
     LOGSTASH_HOST : requiredEnv("LOGSTASH_HOST"),
     LOGSTASH_PORT : requiredEnv("LOGSTASH_PORT"),
-    LOG_LEVEL : requiredEnv("LOG_LEVEL"),
+    LOG_LEVEL : requiredEnv("LOG_LEVEL") ,
     SERVICE_NAME : requiredEnv("SERVICE_NAME"),
     NODE_ENV : requiredEnv("NODE_ENV"),
     
