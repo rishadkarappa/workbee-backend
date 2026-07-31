@@ -32,9 +32,10 @@ export class LogstashTransport extends Transport {
         socket.end();
       });
     });
-
-    socket.on("error", () => {
+    
+    socket.on("error", (error) => {
       socket.destroy();
+      console.error("Logstash connection error:", error.message);
     });
 
     callback();

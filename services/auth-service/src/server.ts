@@ -14,6 +14,7 @@ import RedisClient from "./infrastructure/config/RedisClient";
 
 import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
 import { ENV } from "./infrastructure/config/env";
+import { logger } from "./infrastructure/logger/logger";
 
 const app = express();
 app.use(express.json());
@@ -27,17 +28,17 @@ app.use(errorHandler)
 const startServer = async () => {
     try {
         await connectDatabase();
-        console.log('Database connected');
+        logger.info('Auth Service Database connected');
         
         await RabbitMQClient.initialize();
-        console.log('RabbitMQ initialized');
+        logger.info('Auth Service RabbitMQ initialized');
 
         RedisClient.getInstance();
-        console.log('Redis initialized');
+        logger.info('Auth Service Redis initialized');
         
-        app.listen(ENV.PORT, () => console.log(`Auth Service running on port ${ENV.PORT}`));
+        app.listen(ENV.PORT, () => logger.info(`Auth Service running on port ${ENV.PORT}`));
     } catch (error) {
-        console.error('Failed to start server:', error);
+        logger.error('Failed to start server:', error);
         process.exit(1);
     }
 };

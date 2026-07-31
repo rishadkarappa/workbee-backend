@@ -26,6 +26,7 @@ import { IGetWorkerAssignedWorksUseCase } from "../../application/ports/isc/IGet
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 import { GetAllWorksFilterDto } from "../../application/dtos/work/GetAllWorksFilterDto";
 import { WorkUploadFiles } from "../types/WorkUploadFiles";
+import { logger } from "../../infrastructure/logger/logger";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -135,7 +136,7 @@ export class WorkController implements IWorkController {
 
             // Handle file uploads
             if (files) {
-                console.log("Processing files...");
+                logger.info("processing fileeee")
                 if (files.voiceFile) {
                     rawData.voiceFile = await this._fileUploadService.saveFile(
                         files.voiceFile[0],

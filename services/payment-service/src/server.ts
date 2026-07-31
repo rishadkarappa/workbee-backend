@@ -10,6 +10,7 @@ import { connectDB } from "./infrastructure/config/connectDB";
 
 import paymentRoutes from "./presentation/routes/PaymentRoutes";
 import { startPayoutWorker } from "./infrastructure/queue/PayoutQueue";
+import { logger } from "./infrastructure/logger/logger";
 
 const app = express();
 
@@ -29,10 +30,10 @@ const startServer = async () => {
     await connectDB();
     startPayoutWorker();
     app.listen(PORT, () => {
-      console.log(`[PaymentService] Running on port ${PORT}`);
+      logger.info(`PaymentService Running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("[PaymentService] Failed to start:", error);
+    logger.error("PaymentService Failed to start:", error);
     process.exit(1);
   }
 };

@@ -12,6 +12,7 @@ import { SocketManager } from "./infrastructure/socket/NotificationSocketManager
 import { MessageEventConsumer } from "./infrastructure/message-bus/MessageEventConsumer";
 import notificationRoutes from "./presentation/routes/notificationRoutes";
 import { extractUser } from "./presentation/middlewares/extractUser";
+import { logger } from "./infrastructure/config/logger";
 
 const PORT = process.env.PORT;
 
@@ -36,28 +37,28 @@ const startServer = async () => {
   try {
     // Connect to MongoDB
     await connectDatabase();
-    console.log('-- Database connected');
+    logger.info('Notification Service Database connected');
 
     // Connect to RabbitMQ
     await RabbitMQClient.initialize();
-    console.log('-- RabbitMQ connected');
+    logger.info('Notification Service RabbitMQ connected');
 
     // Initialize Socket.IO
     const socketManager = new SocketManager(httpServer);
     container.registerInstance("SocketManager", socketManager);
-    console.log('-- Socket.IO initialized');
+    logger.info('Notification Service Socket.IO initialized');
 
     // Start message consumer
     const messageConsumer = container.resolve(MessageEventConsumer);
     await messageConsumer.start();
-    console.log('-- Message consumer started');
+    logger.info('Notification Service Message consumer started');
 
     // Start server
     httpServer.listen(PORT, () => {
-      console.log(`-- Notification service running on port ${PORT}`);
+      logger.info(`Notification service running on port ${PORT}`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error);
     process.exit(1);
   }
 };

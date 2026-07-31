@@ -12,6 +12,7 @@ import uploadRoutes from './presentation/routes/UploadRoutes';
 import { SocketManager } from "./infrastructure/socket/SocketManager";
 import { authMiddleware } from "./presentation/middleware/authMiddleware";
 import { RabbitMQClient } from "./infrastructure/message-bus/Client";
+import { logger } from "./infrastructure/logger/logger";
 
 const PORT = process.env.PORT;
 const app = express();
@@ -31,19 +32,19 @@ const httpServer = http.createServer(app);
 const startServer = async () => {
   try {
     await connectDatabase();
-    console.log('-- Database connected');
+    logger.info('Communication service Database connected');
 
     await RabbitMQClient.initialize();
-    console.log('-- Rabbitmq connected');
+    logger.info('Communication service Rabbitmq connected');
 
     new SocketManager(httpServer);
-    console.log('-- Socket.IO initialized');
+    logger.info('Communication service Socket.IO initialized');
 
     httpServer.listen(PORT, () =>
-      console.log(`Communication service running on port ${PORT}`)
+      logger.info(`Communication service running on port ${PORT}`)
     );
   } catch (error) {
-    console.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error);
     process.exit(1);
   }
 };

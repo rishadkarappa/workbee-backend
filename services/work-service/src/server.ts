@@ -11,6 +11,7 @@ const PORT = process.env.PORT
 
 import WorkRoutes from "./presentation/routes/WorkRoutes" 
 import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
+import { logger } from "./infrastructure/logger/logger";
 
 const app = express()
 app.use(express.json())
@@ -26,14 +27,14 @@ app.use(errorHandler);
 const startServer = async () => {
     try {
         await connectDatabase();
-        console.log('-- Database connected');
+        logger.info('Work Service Database connected');
         
         await RabbitMQClient.initialize();
-        console.log('-- RabbitMQ initialized');
+        logger.info('Work Service RabbitMQ initialized');
         
-        app.listen(PORT, () => console.log(`-- Work service running on port ${PORT}`));
+        app.listen(PORT, () => logger.info(`- Work service running on port ${PORT}`));
     } catch (error) {
-        console.error('Failed to start server:', error);
+        logger.error('Failed to start work service server:', error);
         process.exit(1);
     }
 };

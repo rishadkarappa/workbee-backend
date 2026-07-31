@@ -11,6 +11,7 @@ import { IChatRepository } from '../../domain/repositories/IChatRepository';
 import { IRespondToBidUseCase } from '../../application/ports/bid/IRespondToBidUseCase';
 import { ISendBidOfferUseCase } from '../../application/ports/bid/ISendBidOfferUseCase';
 import { getErrorMessage, IJwtPayload, NotificationDTO, UserRole } from 'workbee-common';
+import { logger } from '../logger/logger';
 
 
 interface AuthenticatedSocket extends Socket {
@@ -230,7 +231,7 @@ export class SocketManager {
           this.io.to(`user:${data.userId}`).emit('new_message', enrichedMessage);
 
         } catch (error) {
-          console.error('[Socket] ask_for_confirm error:', error);
+          logger.error('socket ask_for_confirm error:', error);
           socket.emit('error', { message: getErrorMessage(error) });
         }
       });
@@ -281,7 +282,7 @@ export class SocketManager {
           }
 
         } catch (error) {
-          console.error('[Socket] confirm_response error:', error);
+          logger.error('socket confirm_response error:', error);
           socket.emit('error', { message: getErrorMessage(error) });
         }
       });
@@ -446,7 +447,7 @@ export class SocketManager {
 
       // ─ disconnect
       socket.on('disconnect', () => {
-        console.log(`[Socket] disconnected: ${socket.userId}`);
+        logger.info(`[Socket] disconnected: ${socket.userId}`);
         if (socket.userId) this.userSockets.delete(socket.userId);
       });
     });
