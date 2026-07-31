@@ -1,8 +1,6 @@
 import "reflect-metadata";
+import "dotenv/config";
 import "./infrastructure/di/container";
-
-import dotenv from "dotenv";
-dotenv.config();
 
 import express from 'express';
 import http from 'http';
@@ -13,8 +11,9 @@ import { SocketManager } from "./infrastructure/socket/SocketManager";
 import { authMiddleware } from "./presentation/middleware/authMiddleware";
 import { RabbitMQClient } from "./infrastructure/message-bus/Client";
 import { logger } from "./infrastructure/logger/logger";
+import { ENV } from "./infrastructure/config/env";
 
-const PORT = process.env.PORT;
+const PORT = ENV.PORT;
 const app = express();
 
 // Parse JSON and multipart (multer handles multipart inside the route itself)

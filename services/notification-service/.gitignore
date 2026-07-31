@@ -9,6 +9,7 @@ logs/
 
 # env
 .env
+.env.docker
 .env.local
 .env.*
 !.env.example

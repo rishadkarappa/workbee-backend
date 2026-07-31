@@ -1,8 +1,8 @@
-function getEnv(name:string):string{
-    const value = process.env[name];
+function getEnv(name:string):string {
+    const value = process.env[name]
 
-    if (!value) {
-        throw new Error(`${value} is missing`)
+    if(!value) {
+        throw new Error(`env ${name} key is missing`)
     }
 
     return value

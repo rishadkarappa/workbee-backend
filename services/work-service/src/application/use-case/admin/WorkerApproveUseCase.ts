@@ -26,6 +26,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
         const worker = await this._workerRepository.findById(dto.workerId);
 
         if (!worker) {
+            logger.error("Worker not found with ID: " + dto.workerId)
             throw new Error("Worker not found with ID: " + dto.workerId);
         }
 

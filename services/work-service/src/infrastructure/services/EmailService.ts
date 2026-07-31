@@ -1,15 +1,15 @@
 import { injectable } from "tsyringe";
 import nodemailer from "nodemailer";
 import { IEmailService } from "../../domain/services/IEmailService";
+import { logger } from "../logger/logger";
 
 @injectable()
 export class EmailService implements IEmailService {
     private transporter;
 
     constructor() {
-        // Check if email credentials are configured
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-            console.warn(" Email credentials not configured. Emails will not be sent.");
+            logger.error("email credentials not configured. emails will not be sent.");
             this.transporter = null;
         } else {
             this.transporter = nodemailer.createTransport({
@@ -24,7 +24,7 @@ export class EmailService implements IEmailService {
 
     async sendApprovalEmail(email: string, name: string): Promise<void> {
         if (!this.transporter) {
-            console.log("[SIMULATED] Approval email to:", email);
+            logger.info("simulated approval email to:", email);
             return;
         }
 
@@ -80,17 +80,17 @@ export class EmailService implements IEmailService {
             };
 
             await this.transporter.sendMail(mailOptions);
-            console.log("Approval email sent to:", email);
+            logger.info("Approval email sent to:", email);
         } catch (error) {
-            console.error("Failed to send approval email:", error);
+            logger.error("Failed to send approval email:", error);
             // Don't throw error - allow the approval to succeed even if email fails
         }
     }
 
     async sendRejectionEmail(email: string, name: string, reason: string): Promise<void> {
         if (!this.transporter) {
-            console.log("[SIMULATED] Rejection email to:", email);
-            console.log("Reason:", reason);
+            logger.info("[SIMULATED] Rejection email to:", email);
+            logger.info("Reason:", reason);
             return;
         }
 
@@ -158,10 +158,10 @@ export class EmailService implements IEmailService {
             };
 
             await this.transporter.sendMail(mailOptions);
-            console.log("Rejection email sent to:", email);
+            logger.info("Rejection email sent to:", email);
         } catch (error) {
-            console.error("Failed to send rejection email:", error);
-            // Don't throw error - allow the rejection to succeed even if email fails
+            logger.error("Failed to send rejection email:", error);
+            //dont throw error bec allow the rejection to succeed even if email fails
         }
     }
 }
