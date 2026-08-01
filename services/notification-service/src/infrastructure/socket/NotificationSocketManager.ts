@@ -5,13 +5,9 @@ import { IJwtPayload, UserRole } from 'workbee-common';
 import { Notification } from '../../domain/entities/Notification';
 import { ENV } from '../config/env';
 import { logger } from '../config/logger';
+import { AuthenticatedSocket } from './SocketTypes';
 
 const JWT_SECRET = ENV.JWT_SECRET;
-
-interface AuthenticatedSocket extends Socket {
-  userId?: string;
-  userRole?: UserRole;
-}
 
 export class SocketManager {
   private io: Server;
