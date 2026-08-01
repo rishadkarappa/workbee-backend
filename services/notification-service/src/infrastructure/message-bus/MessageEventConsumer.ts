@@ -1,7 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 import { RabbitMQConnection } from '../config/rabbitmq';
 import { CreateNotificationUseCase } from '../../application/use-cases/CreateNotificationUseCase';
-import { SocketManager } from '../socket/NotificationSocketManager';
+import { SocketGateway } from '../socket/SocketGateway';
 import { INewMessageEvent } from '../../domain/message-contracts/INewMessageEvent';
 import { ConsumeMessage } from 'amqplib';
 
@@ -13,7 +13,7 @@ export class MessageEventConsumer {
 
   constructor(
     @inject("CreateNotificationUseCase") private createNotificationUseCase: CreateNotificationUseCase,
-    @inject("SocketManager") private socketManager: SocketManager
+    @inject("SocketManager") private socketManager: SocketGateway
   ) {}
 
   async start(): Promise<void> {

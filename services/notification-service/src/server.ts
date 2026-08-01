@@ -13,15 +13,16 @@ import { MessageEventConsumer } from "./infrastructure/message-bus/MessageEventC
 import notificationRoutes from "./presentation/routes/notificationRoutes";
 import { extractUser } from "./presentation/middlewares/extractUser";
 import { logger } from "./infrastructure/config/logger";
+import { ENV } from "./infrastructure/config/env";
 
-const PORT = process.env.PORT;
+const PORT = ENV.PORT;
 
 const app = express();
 const httpServer = http.createServer(app);
 
 // Middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN,
+  origin: ENV.CORS_ORIGIN,
   credentials: true
 }));
 app.use(express.json());
@@ -65,7 +66,7 @@ const startServer = async () => {
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('Shutting down gracefully...');
+  logger.info('Shutting down gracefully...');
   process.exit(0);
 });
 
