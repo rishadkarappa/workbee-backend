@@ -7,7 +7,7 @@ import http from 'http';
 import { connectDatabase } from "./infrastructure/config/connectMongo";
 import chatRoutes from './presentation/routes/ChatRoute';
 import uploadRoutes from './presentation/routes/UploadRoutes';
-import { SocketManager } from "./infrastructure/socket/SocketManager";
+import { SocketGateway } from "./infrastructure/socket/gateway/SocketGateway";
 import { authMiddleware } from "./presentation/middleware/authMiddleware";
 import { RabbitMQClient } from "./infrastructure/message-bus/Client";
 import { logger } from "./infrastructure/logger/logger";
@@ -36,7 +36,7 @@ const startServer = async () => {
     await RabbitMQClient.initialize();
     logger.info('Communication service Rabbitmq connected');
 
-    new SocketManager(httpServer);
+    new SocketGateway(httpServer);
     logger.info('Communication service Socket.IO initialized');
 
     httpServer.listen(PORT, () =>
