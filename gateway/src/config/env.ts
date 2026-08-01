@@ -9,7 +9,7 @@ function requiredEnv(key:string):string {
 
 
 export const ENV = {
-    SERVER_PORT:process.env.PORT,
+    PORT:process.env.PORT,
     JWT_SECRET : requiredEnv("JWT_SECRET"),
     JWT_REFRESH_SECRET : requiredEnv("JWT_REFRESH_SECRET"),
     LOGSTASH_HOST : requiredEnv("LOGSTASH_HOST"),

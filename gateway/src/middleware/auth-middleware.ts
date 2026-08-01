@@ -30,6 +30,8 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     const redis = getRedisClient();
     const isBlocked = await redis.get(`blocked:${userId}`);
 
+    
+
     if (isBlocked) {
       console.log(`Blocked ${role} attempted access: ${userId} — ${req.method} ${req.path}`);
       return res.status(401).json({ 

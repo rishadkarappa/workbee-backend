@@ -9,9 +9,10 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { httpLogger } from "./middleware/gateway-http-logging";
 import { verifyToken } from "./middleware/auth-middleware";
 import { logger } from "./logger/logger";
+import { ENV } from "./config/env";
 
 // gateway port
-const PORT = process.env.PORT;
+const PORT = ENV.PORT;
 
 // create app
 const app = express();
