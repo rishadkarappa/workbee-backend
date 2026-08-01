@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { IJwtPayload, UserRole } from 'workbee-common';
 import { Notification } from '../../domain/entities/Notification';
 import { ENV } from '../config/env';
+import { logger } from '../config/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
 
@@ -43,7 +44,7 @@ export class SocketManager {
         socket.userRole = decoded.role;
         next();
       } catch (error) {
-        console.log(error);
+        logger.error(error);
         next(new Error('Authentication error: Invalid token'));
       }
     });
@@ -70,7 +71,7 @@ export class SocketManager {
 
   // Emit notification to specific user
   public emitNotificationToUser(userId: string, notification: Notification): void {
-    console.log(`Emitting notification to user: ${userId}`);
+    logger.info(`Emitting notification to user: ${userId}`);
     this.io.to(`user:${userId}`).emit('new_notification', notification);
   }
 
