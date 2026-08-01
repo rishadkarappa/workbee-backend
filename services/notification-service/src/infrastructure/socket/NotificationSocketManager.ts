@@ -6,7 +6,7 @@ import { Notification } from '../../domain/entities/Notification';
 import { ENV } from '../config/env';
 import { logger } from '../config/logger';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jwtsecret2233';
+const JWT_SECRET = ENV.JWT_SECRET;
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
