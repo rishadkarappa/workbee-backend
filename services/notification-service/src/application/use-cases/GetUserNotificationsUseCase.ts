@@ -6,23 +6,14 @@ import { GetUserNotificationsDTO } from "../dtos/GetUserNotificationsDTO";
 
 @injectable()
 export class GetUserNotificationsUseCase
-  implements IGetUserNotificationsUseCase
-{
+  implements IGetUserNotificationsUseCase {
   constructor(
     @inject("NotificationRepository") private readonly _notificationRepository: INotificationRepository
-  ) {}
+  ) { }
 
   async execute(dto: GetUserNotificationsDTO): Promise<Notification[]> {
-    const {
-      userId,
-      limit = 50,
-      offset = 0
-    } = dto;
+    const { userId, limit = 50, offset = 0 } = dto;
 
-    return await this._notificationRepository.findByUserId(
-      userId,
-      limit,
-      offset
-    );
+    return await this._notificationRepository.findByUserId(userId, limit, offset);
   }
 }

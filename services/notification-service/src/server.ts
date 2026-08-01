@@ -8,7 +8,7 @@ import cors from 'cors';
 import { connectDatabase } from "./infrastructure/config/connectMongo";
 import { RabbitMQClient } from "./infrastructure/message-bus/client";
 import { container } from "./infrastructure/di/container";
-import { SocketManager } from "./infrastructure/socket/NotificationSocketManager";
+import { SocketGateway } from "./infrastructure/socket/SocketGateway";
 import { MessageEventConsumer } from "./infrastructure/message-bus/MessageEventConsumer";
 import notificationRoutes from "./presentation/routes/notificationRoutes";
 import { extractUser } from "./presentation/middlewares/extractUser";
@@ -44,7 +44,7 @@ const startServer = async () => {
     logger.info('Notification Service RabbitMQ connected');
 
     // Initialize Socket.IO
-    const socketManager = new SocketManager(httpServer);
+    const socketManager = new SocketGateway(httpServer);
     container.registerInstance("SocketManager", socketManager);
     logger.info('Notification Service Socket.IO initialized');
 

@@ -1,32 +1,36 @@
 import { Server as HttpServer } from 'http';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { IJwtPayload, UserRole } from 'workbee-common';
+import { IJwtPayload } from 'workbee-common';
 import { Notification } from '../../domain/entities/Notification';
 import { ENV } from '../config/env';
 import { logger } from '../config/logger';
 import { AuthenticatedSocket } from './SocketTypes';
+import { ConnectionHandler } from './ConnectionHandler';
 
 const JWT_SECRET = ENV.JWT_SECRET;
 
-export class SocketManager {
+export class SocketGateway {
   private io: Server;
   private userSockets: Map<string, string> = new Map();
+  private connectionHandler: ConnectionHandler;
 
   constructor(httpServer: HttpServer) {
     this.io = new Server(httpServer, {
       cors: {
         origin: ENV.CORS_ORIGIN,
         credentials: true,
-        methods: ["GET", "POST"]
-      }
+        methods: ['GET', 'POST'],
+      },
     });
+
+    this.connectionHandler = new ConnectionHandler(this.userSockets);
 
     this.setupMiddleware();
     this.setupEventHandlers();
   }
 
-  private setupMiddleware() {
+  private setupMiddleware(): void {
     this.io.use((socket: AuthenticatedSocket, next) => {
       const token = socket.handshake.auth.token;
 
@@ -46,32 +50,17 @@ export class SocketManager {
     });
   }
 
-  private setupEventHandlers() {
+  private setupEventHandlers(): void {
     this.io.on('connection', (socket: AuthenticatedSocket) => {
-      console.log(`[Notification] User connected: ${socket.userId}`);
-
-      if (socket.userId) {
-        this.userSockets.set(socket.userId, socket.id);
-        // Join user-specific room for targeted notifications
-        socket.join(`user:${socket.userId}`);
-      }
-
-      socket.on('disconnect', () => {
-        console.log(`[Notification] User disconnected: ${socket.userId}`);
-        if (socket.userId) {
-          this.userSockets.delete(socket.userId);
-        }
-      });
+      this.connectionHandler.register(socket);
     });
   }
 
-  // Emit notification to specific user
   public emitNotificationToUser(userId: string, notification: Notification): void {
     logger.info(`Emitting notification to user: ${userId}`);
     this.io.to(`user:${userId}`).emit('new_notification', notification);
   }
 
-  // Broadcast to all connected clients (if needed)
   public broadcast(event: string, data: Notification): void {
     this.io.emit(event, data);
   }
