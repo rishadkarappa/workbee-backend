@@ -15,8 +15,6 @@ import { extractUser } from "./presentation/middlewares/extractUser";
 import { logger } from "./infrastructure/config/logger";
 import { ENV } from "./infrastructure/config/env";
 
-const PORT = ENV.PORT;
-
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -55,8 +53,8 @@ const startServer = async () => {
     logger.info('Notification Service Message consumer started');
 
     // Start server
-    httpServer.listen(PORT, () => {
-      logger.info(`Notification service running on port ${PORT}`);
+    httpServer.listen(ENV.PORT, () => {
+      logger.info(`Notification service running on port ${ENV.PORT}`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);

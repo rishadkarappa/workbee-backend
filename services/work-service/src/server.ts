@@ -7,11 +7,10 @@ import path from "path";
 import { connectDatabase } from "./infrastructure/config/connectMongo";
 import { RabbitMQClient } from "./infrastructure/message-bus/client";
 
-const PORT = process.env.PORT
-
 import WorkRoutes from "./presentation/routes/WorkRoutes" 
 import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
 import { logger } from "./infrastructure/logger/logger";
+import { ENV } from "./infrastructure/config/env";
 
 const app = express()
 app.use(express.json())
@@ -32,7 +31,7 @@ const startServer = async () => {
         await RabbitMQClient.initialize();
         logger.info('Work Service RabbitMQ initialized');
         
-        app.listen(PORT, () => logger.info(`- Work service running on port ${PORT}`));
+        app.listen(ENV.PORT, () => logger.info(`- Work service running on port ${ENV.PORT}`));
     } catch (error) {
         logger.error('Failed to start work service server:', error);
         process.exit(1);

@@ -13,6 +13,7 @@ function getEnvVariable(key: string): string {
 
 export const ENV = {
   RABBITMQ_URL: getEnvVariable("RABBITMQ_URL"),
+  PORT: getEnvVariable("PORT"),
   NODE_ENV: getEnvVariable("NODE_ENV"),
   SERVICE_NAME: getEnvVariable("SERVICE_NAME"),
   LOG_LEVEL: getEnvVariable("LOG_LEVEL"),

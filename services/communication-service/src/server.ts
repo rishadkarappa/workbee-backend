@@ -13,7 +13,6 @@ import { RabbitMQClient } from "./infrastructure/message-bus/Client";
 import { logger } from "./infrastructure/logger/logger";
 import { ENV } from "./infrastructure/config/env";
 
-const PORT = ENV.PORT;
 const app = express();
 
 // Parse JSON and multipart (multer handles multipart inside the route itself)
@@ -39,8 +38,8 @@ const startServer = async () => {
     new SocketGateway(httpServer);
     logger.info('Communication service Socket.IO initialized');
 
-    httpServer.listen(PORT, () =>
-      logger.info(`Communication service running on port ${PORT}`)
+    httpServer.listen(ENV.PORT, () =>
+      logger.info(`Communication service running on port ${ENV.PORT}`)
     );
   } catch (error) {
     logger.error('Failed to start server:', error);
