@@ -6,6 +6,7 @@
 import { Channel } from 'amqplib';
 import { v4 as uuidv4 } from 'uuid';
 import { WorkerLoginResponseRMQDTO } from '../../application/dtos/worker/WorkerLoginRMQDTO';
+import { logger } from '../logger/logger';
 
 
 export class WorkerValidationClient {
@@ -26,12 +27,12 @@ export class WorkerValidationClient {
             const timeoutId = setTimeout(() => {
                 if (!isResolved) {
                     isResolved = true;
-                    console.error(`Timeout for correlation: ${correlationId}`);
+                    logger.error(`Timeout for correlation: ${correlationId}`);
                     
                     // Cancel consumer on timeout
                     if (consumerTag) {
                         this.channel.cancel(consumerTag).catch(err => 
-                            console.error("Error canceling consumer:", err)
+                            logger.error("Error canceling consumer:", err)
                         );
                     }
                     
@@ -58,7 +59,7 @@ export class WorkerValidationClient {
                             try {
                                 const response = JSON.parse(msg.content.toString());
                                 
-                                console.log(`Received response for: ${correlationId}`, {
+                                logger.info(`Received response for: ${correlationId}`, {
                                     success: response.success
                                 });
 
@@ -72,13 +73,13 @@ export class WorkerValidationClient {
 
                                 resolve(response);
                             } catch (parseError) {
-                                console.error("Error parsing response:", parseError);
+                                logger.error("Error parsing response:", parseError);
                                 this.channel.ack(msg);
                                 reject(new Error("Invalid response format"));
                             }
                         } else {
                             // Acknowledge but ignore mismatched messages
-                            console.warn(`Ignoring message with wrong correlationId: ${msg.properties.correlationId}`);
+                            logger.warn(`Ignoring message with wrong correlationId: ${msg.properties.correlationId}`);
                             this.channel.ack(msg);
                         }
                     },
@@ -97,16 +98,16 @@ export class WorkerValidationClient {
                     }
                 );
 
-                console.log(`Sent validation request: ${correlationId}`);
+                logger.info(`Sent validation request: ${correlationId}`);
 
             } catch (error) {
                 isResolved = true;
                 clearTimeout(timeoutId);
-                console.error("RabbitMQ error:", error);
+                logger.error("RabbitMQ error:", error);
                 
                 if (consumerTag) {
                     this.channel.cancel(consumerTag).catch(err =>
-                        console.error("Error canceling consumer:", err)
+                        logger.error("Error canceling consumer:", err)
                     );
                 }
                 

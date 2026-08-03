@@ -8,6 +8,7 @@ import { RabbitMQConnection } from "../config/rabbitmq";
 import { ITokenService } from "../../domain/services/ITokenService";
 import RedisClient from "../config/RedisClient";
 import { ConsumeMessage } from "amqplib";
+import { logger } from "../logger/logger";
 
 interface IWorkerBlockedEvent {
   workerId: string;
@@ -33,7 +34,7 @@ export class WorkerEventConsumer {
       await channel.assertQueue(this.QUEUE, { durable: true });
       await channel.bindQueue(this.QUEUE, this.EXCHANGE, this.ROUTING_KEY);
 
-      console.log("Auth service listening for worker.blocked events");
+      logger.info("Auth service listening for worker.blocked events");
 
       channel.consume(
         this.QUEUE,
@@ -44,14 +45,14 @@ export class WorkerEventConsumer {
             await this.handleWorkerBlocked(event);
             channel.ack(msg);
           } catch (error) {
-            console.error("Error processing worker.blocked event:", error);
+            logger.error("Error processing worker.blocked event:", error);
             channel.nack(msg, false, false);
           }
         },
         { noAck: false }
       );
     } catch (error) {
-      console.error("Failed to start WorkerEventConsumer:", error);
+      logger.error("Failed to start WorkerEventConsumer:", error);
       throw error;
     }
   }
@@ -60,18 +61,17 @@ export class WorkerEventConsumer {
     const { workerId, isBlocked } = event;
 
     if (isBlocked) {
-      // 1. Delete refresh token → next refresh attempt fails
       await this._tokenService.deleteRefreshToken(workerId);
 
-      // 2. Add to blocklist → gateway rejects ALL requests immediately
-      //    TTL = 900s (15min) matches access token expiry
+      // Add to blocklist - gateway rejects ALL requests immediately
+      // TTL = 900s (15min) matches access token expiry
       await this.redis.setex(`blocked:${workerId}`, 900, "1");
 
-      console.log(`Worker blocked + refresh token deleted + blocklist set: ${workerId}`);
+      logger.info(`Worker blocked + refresh token deleted + blocklist set: ${workerId}`);
     } else {
       // Unblocked — remove from blocklist
       await this.redis.del(`blocked:${workerId}`);
-      console.log(`Worker unblocked + removed from blocklist: ${workerId}`);
+      logger.info(`Worker unblocked + removed from blocklist: ${workerId}`);
     }
   }
 }
