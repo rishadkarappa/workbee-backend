@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IBlockWorkerUseCase } from "../../ports/worker/IBlockWorkerUseCase";
 import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
-import { WorkerEventPublisher } from "../../../infrastructure/message-bus/publishers/WorkerEventPublisher";
+import { WorkerEventPublisher } from "../../../infrastructure/message-bus/WorkerEventPublisher";
 import { Worker } from "../../../domain/entities/Worker";
 
 @injectable()

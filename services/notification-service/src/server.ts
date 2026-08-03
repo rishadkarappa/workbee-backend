@@ -41,11 +41,10 @@ const startServer = async () => {
     const socketManager = new SocketGateway(httpServer);
     container.registerInstance("SocketManager", socketManager);
     logger.info('Notification Service Socket.IO initialized');
-    
+
     // Connect to RabbitMQ
     await RabbitMQInitializer.initialize();
     logger.info('Notification Service RabbitMQ connected and consumer started');
-
 
 
     // Start server
@@ -58,9 +57,9 @@ const startServer = async () => {
   }
 };
 
-// Graceful shutdown
+// shutdown
 process.on('SIGINT', async () => {
-  logger.info('Shutting down gracefully...');
+  logger.info('Shutting down...');
   process.exit(0);
 });
 

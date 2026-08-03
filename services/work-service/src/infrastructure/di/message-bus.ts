@@ -1,5 +1,5 @@
 import { container } from "tsyringe";
 
-import { WorkerEventPublisher } from "../message-bus/publishers/WorkerEventPublisher";
+import { WorkerEventPublisher } from "../message-bus/WorkerEventPublisher"
 
 container.registerSingleton("WorkerEventPublisher", WorkerEventPublisher)
