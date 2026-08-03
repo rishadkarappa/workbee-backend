@@ -9,7 +9,7 @@ import chatRoutes from './presentation/routes/ChatRoute';
 import uploadRoutes from './presentation/routes/UploadRoutes';
 import { SocketGateway } from "./infrastructure/socket/gateway/SocketGateway";
 import { authMiddleware } from "./presentation/middleware/authMiddleware";
-import { RabbitMQClient } from "./infrastructure/message-bus/Client";
+import { RabbitMQInitializer } from "./infrastructure/message-bus/RabbitMQInitializer";
 import { logger } from "./infrastructure/logger/logger";
 import { ENV } from "./infrastructure/config/env";
 
@@ -32,8 +32,8 @@ const startServer = async () => {
     await connectDatabase();
     logger.info('Communication service Database connected');
 
-    await RabbitMQClient.initialize();
-    logger.info('Communication service Rabbitmq connected');
+    await RabbitMQInitializer.initialize();
+    logger.info('Communication service Rabbitmq connected and initialized');
 
     new SocketGateway(httpServer);
     logger.info('Communication service Socket.IO initialized');

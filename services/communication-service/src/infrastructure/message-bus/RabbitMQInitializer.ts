@@ -1,22 +1,23 @@
 import { RabbitMQConnection } from "../config/rabbitmq";
+import { logger } from "../logger/logger";
 
-export class RabbitMQClient {
+export class RabbitMQInitializer {
     private static isInitialized = false;
 
     static async initialize(): Promise<void> {
         if (this.isInitialized) {
-            console.log('-- Messaging service already initialized');
+            logger.info('- Messaging service already initialized');
             return;
         }
 
         try {
             await RabbitMQConnection.connect();
-            console.log('-- RabbitMQ connected');
+            logger.info('- RabbitMQ connected');
 
             this.isInitialized = true;
-            console.log('-- Messaging Service initialized successfully');
+            logger.info('- Messaging Service initialized successfully');
         } catch (error) {
-            console.error('-- Failed to initialize Messaging Service:', error);
+            logger.error('- Failed to initialize Messaging Service:', error);
             throw error;
         }
     }

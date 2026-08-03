@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { RabbitMQConnection } from '../config/rabbitmq';
 import { INewMessageEvent } from '../../domain/message-contracts/INewMessageEvent';
+import { logger } from '../logger/logger';
 
 @injectable()
 export class MessageEventPublisher {
@@ -21,9 +22,9 @@ export class MessageEventPublisher {
         contentType: 'application/json',
       });
 
-      console.log(`Published new message event for user: ${event.userId}`);
+      logger.info(`Published new message event for user: ${event.userId}`);
     } catch (error) {
-      console.error('Failed to publish message event:', error);
+      logger.error('Failed to publish message event:', error);
       throw error;
     }
   }
