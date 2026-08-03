@@ -1,5 +1,4 @@
 // Same Redis instance as auth service — just a new connection from the gateway process
-
 import Redis from "ioredis";
 
 let redisClient: Redis | null = null;

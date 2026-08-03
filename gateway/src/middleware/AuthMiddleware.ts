@@ -5,6 +5,7 @@ import { getRedisClient } from "../config/RedisClient";
 import { ENV } from "../config/env";
 import { IJwtPayload } from "workbee-common";
 import { ErrorMessages } from "../shared/constants/ErrorMessages";
+import { logger } from "../logger/logger";
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   if (isPublic(req)) {
@@ -14,7 +15,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    console.log(`No token provided for ${req.method} ${req.path}`);
+    logger.error(`No token provided for ${req.method} ${req.path}`);
     return res.status(401).json({ error: ErrorMessages.AUTH.NO_TOKEN_PROVIDED });
   }
 
@@ -33,7 +34,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     
 
     if (isBlocked) {
-      console.log(`Blocked ${role} attempted access: ${userId} — ${req.method} ${req.path}`);
+      logger.warn(`Blocked ${role} attempted access: ${userId} — ${req.method} ${req.path}`);
       return res.status(401).json({ 
         error: ErrorMessages.AUTH.ACCOUNT_HAS_BEEN_BLOCKED,
         code: "ACCOUNT_BLOCKED"
@@ -52,7 +53,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 
     const message = error instanceof Error ? error.message : "unknown error";
 
-    console.log(`Token verification failed for ${req.method} ${req.path}: ${message}`);
+    logger.error(`Token verification failed for ${req.method} ${req.path}: ${message}`);
     
     return res.status(403).json({ error: ErrorMessages.AUTH.INVALID_OR_EXPIRED_TOKEN});
   }

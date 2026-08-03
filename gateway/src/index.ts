@@ -6,8 +6,8 @@ import express from "express";
 
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import { httpLogger } from "./middleware/gateway-http-logging";
-import { verifyToken } from "./middleware/auth-middleware";
+import { gatewayReqResLogger } from "./middleware/GateWayReqResLogging";
+import { verifyToken } from "./middleware/AuthMiddleware";
 import { logger } from "./logger/logger";
 import { ENV } from "./config/env";
 
@@ -26,7 +26,7 @@ app.use(cors({
 }));
 
 // centerlized logging (mogran, winston)
-app.use(httpLogger);
+app.use(gatewayReqResLogger);
 
 // autherization before hitting services
 app.use(verifyToken);
