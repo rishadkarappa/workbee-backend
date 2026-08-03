@@ -4,6 +4,7 @@ import { CreateNotificationUseCase } from '../../application/use-cases/CreateNot
 import { SocketGateway } from '../socket/SocketGateway';
 import { INewMessageEvent } from '../../domain/message-contracts/INewMessageEvent';
 import { ConsumeMessage } from 'amqplib';
+import { logger } from '../config/logger';
 
 @injectable()
 export class MessageEventConsumer {
@@ -14,7 +15,7 @@ export class MessageEventConsumer {
   constructor(
     @inject("CreateNotificationUseCase") private createNotificationUseCase: CreateNotificationUseCase,
     @inject("SocketManager") private socketManager: SocketGateway
-  ) {}
+  ) { }
 
   async start(): Promise<void> {
     try {
@@ -29,34 +30,32 @@ export class MessageEventConsumer {
       // Bind queue to exchange
       await channel.bindQueue(this.QUEUE, this.EXCHANGE, this.ROUTING_KEY);
 
-      console.log(`Waiting for messages in queue: ${this.QUEUE}`);
+      logger.info(`Waiting for messages in queue: ${this.QUEUE}`);
 
       // Consume messages
-      channel.consume(
-        this.QUEUE,
-        async (msg: ConsumeMessage | null) => {
-          if (msg) {
-            try {
-              const event: INewMessageEvent = JSON.parse(msg.content.toString());
-              await this.handleNewMessage(event);
-              channel.ack(msg);
-            } catch (error) {
-              console.error('Error processing message:', error);
-              channel.nack(msg, false, false); // Don't requeue on error
-            }
+      channel.consume(this.QUEUE, async (msg: ConsumeMessage | null) => {
+        if (msg) {
+          try {
+            const event: INewMessageEvent = JSON.parse(msg.content.toString());
+            await this.handleNewMessage(event);
+            channel.ack(msg);
+          } catch (error) {
+            logger.error('Error processing message:', error);
+            channel.nack(msg, false, false);
           }
-        },
+        }
+      },
         { noAck: false }
       );
     } catch (error) {
-      console.error('Failed to start message consumer:', error);
+      logger.error('Failed to start message consumer:', error);
       throw error;
     }
   }
 
   private async handleNewMessage(event: INewMessageEvent): Promise<void> {
     try {
-      console.log(`Processing new message event for user: ${event.userId}`);
+      logger.info(`Processing new message event for user: ${event.userId}`);
 
       // Create notification in database
       const notification = await this.createNotificationUseCase.execute({
@@ -75,9 +74,9 @@ export class MessageEventConsumer {
       // Emit real-time notification via Socket.IO
       this.socketManager.emitNotificationToUser(event.userId, notification);
 
-      console.log(`Notification created and sent to user: ${event.userId}`);
+      logger.info(`Notification created and sent to user: ${event.userId}`);
     } catch (error) {
-      console.error('Error handling new message event:', error);
+      logger.error('Error handling new message event:', error);
       throw error;
     }
   }

@@ -6,10 +6,9 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { connectDatabase } from "./infrastructure/config/connectMongo";
-import { RabbitMQClient } from "./infrastructure/message-bus/client";
+import { RabbitMQInitializer } from "./infrastructure/message-bus/RabbitMQInitializer";
 import { container } from "./infrastructure/di/container";
 import { SocketGateway } from "./infrastructure/socket/SocketGateway";
-import { MessageEventConsumer } from "./infrastructure/message-bus/MessageEventConsumer";
 import notificationRoutes from "./presentation/routes/notificationRoutes";
 import { extractUser } from "./presentation/middlewares/extractUser";
 import { logger } from "./infrastructure/config/logger";
@@ -38,19 +37,16 @@ const startServer = async () => {
     await connectDatabase();
     logger.info('Notification Service Database connected');
 
-    // Connect to RabbitMQ
-    await RabbitMQClient.initialize();
-    logger.info('Notification Service RabbitMQ connected');
-
     // Initialize Socket.IO
     const socketManager = new SocketGateway(httpServer);
     container.registerInstance("SocketManager", socketManager);
     logger.info('Notification Service Socket.IO initialized');
+    
+    // Connect to RabbitMQ
+    await RabbitMQInitializer.initialize();
+    logger.info('Notification Service RabbitMQ connected and consumer started');
 
-    // Start message consumer
-    const messageConsumer = container.resolve(MessageEventConsumer);
-    await messageConsumer.start();
-    logger.info('Notification Service Message consumer started');
+
 
     // Start server
     httpServer.listen(ENV.PORT, () => {

@@ -8,8 +8,6 @@ import { logger } from '../config/logger';
 import { AuthenticatedSocket } from './SocketTypes';
 import { ConnectionHandler } from './ConnectionHandler';
 
-const JWT_SECRET = ENV.JWT_SECRET;
-
 export class SocketGateway {
   private io: Server;
   private userSockets: Map<string, string> = new Map();
@@ -39,7 +37,7 @@ export class SocketGateway {
       }
 
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as IJwtPayload;
+        const decoded = jwt.verify(token, ENV.JWT_SECRET) as IJwtPayload;
         socket.userId = decoded.id || decoded.userId;
         socket.userRole = decoded.role;
         next();

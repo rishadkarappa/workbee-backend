@@ -4,6 +4,7 @@
 
 import amqp, { Channel, ChannelModel } from 'amqplib';
 import { ENV } from './env';
+import { logger } from './logger';
 
 // How long to wait before trying to reconnect after a dropped connection
 const RECONNECT_DELAY_MS = 5000;
@@ -23,12 +24,12 @@ export class RabbitMQConnection {
       RabbitMQConnection.connection = connection;
       RabbitMQConnection.channel = channel;
 
-      console.log('-- RabbitMQ connected successfully');
+      logger.info('- RabbitMQ connected successfully');
       RabbitMQConnection.isReconnecting = false;
 
       // Handle connection errors (network blip, RabbitMQ restart)
       connection.on('error', (err: Error) => {
-        console.error('-- RabbitMQ connection error:', err.message);
+        console.error('- RabbitMQ connection error:', err.message);
         RabbitMQConnection.connection = null;
         RabbitMQConnection.channel = null;
         RabbitMQConnection.scheduleReconnect();
@@ -38,14 +39,14 @@ export class RabbitMQConnection {
       // the heartbeat is missed. Without this handler the dead connection
       // stays in memory and every subsequent getChannel() call uses it.
       connection.on('close', () => {
-        console.warn('-- RabbitMQ connection closed — scheduling reconnect...');
+        logger.warn('- RabbitMQ connection closed — scheduling reconnect...');
         RabbitMQConnection.connection = null;
         RabbitMQConnection.channel = null;
         RabbitMQConnection.scheduleReconnect();
       });
 
     } catch (error) {
-      console.error('-- RabbitMQ connection failed:', error);
+      logger.error('- RabbitMQ connection failed:', error);
       RabbitMQConnection.connection = null;
       RabbitMQConnection.channel = null;
       RabbitMQConnection.scheduleReconnect();
@@ -71,14 +72,14 @@ export class RabbitMQConnection {
     if (RabbitMQConnection.isReconnecting) return;
 
     RabbitMQConnection.isReconnecting = true;
-    console.log(`-- Reconnecting to RabbitMQ in ${RECONNECT_DELAY_MS / 1000}s...`);
+    logger.info(`- Reconnecting to RabbitMQ in ${RECONNECT_DELAY_MS / 1000}s...`);
 
     setTimeout(async () => {
       try {
         await RabbitMQConnection.connect();
-        console.log('-- RabbitMQ reconnected successfully');
+        logger.info('- RabbitMQ reconnected successfully');
       } catch (err) {
-        console.error('-- RabbitMQ reconnect attempt failed:', err);
+        logger.error('- RabbitMQ reconnect attempt failed:', err);
         // connect() will call scheduleReconnect() again on failure,
         // so we reset the flag here to allow that
         RabbitMQConnection.isReconnecting = false;
