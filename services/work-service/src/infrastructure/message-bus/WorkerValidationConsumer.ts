@@ -1,5 +1,5 @@
 // /**
-//  * worker-service → auth-service communication (login validation)
+//  * worker-service - auth-service communication (login validation)
 //  * auth service sends: { email, password, correlationId }
 //  * worker service checks worker and responds with: { success, data?, error? }
 //  */
@@ -10,6 +10,7 @@ import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
 import { IHashService } from "../../domain/services/IHashService";
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
 import { getErrorMessage } from "workbee-common";
+import { logger } from "../logger/logger";
 
 interface WorkerLoginRequest {
     email: string;
@@ -47,7 +48,7 @@ export class WorkerValidationConsumer {
         await channel.assertQueue(this.REQUEST_QUEUE, { durable: true });
         await channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
-        console.log(`WorkerValidationConsumer listening on queue: ${this.REQUEST_QUEUE}`);
+        logger.info(`WorkerValidationConsumer listening on queue: ${this.REQUEST_QUEUE}`);
 
         channel.consume(this.REQUEST_QUEUE, async (msg) => {
             if (!msg) return;
@@ -66,10 +67,10 @@ export class WorkerValidationConsumer {
                     }
                 );
 
-                console.log(`Sent validation response for: ${request.email}`);
+                logger.info(`Sent validation response for: ${request.email}`);
                 channel.ack(msg);
             } catch (err) {
-                console.error("Worker validation error:", err);
+                logger.error("Worker validation error:", err);
 
                 const errorResponse: WorkerLoginResponse = {
                     success: false,
@@ -132,7 +133,6 @@ export class WorkerValidationConsumer {
             };
         }
 
-        // get worker ID (MongoDB _id or id)
         const workerId = worker.id;
 
         // Return worker data 

@@ -4,6 +4,7 @@
 
 import { injectable } from "tsyringe";
 import { RabbitMQConnection } from "../config/rabbitmq";
+import { logger } from "../logger/logger";
 
 export interface IWorkerBlockedEvent {
   workerId: string;
@@ -25,9 +26,9 @@ export class WorkerEventPublisher {
         contentType: "application/json",
       });
 
-      console.log(`Published worker.blocked event for worker: ${event.workerId}, isBlocked: ${event.isBlocked}`);
+      logger.info(`Published worker.blocked event for worker: ${event.workerId}, isBlocked: ${event.isBlocked}`);
     } catch (error) {
-      console.error("Failed to publish worker blocked event:", error);
+      logger.error("Failed to publish worker blocked event:", error);
       throw error;
     }
   }

@@ -68,7 +68,7 @@ export class WorkerValidationClient {
 
                                 // Cancel this consumer immediately
                                 this.channel.cancel(consumer.consumerTag).catch(err =>
-                                    console.error("Error canceling consumer:", err)
+                                    logger.error("Error canceling consumer:", err)
                                 );
 
                                 resolve(response);
@@ -110,7 +110,6 @@ export class WorkerValidationClient {
                         logger.error("Error canceling consumer:", err)
                     );
                 }
-                
                 reject(error);
             }
         });

@@ -1,6 +1,6 @@
 
 // /**
-//  * inter serivce comm [worker service <-> auth serivce] : to delte refresh token after blocking worker
+//  * inter serivce comm [worker service <-> auth serivce] : to delete refresh token after blocking worker
 //  */
 
 import { injectable, inject } from "tsyringe";
@@ -24,7 +24,7 @@ export class WorkerEventConsumer {
 
   constructor(
     @inject("TokenService") private _tokenService: ITokenService
-  ) {}
+  ) { }
 
   async start(): Promise<void> {
     try {
@@ -36,21 +36,17 @@ export class WorkerEventConsumer {
 
       logger.info("Auth service listening for worker.blocked events");
 
-      channel.consume(
-        this.QUEUE,
-        async (msg:ConsumeMessage | null) => {
-          if (!msg) return;
-          try {
-            const event: IWorkerBlockedEvent = JSON.parse(msg.content.toString());
-            await this.handleWorkerBlocked(event);
-            channel.ack(msg);
-          } catch (error) {
-            logger.error("Error processing worker.blocked event:", error);
-            channel.nack(msg, false, false);
-          }
-        },
-        { noAck: false }
-      );
+      channel.consume(this.QUEUE, async (msg: ConsumeMessage | null) => {
+        if (!msg) return;
+        try {
+          const event: IWorkerBlockedEvent = JSON.parse(msg.content.toString());
+          await this.handleWorkerBlocked(event);
+          channel.ack(msg);
+        } catch (error) {
+          logger.error("Error processing worker.blocked event:", error);
+          channel.nack(msg, false, false);
+        }
+      },{ noAck: false });
     } catch (error) {
       logger.error("Failed to start WorkerEventConsumer:", error);
       throw error;
