@@ -1,9 +1,10 @@
 /**
  * inter serivce comm with [work-auth] : to delete refresh token after blocking worker
+ * bublishing to inform auth service worker has been blocked
  */
 
 import { injectable } from "tsyringe";
-import { RabbitMQConnection } from "../config/rabbitmq";
+import { RabbitMQConnection } from "./RabbitMQInitializer";
 import { logger } from "../logger/logger";
 
 export interface IWorkerBlockedEvent {

@@ -5,7 +5,7 @@ import express from "express";
 import path from "path";
 
 import { connectDatabase } from "./infrastructure/config/connectMongo";
-import { RabbitMQClient } from "./infrastructure/message-bus/client";
+import { RabbitMQInitializer } from "./infrastructure/message-bus/RabbitMQInitializer";
 
 import WorkRoutes from "./presentation/routes/WorkRoutes" 
 import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
@@ -28,7 +28,7 @@ const startServer = async () => {
         await connectDatabase();
         logger.info('Work Service Database connected');
         
-        await RabbitMQClient.initialize();
+        await RabbitMQInitializer.initialize();
         logger.info('Work Service RabbitMQ initialized');
         
         app.listen(ENV.PORT, () => logger.info(`- Work service running on port ${ENV.PORT}`));

@@ -14,7 +14,7 @@ export class WorkerValidationClient {
     private readonly RESPONSE_QUEUE = 'worker.validate.response';
     private readonly TIMEOUT = 10000; // 10 seconds
 
-    constructor(private channel: Channel) {}
+    constructor(private channel: Channel) { }
 
     async validateWorker(email: string, password: string): Promise<WorkerLoginResponseRMQDTO> {
         const correlationId = uuidv4();
@@ -28,14 +28,14 @@ export class WorkerValidationClient {
                 if (!isResolved) {
                     isResolved = true;
                     logger.error(`Timeout for correlation: ${correlationId}`);
-                    
+
                     // Cancel consumer on timeout
                     if (consumerTag) {
-                        this.channel.cancel(consumerTag).catch(err => 
+                        this.channel.cancel(consumerTag).catch(err =>
                             logger.error("Error canceling consumer:", err)
                         );
                     }
-                    
+
                     reject(new Error("Worker validation timeout. Please try again."));
                 }
             }, this.TIMEOUT);
@@ -46,9 +46,7 @@ export class WorkerValidationClient {
                 await this.channel.assertQueue(this.RESPONSE_QUEUE, { durable: true });
 
                 // Create a NEW consumer for THIS request only
-                const consumer = await this.channel.consume(
-                    this.RESPONSE_QUEUE,
-                    (msg) => {
+                const consumer = await this.channel.consume(this.RESPONSE_QUEUE,(msg) => {
                         if (!msg || isResolved) return;
 
                         // Only process matching correlationId
@@ -58,7 +56,7 @@ export class WorkerValidationClient {
 
                             try {
                                 const response = JSON.parse(msg.content.toString());
-                                
+
                                 logger.info(`Received response for: ${correlationId}`, {
                                     success: response.success
                                 });
@@ -82,21 +80,16 @@ export class WorkerValidationClient {
                             logger.warn(`Ignoring message with wrong correlationId: ${msg.properties.correlationId}`);
                             this.channel.ack(msg);
                         }
-                    },
-                    { noAck: false }
+                    },{ noAck: false }
                 );
 
                 consumerTag = consumer.consumerTag;
 
                 //  Send request after consumer is set up
-                this.channel.sendToQueue(
-                    this.REQUEST_QUEUE,
-                    Buffer.from(JSON.stringify({ email, password, correlationId })),
-                    {
-                        correlationId: correlationId,
-                        persistent: true
-                    }
-                );
+                this.channel.sendToQueue(this.REQUEST_QUEUE, Buffer.from(JSON.stringify({ email, password, correlationId })), {
+                    correlationId: correlationId,
+                    persistent: true
+                });
 
                 logger.info(`Sent validation request: ${correlationId}`);
 
@@ -104,7 +97,7 @@ export class WorkerValidationClient {
                 isResolved = true;
                 clearTimeout(timeoutId);
                 logger.error("RabbitMQ error:", error);
-                
+
                 if (consumerTag) {
                     this.channel.cancel(consumerTag).catch(err =>
                         logger.error("Error canceling consumer:", err)

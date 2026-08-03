@@ -5,7 +5,7 @@ import "./infrastructure/di/container"
 
 import express from "express";
 import { connectDatabase } from "./infrastructure/config/connectMongo";
-import { RabbitMQClient } from "./infrastructure/message-bus/Client";
+import { RabbitMQInitializer } from "./infrastructure/message-bus/RabbitMQInitializer";
 
 import UserRoutes from './presentation/routes/user/UserRoutes'
 import AdminRoutes from './presentation/routes/admin/AdminRoutes'
@@ -30,7 +30,7 @@ const startServer = async () => {
         await connectDatabase();
         logger.info('Auth Service Database connected');
 
-        await RabbitMQClient.initialize();
+        await RabbitMQInitializer.initialize();
         logger.info('Auth Service RabbitMQ initialized');
 
         RedisClient.getInstance();

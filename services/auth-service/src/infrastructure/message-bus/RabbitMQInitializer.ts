@@ -3,7 +3,7 @@ import { RabbitMQConnection } from "../config/rabbitmq";
 import { WorkerEventConsumer } from "./WorkerEventConsumer"; 
 import { logger } from "../logger/logger";
 
-export class RabbitMQClient {
+export class RabbitMQInitializer {
   private static isInitialized = false;
 
   static async initialize(): Promise<void> {
@@ -16,6 +16,7 @@ export class RabbitMQClient {
       await RabbitMQConnection.connect();
       logger.info("- RabbitMQ connected");
 
+      // consumers
       const workerEventConsumer = container.resolve(WorkerEventConsumer);
       await workerEventConsumer.start();
       logger.info("- Worker event consumer started");

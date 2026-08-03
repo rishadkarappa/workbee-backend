@@ -3,7 +3,7 @@ import { RabbitMQConnection } from '../config/rabbitmq';
 import { WorkerValidationConsumer } from './WorkerValidationConsumer';
 import { logger } from '../logger/logger';
 
-export class RabbitMQClient {
+export class RabbitMQInitializer {
     private static isInitialized = false;
 
     static async initialize(): Promise<void> {
@@ -18,6 +18,7 @@ export class RabbitMQClient {
 
             const channel = await RabbitMQConnection.getChannel();
 
+            // consumers
             // Start Worker Validation Consumer
             const workerValidationConsumer = container.resolve(WorkerValidationConsumer);
             await workerValidationConsumer.start(channel);
