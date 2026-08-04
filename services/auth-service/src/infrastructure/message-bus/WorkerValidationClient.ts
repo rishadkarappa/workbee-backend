@@ -60,15 +60,10 @@ export class WorkerValidationClient {
                                 logger.info(`Received response for: ${correlationId}`, {
                                     success: response.success
                                 });
-
-                                // Acknowledge message
                                 this.channel.ack(msg);
-
-                                // Cancel this consumer immediately
                                 this.channel.cancel(consumer.consumerTag).catch(err =>
                                     logger.error("Error canceling consumer:", err)
                                 );
-
                                 resolve(response);
                             } catch (parseError) {
                                 logger.error("Error parsing response:", parseError);
