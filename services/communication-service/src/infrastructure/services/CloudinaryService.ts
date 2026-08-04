@@ -8,7 +8,7 @@ export interface CloudinaryUploadResult {
   format: string;
   width?: number;
   height?: number;
-  duration?: number; // for video
+  duration?: number;//duration if file is a video
   bytes: number;
 }
 
@@ -38,7 +38,6 @@ export class CloudinaryService {
         {
           folder,
           resource_type: resourceType,
-          // For videos, limit to 50 MB; images 10 MB
           chunk_size: 6_000_000,
         },
         (error, result) => {
@@ -67,4 +66,18 @@ export class CloudinaryService {
   async deleteFile(publicId: string, resourceType: 'image' | 'video'): Promise<void> {
     await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
   }
+
+  /**
+   * Sign a set of upload params so the client can upload directly to Cloudinary.
+   */
+
+  generateUploadSignature(paramsToSign: Record<string, string | number>): { signature: string; timestamp: number; } {
+    const timestamp = Math.round(Date.now() / 1000);
+    const signature = cloudinary.utils.api_sign_request(
+      { ...paramsToSign, timestamp },
+      process.env.CLOUDINARY_API_SECRET as string
+    );
+    return { signature, timestamp };
+  }
 }
+

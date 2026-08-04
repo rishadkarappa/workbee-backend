@@ -17,10 +17,7 @@ export class GetUserProfilesBatchUseCase implements IGetUserProfilesBatchUseCase
         if (!userIds || userIds.length === 0) {
             return [];
         }
-
         const users = await this._userRepository.findByIds(userIds);
-
-        // Map to safe profile data
         return users.map(user => ({
             id: user.id,        
             name: user.name,

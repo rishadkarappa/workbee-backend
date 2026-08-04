@@ -3,6 +3,10 @@ import { RabbitMQConnection } from '../config/rabbitmq';
 import { INewMessageEvent } from '../../domain/message-contracts/INewMessageEvent';
 import { logger } from '../logger/logger';
 
+/**
+ * messaging time publish new message has been created
+ */
+
 @injectable()
 export class MessageEventPublisher {
   private readonly EXCHANGE = 'workbee.events';

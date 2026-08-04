@@ -6,7 +6,7 @@ import express from "express";
 
 import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import { gatewayReqResLogger } from "./middleware/GateWayReqResLogging";
+import { gatewayReqResLogger } from "./middleware/GatewayReqResLogging";
 import { verifyToken } from "./middleware/AuthMiddleware";
 import { logger } from "./logger/logger";
 import { ENV } from "./config/env";

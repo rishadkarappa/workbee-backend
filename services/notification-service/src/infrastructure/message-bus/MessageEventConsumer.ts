@@ -44,9 +44,7 @@ export class MessageEventConsumer {
             channel.nack(msg, false, false);
           }
         }
-      },
-        { noAck: false }
-      );
+      },{ noAck: false });
     } catch (error) {
       logger.error('Failed to start message consumer:', error);
       throw error;

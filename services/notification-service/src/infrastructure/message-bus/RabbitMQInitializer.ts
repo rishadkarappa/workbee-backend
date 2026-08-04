@@ -16,6 +16,7 @@ export class RabbitMQInitializer {
             await RabbitMQConnection.connect();
             logger.info('- RabbitMQ connected');
 
+            //consumers
             const messageConsumer = container.resolve(MessageEventConsumer);
             await messageConsumer.start();
             logger.info("- Message event consumer started");

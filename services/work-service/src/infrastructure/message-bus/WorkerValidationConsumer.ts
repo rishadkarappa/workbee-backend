@@ -58,14 +58,10 @@ export class WorkerValidationConsumer {
             try {
                 const response = await this.validateWorker(request);
 
-                channel.sendToQueue(
-                    this.RESPONSE_QUEUE,
-                    Buffer.from(JSON.stringify(response)),
-                    {
-                        correlationId: request.correlationId,
-                        persistent: true
-                    }
-                );
+                channel.sendToQueue(this.RESPONSE_QUEUE, Buffer.from(JSON.stringify(response)), {
+                    correlationId: request.correlationId,
+                    persistent: true
+                });
 
                 logger.info(`Sent validation response for: ${request.email}`);
                 channel.ack(msg);
