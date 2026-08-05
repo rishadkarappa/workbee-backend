@@ -19,10 +19,19 @@ export const PUBLIC_ROUTES: { method: string; path: string }[] = [
 
 ];
 
-export const isPublic = (req: Request): boolean => {
-    return PUBLIC_ROUTES.some(
-        (request) => request.method === req.method && request.path === req.path
-    )
-}
 
+export const isPublic = (req: Request): boolean => {
+    const reqSegments = req.path.split("/").filter(Boolean);
+
+    return PUBLIC_ROUTES.some(({ method, path }) => {
+        if (method !== req.method) return false;
+
+        const routeSegments = path.split("/").filter(Boolean);
+        if (routeSegments.length !== reqSegments.length) return false;
+
+        return routeSegments.every((seg, i) =>
+            seg.startsWith(":") || seg === reqSegments[i]
+        );
+    });
+};
 

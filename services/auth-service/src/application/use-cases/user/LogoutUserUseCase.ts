@@ -11,7 +11,7 @@ export class LogoutUserUseCase implements ILogoutUserUseCase {
 
   async execute(userId: string): Promise<void> {
     // delete refresh token from redis
-    logger.info('deleted refreshtoken')
+    logger.info('deleted refreshtoken when logout')
     await this._tokenService.deleteRefreshToken(userId);
   }
 }
