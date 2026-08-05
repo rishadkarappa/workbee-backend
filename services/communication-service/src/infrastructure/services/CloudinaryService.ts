@@ -1,19 +1,9 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { injectable } from 'tsyringe';
-
-export interface CloudinaryUploadResult {
-  url: string;
-  publicId: string;
-  resourceType: 'image' | 'video';
-  format: string;
-  width?: number;
-  height?: number;
-  duration?: number;//duration if file is a video
-  bytes: number;
-}
+import { ICloudinaryService, ICloudinaryUploadResult } from '../../domain/services/ICloudeService';
 
 @injectable()
-export class CloudinaryService {
+export class CloudinaryService implements ICloudinaryService {
   constructor() {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -28,22 +18,17 @@ export class CloudinaryService {
    * @param folder  - cloudinary folder (e.g. 'chat/images')
    * @param resourceType - 'image' | 'video'
    */
-  async uploadBuffer(
-    buffer: Buffer,
-    folder: string,
-    resourceType: 'image' | 'video'
-  ): Promise<CloudinaryUploadResult> {
+  async uploadBuffer(buffer: Buffer, folder: string, resourceType: 'image' | 'video'): Promise<ICloudinaryUploadResult> {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder,
           resource_type: resourceType,
           chunk_size: 6_000_000,
-        },
-        (error, result) => {
+        }, (error, result) => {
           if (error || !result) {
             return reject(error || new Error('Cloudinary upload failed'));
-          }
+          } 
           resolve({
             url: result.secure_url,
             publicId: result.public_id,

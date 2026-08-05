@@ -33,10 +33,10 @@ export class AdminController implements IAdminContoller {
 
     async getUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
-            const search = (req.query.search as string) || "";
-            const status = (req.query.status as string) || "all";
+            const page = parseInt(req.query.page as string);
+            const limit = parseInt(req.query.limit as string);
+            const search = (req.query.search as string);
+            const status = (req.query.status as string);
 
             const result = await this._getUsersUseCase.execute(page, limit, search, status);
 
