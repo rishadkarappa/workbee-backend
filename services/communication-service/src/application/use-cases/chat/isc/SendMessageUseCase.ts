@@ -16,12 +16,12 @@ export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
     @inject("MessageRepository") private readonly _messageRepository: IMessageRepository,
     @inject("ChatRepository") private readonly _chatRepository: IChatRepository
-  ) {}
+  ) { }
 
   async execute(data: SendMessageDTO): Promise<SendMessageResult> {
     // Get chat to determine recipient
     const chat = await this._chatRepository.findById(data.chatId);
-    
+
     if (!chat) {
       throw new Error('Chat not found');
     }
@@ -48,9 +48,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
     await this._chatRepository.updateLastMessage(data.chatId, data.content);
 
-    return {
-      ...savedMessage,
-      recipientId
-    };
+    return { ...savedMessage, recipientId };
   }
 }

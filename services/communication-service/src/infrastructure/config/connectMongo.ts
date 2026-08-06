@@ -1,11 +1,13 @@
 import mongoose  from "mongoose";
+import { logger } from "../logger/logger";
+import { ENV } from "./env";
 
 export const connectDatabase = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI as string ||"mongodb://localhost:27017/workbee-communication-service")
-        console.log('mongodb connected')
+        await mongoose.connect(ENV.MONGO_URI)
+        logger.info('mongodb connected')
     } catch (error) {
-        console.log('database conection failded',error)
+        logger.info('database conection failded',error)
         process.exit(1)
     }
 }

@@ -17,13 +17,10 @@ export class GetMessagesUseCase implements IGetMessagesUseCase {
   async execute(data: GetMessagesDTO): Promise<Message[]> {
     const messages = await this._messageRepository.findByChatId(
       data.chatId,
-      data.limit,   
+      data.limit,
       data.offset
     );
 
-    return ChatMapper.toMessageListWithSender(
-      messages,
-      this._cacheService
-    );
+    return ChatMapper.toMessageListWithSender(messages, this._cacheService);
   }
 }

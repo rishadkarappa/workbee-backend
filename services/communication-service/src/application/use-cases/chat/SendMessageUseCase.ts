@@ -38,7 +38,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     return savedMessage;
   }
 
-  // Friendly, human-readable preview for the chat list — never raw JSON.
+  // human-readable preview for the chat list — not raw JSON.
   private getPreviewText(data: SendMessageDTO): string {
     if (data.type === 'image') return '📷 Image';
     if (data.type === 'video') return '🎥 Video';

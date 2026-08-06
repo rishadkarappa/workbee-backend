@@ -14,10 +14,7 @@ export class CreateChatUseCase implements ICreateChatUseCase {
   ) { }
 
   async execute(data: CreateChatDTO): Promise<Chat> {
-    const existingChat = await this._chatRepository.findByParticipants(
-      data.userId,
-      data.workerId
-    );
+    const existingChat = await this._chatRepository.findByParticipants(data.userId, data.workerId);
 
     if (existingChat) {
       const userProfile = await this._cacheService.getUserProfile(data.userId);

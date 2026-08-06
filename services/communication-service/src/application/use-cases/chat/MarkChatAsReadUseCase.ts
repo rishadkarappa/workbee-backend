@@ -9,14 +9,10 @@ import { UserRole } from 'workbee-common';
 export class MarkChatAsReadUseCase implements IMarkChatAsReadUseCase {
   constructor(
     @inject("ChatRepository") private readonly _chatRepository: IChatRepository
-  ) {}
+  ) { }
 
   async execute(dto: MarkChatAsReadDTO): Promise<void> {
-    // role 'user'   - resets unreadCount.userId
-    // role 'worker' - resets unreadCount.workerId
-    const readerRole: 'userId' | 'workerId' =
-      dto.role === UserRole.USER ? 'userId' : 'workerId';
-
+    const readerRole: 'userId' | 'workerId' = dto.role === UserRole.USER ? 'userId' : 'workerId';
     await this._chatRepository.resetUnreadCount(dto.chatId, readerRole);
   }
 }

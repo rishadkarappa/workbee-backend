@@ -5,9 +5,7 @@ import { ICreateNotificationUseCase } from "../ports/ICreateNotificationUseCase"
 import { CreateNotificationDTO } from "../dtos/CreateNotificationDTO";
 
 @injectable()
-export class CreateNotificationUseCase
-  implements ICreateNotificationUseCase
-{
+export class CreateNotificationUseCase implements ICreateNotificationUseCase {
   constructor(
     @inject("NotificationRepository") private readonly _notificationRepository: INotificationRepository
   ) {}

@@ -4,9 +4,7 @@ import { IMarkAllAsReadUseCase } from "../ports/IMarkAllAsReadUseCase";
 import { MarkAllAsReadDTO } from "../dtos/MarkAllAsReadDTO";
 
 @injectable()
-export class MarkAllAsReadUseCase
-  implements IMarkAllAsReadUseCase
-{
+export class MarkAllAsReadUseCase implements IMarkAllAsReadUseCase {
   constructor(
     @inject("NotificationRepository")
     private readonly _notificationRepository: INotificationRepository

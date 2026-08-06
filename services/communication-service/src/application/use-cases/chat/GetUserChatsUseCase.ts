@@ -12,43 +12,28 @@ export class GetUserChatsUseCase implements IGetUserChatsUseCase {
   constructor(
     @inject("ChatRepository") private readonly _chatRepository: IChatRepository,
     @inject("CacheService") private readonly _cacheService: ICacheService
-  ) {}
+  ) { }
 
   async execute(data: GetUserChatsDTO): Promise<Chat[]> {
     const { userId, role } = data;
 
-    // Raw chats from DB — contain unreadCount
-    const chats =
-      role === 'user'
-        ? await this._chatRepository.findByUserId(userId)
-        : await this._chatRepository.findByWorkerId(userId);
+    const chats = role === 'user' ? await this._chatRepository.findByUserId(userId) : await this._chatRepository.findByWorkerId(userId);
 
-    // Build unread lookup by id BEFORE ChatMapper (mapper may change order)
     const unreadMap = new Map<string, { userId: number; workerId: number }>();
     chats.forEach(c => {
       if (c.id) {
         unreadMap.set(c.id, {
-          userId:   c.unreadCount?.userId   ?? 0,
+          userId: c.unreadCount?.userId ?? 0,
           workerId: c.unreadCount?.workerId ?? 0
         });
       }
     });
 
-    // Enrich with participant details
-    const chatsWithParticipants = await ChatMapper.toChatListWithParticipants(
-      chats,
-      this._cacheService
-    );
+    const chatsWithParticipants = await ChatMapper.toChatListWithParticipants(chats, this._cacheService);
 
-    // Attach myUnreadCount matched by id — NOT by index
     return chatsWithParticipants.map(chat => {
       const unread = unreadMap.get(chat.id!);
-      return {
-        ...chat,
-        myUnreadCount: role === UserRole.USER
-          ? (unread?.userId   ?? 0)
-          : (unread?.workerId ?? 0)
-      };
+      return { ...chat, myUnreadCount: role === UserRole.USER ? (unread?.userId ?? 0) : (unread?.workerId ?? 0) };
     });
   }
 }
