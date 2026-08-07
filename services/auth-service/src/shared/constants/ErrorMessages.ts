@@ -11,6 +11,7 @@ export const ErrorMessages = {
             TOKEN_IS_MISSING:"token is missing",
             NOT_FOUND_USERS:'NOT FOUND USERS',
             ALREADY_VERIFIED:"User is already verified",
+            INVALID_USER_ID:"Invalid user id",
     },
 
     AUTH:{

@@ -11,6 +11,7 @@ import { IGetUsersUseCase } from "../../../application/ports/admin/IGetUsersUseC
 
 import { IAdminContoller } from "../../ports/IAdminController";
 import { IBlockUserUseCase } from "../../../application/ports/admin/IBlockUserUseCase";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class AdminController implements IAdminContoller {
@@ -61,7 +62,7 @@ export class AdminController implements IAdminContoller {
         try {
             const userId = req.params.id
             if (typeof userId !== "string") {
-                throw new Error("Invalid user id");
+                throw new Error(ErrorMessages.USER.INVALID_USER_ID);
             }
             const result = await this._blockUserUseCase.execute(userId)
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.ADMIN_BLOCKED_USER))

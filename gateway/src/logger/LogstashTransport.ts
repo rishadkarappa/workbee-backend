@@ -1,6 +1,7 @@
 import net from "node:net";
 import Transport from "winston-transport";
 import type { TransformableInfo } from "logform";
+import { logger } from "./logger";
 
 interface LogstashTransportOptions extends Transport.TransportStreamOptions {
   host: string;
@@ -31,7 +32,7 @@ export class LogstashTransport extends Transport {
 
     socket.on("error", (error) => {
       socket.destroy();
-      console.error("Logstash connection error:", error.message);
+      logger.error("Logstash connection error:", error.message);
     });
 
     callback();

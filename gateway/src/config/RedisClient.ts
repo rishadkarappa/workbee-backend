@@ -1,5 +1,5 @@
-// Same Redis instance as auth service — just a new connection from the gateway process
 import Redis from "ioredis";
+import { logger } from "../logger/logger";
 
 let redisClient: Redis | null = null;
 
@@ -11,8 +11,8 @@ export const getRedisClient = (): Redis => {
       password: process.env.REDIS_PASSWORD
     });
 
-    redisClient.on("connect", () => console.log("Gateway Redis connected"));
-    redisClient.on("error", (err) => console.error("Gateway Redis error:", err));
+    redisClient.on("connect", () => logger.info("Gateway Redis connected"));
+    redisClient.on("error", (err) => logger.error("Gateway Redis error:", err));
   }
   return redisClient;
 };

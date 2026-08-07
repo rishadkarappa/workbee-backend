@@ -3,6 +3,7 @@ import { HttpStatus } from '../../shared/enums/HttpStatus';
 import { ResponseHelper } from '../../shared/helpers/responseHelper';
 import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 import { AppError } from 'workbee-common';
+import { logger } from '../../infrastructure/logger/logger';
 
 
 export const errorHandler = (err: Error | AppError, req: Request, res: Response, _next: NextFunction): void => {
@@ -12,8 +13,9 @@ export const errorHandler = (err: Error | AppError, req: Request, res: Response,
         );
         return;
     }
-    // Handle unexpected errors
-    console.error('Unexpected Error:', err);
+
+    logger.error('Unexpected Error:', err);
+    
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
         ResponseHelper.error(
             err.message || ErrorMessages.GENERAL.INTERNAL_SERVER_ERROR,
