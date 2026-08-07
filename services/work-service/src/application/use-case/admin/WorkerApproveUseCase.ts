@@ -6,45 +6,44 @@ import { WorkerMapper } from "../../mappers/WorkerMapper";
 import { IWorkerApproveUseCase } from "../../ports/worker/IWorkerApproveUseCase";
 import { WorkerStatus } from "../../../infrastructure/database/models/WorkerSchema";
 import { logger } from "../../../infrastructure/logger/logger";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class WorkerApproveUseCase implements IWorkerApproveUseCase {
     constructor(
         @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository,
         @inject("EmailService") private readonly _emailService: IEmailService
-    ) {}
+    ) { }
 
     async execute(dto: WorkerApproveDto): Promise<WorkerResponseDto> {
         if (!dto.workerId) {
-            throw new Error("Worker ID is required");
+            throw new Error(ErrorMessages.WORKER.WORKER_ID_REQUIRED);
         }
 
         if (!dto.status || !["approved", "rejected"].includes(dto.status)) {
-            throw new Error("Valid status (approved or rejected) is required");
+            throw new Error(ErrorMessages.APPLY.VALID_STATUS_REQUIRED);
         }
 
         const worker = await this._workerRepository.findById(dto.workerId);
 
         if (!worker) {
             logger.error("Worker not found with ID: " + dto.workerId)
-            throw new Error("Worker not found with ID: " + dto.workerId);
+            throw new Error(ErrorMessages.WORKER.WORKER_NOT_FOUND + dto.workerId);
         }
 
-        // Update status
-        if (dto.status === "approved") {
+        if (dto.status === WorkerStatus.APPROVED) {
+
             worker.status = WorkerStatus.APPROVED;
-            
             // Clear rejection data if previously rejected
             worker.rejectionReason = undefined;
             worker.rejectedAt = undefined;
 
-            // Send approval email
             await this._emailService.sendApprovalEmail(worker.email, worker.name);
-            
+
         } else if (dto.status === "rejected") {
             if (!dto.rejectionReason || dto.rejectionReason.trim().length === 0) {
                 logger.error("Rejection reason is required when rejecting an application")
-                throw new Error("Rejection reason is required when rejecting an application");
+                throw new Error(ErrorMessages.APPLY.REJUCTION_REASON_REQUIRED);
             }
 
             worker.status = WorkerStatus.REJECTED;
@@ -52,12 +51,7 @@ export class WorkerApproveUseCase implements IWorkerApproveUseCase {
             worker.rejectedAt = new Date();
             worker.canReapply = true;
 
-            // Send rejection email with reason
-            await this._emailService.sendRejectionEmail(
-                worker.email,
-                worker.name,
-                dto.rejectionReason
-            );
+            await this._emailService.sendRejectionEmail(worker.email, worker.name, dto.rejectionReason);
         }
 
         logger.log("WorkerApproveUseCase - Updating worker status to:", worker.status);

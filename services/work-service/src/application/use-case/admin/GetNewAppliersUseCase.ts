@@ -12,19 +12,13 @@ export class GetNewAppliersUseCase implements IGetNewAppliersUseCase {
         @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
     ) { }
 
-    async execute(page: number, limit: number, search: string): Promise<{
-        workers: WorkerResponseDto[];
-        total: number;
-    }> {
+    async execute(page: number, limit: number, search: string): Promise<{ workers: WorkerResponseDto[]; total: number; }> {
         const result = await this._workerRepository.getNewAppliers(page, limit, search);
 
         if (!result.workers || result.workers.length === 0) {
             return { workers: [], total: 0 };
         }
 
-        return {
-            workers: WorkerMapper.toResponseDtoList(result.workers),
-            total: result.total
-        };
+        return { workers: WorkerMapper.toResponseDtoList(result.workers), total: result.total };
     }
 }

@@ -8,21 +8,16 @@ import { IGetAllWorkersUseCase } from "../../ports/worker/IGetAllWorkersUseCase"
 export class GetAllWorkersUseCase implements IGetAllWorkersUseCase {
     constructor(
         @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
-    ) {}
+    ) { }
 
-    async execute(page: number, limit: number, search: string, status: string = "all"): Promise<{
-        workers: WorkerResponseDto[];
-        total: number;
-    }> {
+    async execute(page: number, limit: number, search: string, status: string = "all"):
+        Promise<{ workers: WorkerResponseDto[]; total: number; }> {
         const result = await this._workerRepository.getAllWorkers(page, limit, search, status);
-        
+
         if (!result.workers || result.workers.length === 0) {
             return { workers: [], total: 0 };
         }
 
-        return {
-            workers: WorkerMapper.toResponseDtoList(result.workers),
-            total: result.total
-        };
+        return { workers: WorkerMapper.toResponseDtoList(result.workers), total: result.total };
     }
 }

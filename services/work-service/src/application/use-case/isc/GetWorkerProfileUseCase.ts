@@ -2,6 +2,8 @@ import { inject, injectable } from 'tsyringe';
 import { IWorkerRepository } from '../../../domain/repositories/IWorkerRepository';
 import { GetWorkerProfileDto, GetWorkerProfileReponseDto } from '../../dtos/worker/WorkerDTO';
 import { IGetWorkerProfileUseCase } from '../../ports/worker/IGetWorkerProfileUseCase';
+import { UserRole } from 'workbee-common';
+import { ErrorMessages } from '../../../shared/constants/ErrorMessages';
 
 @injectable()
 export class GetWorkerProfileUseCase implements IGetWorkerProfileUseCase{
@@ -13,14 +15,14 @@ export class GetWorkerProfileUseCase implements IGetWorkerProfileUseCase{
     const worker = await this._workerRepository.findById(dto.workerId);
 
     if (!worker) {
-      throw new Error('Worker not found');
+      throw new Error(ErrorMessages.WORKER.WORKER_NOT_FOUND);
     }
 
     return {
       id: worker.id,
       name: worker.name,
       email: worker.email,
-      role: 'worker',
+      role: UserRole.WORKER,
       createdAt: worker.createdAt
     };
 

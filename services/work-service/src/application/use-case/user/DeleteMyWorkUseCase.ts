@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IDeleteMyWorkUseCase } from "../../ports/user/IDeleteMyWorkUseCase";
 import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { DeleteWorkDto } from "../../dtos/work/WorkDTO";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class DeleteMyWorkUseCase implements IDeleteMyWorkUseCase {
@@ -13,19 +14,18 @@ export class DeleteMyWorkUseCase implements IDeleteMyWorkUseCase {
         const work = await this._workRepository.findById(dto.workId);
 
         if (!work) {
-            throw new Error("Work not found");
+            throw new Error(ErrorMessages.WORK.WORK_NOT_FOUND);
         }
 
         if (work.userId !== dto.userId) {
-            throw new Error("Unauthorized to delete this work");
+            throw new Error(ErrorMessages.AUTH.UNAUTHORIZED_TO_DELETE_THIS_WORK);
         }
 
         const deleted = await this._workRepository.delete(dto.workId);
 
         if (!deleted) {
-            throw new Error("Delete failed");
+            throw new Error(ErrorMessages.WORK.FAILD_TO_DELETE_WORK);
         }
-
         return true;
     }
 

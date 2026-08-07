@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IGetMyWorksUseCase } from "../../ports/user/IGetMyWorksUseCase";
 import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class GetMyWorksUseCase implements IGetMyWorksUseCase {
@@ -12,7 +13,7 @@ export class GetMyWorksUseCase implements IGetMyWorksUseCase {
         const result = await this._workRepository.getMyWorks(userId);
         
         if (!result.works || result.works.length === 0) {
-            throw new Error("No works found for this user");
+            throw new Error(ErrorMessages.WORK.WORK_NOT_FOUND);
         }
         
         return result;

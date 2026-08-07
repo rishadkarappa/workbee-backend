@@ -2,6 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { IWorkerRepository } from '../../../domain/repositories/IWorkerRepository';
 import { IGetWorkerProfileBatchUseCase } from '../../ports/isc/IGetWorkerProfilesBatchUseCase';
 import { GetWorkerProfilesBatchDto, GetWorkerProfilesBatchResponseDto } from '../../dtos/worker/GetWorkerProfilesBatch.dtos';
+import { UserRole } from 'workbee-common';
 
 @injectable()
 export class GetWorkerProfilesBatchUseCase implements IGetWorkerProfileBatchUseCase{
@@ -23,7 +24,7 @@ export class GetWorkerProfilesBatchUseCase implements IGetWorkerProfileBatchUseC
       id: worker.id,
       name: worker.name,
       email: worker.email,
-      role: 'worker',
+      role: UserRole.WORKER,
     }));
 
   }
