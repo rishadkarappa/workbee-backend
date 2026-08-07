@@ -8,6 +8,7 @@ import { GoogleLoginRequestDTO, GoogleLoginResponseDTO } from "../../dtos/user/G
 import { UserMapper } from "../../mappers/UserMapper";
 import { IGoogleLoginUserUseCase } from "../../ports/user/IGoogleLoginUserUseCase";
 import { UserRole } from "workbee-common";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 const clientId = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
@@ -26,10 +27,9 @@ export class GoogleLoginUserUseCase implements IGoogleLoginUserUseCase{
         });
 
         const payload = ticket.getPayload();
-        if(!payload) throw new Error('Invalid google credential');
+        if(!payload) throw new Error(ErrorMessages.AUTH.INVALID_GOOGLE_CREDN);
 
         const { email, name } = payload;
-
         let user = await this._userRepository.findByEmail(email!);
 
         if(!user){

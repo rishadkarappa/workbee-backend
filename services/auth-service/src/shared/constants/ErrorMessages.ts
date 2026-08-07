@@ -9,6 +9,8 @@ export const ErrorMessages = {
             INVALID_OTP:'invalid otp',
             OTP_EXPIRED:"otp expired",
             TOKEN_IS_MISSING:"token is missing",
+            NOT_FOUND_USERS:'NOT FOUND USERS',
+            ALREADY_VERIFIED:"User is already verified",
     },
 
     AUTH:{
@@ -21,6 +23,8 @@ export const ErrorMessages = {
         USERIDS_MUST_BE_ARRAY:'userIds must be an array',
         INVALID_TOKEN:'Invalid token',
         INVALID_USER_ID:'Invalid user id',
+        ADMIN_ACCOUNT_CANNOT_BE_BLOCK:"Admin accounts cannot be blocked",
+        INVALID_GOOGLE_CREDN:'Invalid google credential'
     },
 
     ADMIN:{

@@ -5,6 +5,8 @@ import { ITokenService } from "../../../domain/services/ITokenService";
 import { User } from "../../../domain/entities/User";
 import RedisClient from "../../../infrastructure/config/RedisClient";
 import { logger } from "../../../infrastructure/logger/logger";
+import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { UserRole } from "workbee-common";
 
 @injectable()
 export class BlockUserUseCase implements IBlockUserUseCase {
@@ -17,10 +19,10 @@ export class BlockUserUseCase implements IBlockUserUseCase {
 
   async execute(userId: string): Promise<User> {
     const user = await this._userRepository.findById(userId);
-    if (!user) throw new Error("User not found to block");
+    if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
 
-    if (user.role === "admin") {
-      throw new Error("Admin accounts cannot be blocked");
+    if (user.role === UserRole.ADMIN) {
+      throw new Error(ErrorMessages.AUTH.ADMIN_ACCOUNT_CANNOT_BE_BLOCK);
     }
 
     user.isBlocked = !user.isBlocked;

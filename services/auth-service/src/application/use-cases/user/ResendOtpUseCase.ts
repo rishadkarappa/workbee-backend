@@ -7,6 +7,7 @@ import { IOtpService } from "../../../domain/services/IOtpService";
 import { IEmailService } from "../../../domain/services/IEmailService";
 import { ResendOtpRequestDTO, ResendOtpResponseDTO } from "../../dtos/user/ResendOtpDTO";
 import { IResendOtpUseCase } from "../../ports/user/IResendOtpUseCase";
+import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
 @injectable()
 export class ResendOtpUseCase implements IResendOtpUseCase {
@@ -23,7 +24,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
         const user = await this._userRepository.findById(userId);
         if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
 
-        if (user.isVerified) throw new Error("User is already verified");
+        if (user.isVerified) throw new Error(ErrorMessages.USER.ALREADY_VERIFIED);
 
         // Delete existing OTP
         await this._otpRepository.deleteByUserId(userId);
@@ -42,10 +43,6 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
 
         // send otp
         await this._emailService.sendOtp(user.email, otp);
-
-        return {
-            success: true,
-            message: "OTP has been resent to your email"
-        };
+        return { success: true, message: ResponseMessage.OTP.OTP_RESENT};
     }
 }

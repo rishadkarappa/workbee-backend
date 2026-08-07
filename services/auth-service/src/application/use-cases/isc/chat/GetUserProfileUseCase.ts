@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IUserRepository } from '../../../../domain/repositories/IUserRepository';
 import { IGetUserProfileUseCase, IUserProfile } from '../../../ports/isc/IGetUserProfileUseCase';
+import { ErrorMessages } from '../../../../shared/constants/ErrorMessages';
 
 /**
  * comm
@@ -16,7 +17,7 @@ export class GetUserProfileUseCase implements IGetUserProfileUseCase{
     const user = await this._userRepository.findById(userId);
     
     if (!user) {
-      throw new Error('User not found');
+      throw new Error(ErrorMessages.USER.NOT_FOUND);
     }
 
     return {
