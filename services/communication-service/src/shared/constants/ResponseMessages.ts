@@ -9,23 +9,24 @@ export const ResponseMessage = {
         ALREADY_EXISTS: "User already exists",
     },
 
-    USER:{
-        REGISTERD_SUCCESSFULLY:"User registered successfully",
-        LOGINED_SUCCESFULLY:"User Logined successful",
-        VERFIFIED:"user verified successfully",
-        SENT_RESET_LINK:"Reset link sent successfully",
-        PASSOWORD_UPDATED:"password reset successfully"
+    USER: {
+        REGISTERD_SUCCESSFULLY: "User registered successfully",
+        LOGINED_SUCCESFULLY: "User Logined successful",
+        VERFIFIED: "user verified successfully",
+        SENT_RESET_LINK: "Reset link sent successfully",
+        PASSOWORD_UPDATED: "password reset successfully"
     },
 
-    ADMIN:{
-        LOGINED_SUCCESFULLY:"admin Verified Logined successful",
-        GET_USERS:"get suers successfully"
+    ADMIN: {
+        LOGINED_SUCCESFULLY: "admin Verified Logined successful",
+        GET_USERS: "get suers successfully"
     },
 
     CHAT: {
         CHAT_CREATED: 'Chat created/retrieved successfully',
-        CHAT_RETRIEVED:'Chats retrieved successfully',
-        MESSAGE_RETREIVED:"Messages retrieved successfully",
-        MARKED_AS_READ:'Chat marked as read',
+        CHAT_RETRIEVED: 'Chats retrieved successfully',
+        MESSAGE_RETREIVED: "Messages retrieved successfully",
+        MARKED_AS_READ: 'Chat marked as read',
     },
+    
 }

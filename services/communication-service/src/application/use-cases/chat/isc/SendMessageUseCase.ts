@@ -6,6 +6,7 @@ import { SendMessageDTO } from '../../../dtos/chat/ChatDTO';
 import { Message } from '../../../../domain/entities/Message';
 import { ISendMessageUseCase } from '../../../ports/chat/ISendMessageUseCase';
 import { UserRole } from 'workbee-common';
+import { ErrorMessages } from '../../../../shared/constants/ErrorMessages';
 
 export interface SendMessageResult extends Message {
   recipientId?: string;
@@ -23,7 +24,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     const chat = await this._chatRepository.findById(data.chatId);
 
     if (!chat) {
-      throw new Error('Chat not found');
+      throw new Error(ErrorMessages.CHAT.CHAT_NOT_FOUND);
     }
 
     // Determine recipient based on sender role

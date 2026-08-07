@@ -5,6 +5,7 @@ import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { IRespondToBidUseCase } from '../../ports/bid/IRespondToBidUseCase';
 import { RespondToBidDTO, BidActionResult } from '../../dtos/bid/BidDTO';
 import { UserRole } from 'workbee-common';
+import { ErrorMessages } from '../../../shared/constants/ErrorMessages';
 
 @injectable()
 export class RespondToBidUseCase implements IRespondToBidUseCase {
@@ -16,10 +17,10 @@ export class RespondToBidUseCase implements IRespondToBidUseCase {
 
   async execute(data: RespondToBidDTO): Promise<BidActionResult> {
     const bid = await this._bidRepository.findById(data.bidId);
-    if (!bid) throw new Error('Bid not found');
-    if (bid.status !== 'pending') throw new Error('This negotiation has already been finalized');
+    if (!bid) throw new Error(ErrorMessages.BID.BID_NOT_FOUND);
+    if (bid.status !== 'pending') throw new Error(ErrorMessages.BID.BID_FINALIZED);
     if (bid.awaitingResponseFrom !== data.respondedBy) {
-      throw new Error('It is not your turn to respond');
+      throw new Error(ErrorMessages.BID.NOT_YOUR_TURN);
     }
 
     const updated = await this._bidRepository.update(bid.id!, {

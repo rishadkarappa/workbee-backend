@@ -5,6 +5,7 @@ import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { ISendBidOfferUseCase } from '../../ports/bid/ISendBidOfferUseCase';
 import { SendBidOfferDTO, BidActionResult } from '../../dtos/bid/BidDTO';
 import { UserRole } from 'workbee-common';
+import { ErrorMessages } from '../../../shared/constants/ErrorMessages';
 
 @injectable()
 export class SendBidOfferUseCase implements ISendBidOfferUseCase {
@@ -16,7 +17,7 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
 
   async execute(data: SendBidOfferDTO): Promise<BidActionResult> {
     if (!data.amount || data.amount <= 0) {
-      throw new Error('Offer amount must be greater than zero');
+      throw new Error(ErrorMessages.BID.OFFER_AMOUNT_NOT_VALID);
     }
 
     const existing = await this._bidRepository.findActiveByWorkId(data.workId);
@@ -24,9 +25,8 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
     let bid;
 
     if (!existing) {
-      // No live bid — only the worker may open a negotiation.
       if (data.offeredBy !== UserRole.WORKER) {
-        throw new Error('Only the worker can make the first offer');
+        throw new Error(ErrorMessages.BID.ONLY_WORKER_CAN_MAKE_THE_FIRST_OFFER);
       }
 
       bid = await this._bidRepository.create({
@@ -44,15 +44,15 @@ export class SendBidOfferUseCase implements ISendBidOfferUseCase {
       });
     } else {
       if (existing.status !== 'pending') {
-        throw new Error('This negotiation has already been finalized');
+        throw new Error(ErrorMessages.BID.BID_FINALIZED);
       }
       if (existing.awaitingResponseFrom !== data.offeredBy) {
-        throw new Error('It is not your turn to make an offer');
+        throw new Error(ErrorMessages.BID.NOT_YOUR_TURN);
       }
 
       // Only ONE counter offer is allowed total (eg history length must be exactly 1 here).
       if (existing.history.length >= 2) {
-        throw new Error('Only one counter offer is allowed');
+        throw new Error(ErrorMessages.BID.ONE_COUNTER_OFFER_IS_ALLOWED);
       }
 
       const nextAwaiting = data.offeredBy === UserRole.USER ? UserRole.WORKER : UserRole.USER;
