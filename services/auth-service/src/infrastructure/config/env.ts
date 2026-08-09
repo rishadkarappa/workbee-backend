@@ -18,5 +18,6 @@ export const ENV = {
     NODE_ENV: getEnv("NODE_ENV"),
     LOGSTASH_HOST: getEnv("LOGSTASH_HOST"),
     LOGSTASH_PORT: getEnv("LOGSTASH_PORT"),
+    MONGO_URI: getEnv("MONGO_URI"),
 
 }

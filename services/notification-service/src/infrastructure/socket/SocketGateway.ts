@@ -42,8 +42,16 @@ export class SocketGateway {
         socket.userRole = decoded.role;
         next();
       } catch (error) {
-        logger.error(error);
-        next(new Error('Authentication error: Invalid token'));
+        if (error instanceof jwt.TokenExpiredError) {
+          logger.warn('socket authentication failed - access token expired')
+          return next(new Error('authentication error: token expired'))
+        }
+        if (error instanceof jwt.JsonWebTokenError) {
+          logger.warn('socket auth failed - invalid token')
+          return next(new Error('auth error - invalid token'))
+        }
+        logger.error('unexpected socket auth error', error)
+        return next(new Error('authentication error'))
       }
     });
   }

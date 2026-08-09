@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
+import { logger } from "../logger/logger";
+import { ENV } from "./env";
 
 export const connectDatabase = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI||"mongodb://localhost:27017/workbee-auth-service")
-        console.log('mongodb connected')
+        await mongoose.connect(ENV.MONGO_URI)
+        logger.info('mongodb connected')
     }catch(err){
-        console.log('database connection failed',err)
+        logger.warn('database connection failed',err)
         process.exit(1)
     }
 };
