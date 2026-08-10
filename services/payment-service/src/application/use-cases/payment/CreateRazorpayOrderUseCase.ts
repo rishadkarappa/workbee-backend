@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import Razorpay from "razorpay";
 
-import { IPaymentRepository } from "../../domain/repositories/IPaymentRepository";
-import { IWalletRepository } from "../../domain/repositories/IWalletRepository";
+import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
+import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
 
 const PLATFORM_FEE_PERCENT = 0.01; // 1%
 

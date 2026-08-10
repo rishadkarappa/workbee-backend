@@ -1,6 +1,6 @@
 import { Queue, Worker, Job } from "bullmq";
 import { container } from "tsyringe";
-import { ReleaseWorkerPayoutUseCase } from "../../application/use-cases/ReleaseWorkerPayoutUseCase";
+import { ReleaseWorkerPayoutUseCase } from "../../application/use-cases/payment/ReleaseWorkerPayoutUseCase";
 
 const REDIS_CONNECTION = {
   host: process.env.REDIS_HOST || "localhost",

@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
 
-import { IPlatformEarningRepository } from "../../domain/repositories/IPlatformEarningRepository";
-import { IPaymentRepository } from "../../domain/repositories/IPaymentRepository";
-import { IWalletRepository } from "../../domain/repositories/IWalletRepository";
-import { ITransactionRepository } from "../../domain/repositories/ITransactionRepository";
+import { IPlatformEarningRepository } from "../../../domain/repositories/IPlatformEarningRepository";
+import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
+import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
+import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 
 @injectable()
 export class ReleaseWorkerPayoutUseCase {

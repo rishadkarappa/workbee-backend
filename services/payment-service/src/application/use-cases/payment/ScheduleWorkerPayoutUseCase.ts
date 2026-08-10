@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { IPaymentRepository } from "../../domain/repositories/IPaymentRepository";
-import { IWalletRepository } from "../../domain/repositories/IWalletRepository";
-import { ITransactionRepository } from "../../domain/repositories/ITransactionRepository";
+import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
+import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
+import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 
 @injectable()
 export class ScheduleWorkerPayoutUseCase {

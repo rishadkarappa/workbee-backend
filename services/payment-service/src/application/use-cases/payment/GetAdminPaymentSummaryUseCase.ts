@@ -1,7 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import {
-  IPlatformEarningRepository,
-} from "../../domain/repositories/IPlatformEarningRepository";
+import { IPlatformEarningRepository } from "../../../domain/repositories/IPlatformEarningRepository";
 
 
 @injectable()

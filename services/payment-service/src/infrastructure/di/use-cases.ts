@@ -1,14 +1,13 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 
-import { ScheduleWorkerPayoutUseCase } from '../../application/use-cases/ScheduleWorkerPayoutUseCase';
-import { ReleaseWorkerPayoutUseCase } from '../../application/use-cases/ReleaseWorkerPayoutUseCase';
-import { GetWalletUseCase } from '../../application/use-cases/GetWalletUseCase';
-import { GetAdminPaymentSummaryUseCase } from '../../application/use-cases/GetAdminPaymentSummaryUseCase';
-import { CreateRazorpayOrderUseCase } from '../../application/use-cases/CreateRazorpayOrderUseCase';
-import { VerifyRazorpayPaymentUseCase } from '../../application/use-cases/VerifyRazorpayPaymentUseCase';
-import { GetAdminPaymentsListUseCase } from '../../application/use-cases/GetAdminPaymentsListUseCase';
-
+import { ScheduleWorkerPayoutUseCase } from '../../application/use-cases/payment/ScheduleWorkerPayoutUseCase';
+import { ReleaseWorkerPayoutUseCase } from '../../application/use-cases/payment/ReleaseWorkerPayoutUseCase';
+import { GetWalletUseCase } from '../../application/use-cases/wallet/GetWalletUseCase';
+import { GetAdminPaymentSummaryUseCase } from '../../application/use-cases/payment/GetAdminPaymentSummaryUseCase';
+import { CreateRazorpayOrderUseCase } from '../../application/use-cases/payment/CreateRazorpayOrderUseCase';
+import { VerifyRazorpayPaymentUseCase } from '../../application/use-cases/payment/VerifyRazorpayPaymentUseCase';
+import { GetAdminPaymentsListUseCase } from '../../application/use-cases/payment/GetAdminPaymentsListUseCase';
 
 container.register("CreateRazorpayOrderUseCase", { useClass: CreateRazorpayOrderUseCase });
 container.register("VerifyRazorpayPaymentUseCase", { useClass: VerifyRazorpayPaymentUseCase });

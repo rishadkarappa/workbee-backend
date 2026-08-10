@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IPaymentRepository } from "../../domain/repositories/IPaymentRepository";
+import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
 
 @injectable()
 export class GetAdminPaymentsListUseCase {
