@@ -5,11 +5,11 @@ import { IPaymentController } from "../ports/IPaymentController";
 
 import { CreateRazorpayOrderUseCase } from "../../application/use-cases/payment/CreateRazorpayOrderUseCase";
 import { VerifyRazorpayPaymentUseCase } from "../../application/use-cases/payment/VerifyRazorpayPaymentUseCase";
-import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/payment/ScheduleWorkerPayoutUseCase";
+import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/worker/ScheduleWorkerPayoutUseCase";
 import { GetWalletUseCase } from "../../application/use-cases/wallet/GetWalletUseCase";
-import { GetAdminPaymentSummaryUseCase } from "../../application/use-cases/payment/GetAdminPaymentSummaryUseCase";
+import { GetAdminPaymentSummaryUseCase } from "../../application/use-cases/admin/GetAdminPaymentSummaryUseCase";
 import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
-import { GetAdminPaymentsListUseCase } from "../../application/use-cases/payment/GetAdminPaymentsListUseCase";
+import { GetAdminPaymentsListUseCase } from "../../application/use-cases/admin/GetAdminPaymentsListUseCase";
 
 @injectable()
 export class PaymentController implements IPaymentController {

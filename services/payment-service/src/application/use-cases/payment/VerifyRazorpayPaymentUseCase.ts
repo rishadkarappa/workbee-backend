@@ -14,9 +14,7 @@ export class VerifyRazorpayPaymentUseCase {
   ) { }
 
   async execute(data: {
-    razorpayOrderId: string;
-    razorpayPaymentId: string;
-    razorpaySignature: string;
+    razorpayOrderId: string; razorpayPaymentId: string; razorpaySignature: string;
   }): Promise<{ success: boolean; paymentId: string }> {
 
     // 1. Verify HMAC signature

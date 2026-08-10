@@ -1,6 +1,6 @@
 import { Queue, Worker, Job } from "bullmq";
 import { container } from "tsyringe";
-import { ReleaseWorkerPayoutUseCase } from "../../application/use-cases/payment/ReleaseWorkerPayoutUseCase";
+import { ReleaseWorkerPayoutUseCase } from "../../application/use-cases/worker/ReleaseWorkerPayoutUseCase";
 import { ENV } from "../config/env";
 import { logger } from "../logger/logger";
 

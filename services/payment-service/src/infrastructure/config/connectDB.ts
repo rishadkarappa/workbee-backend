@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { logger } from "../logger/logger";
 
 let pool: Pool | null = null;
 
@@ -16,7 +17,7 @@ export const getPool = (): Pool => {
     });
 
     pool.on("error", (err) => {
-      console.error("Unexpected PG pool error:", err);
+      logger.error("Unexpected PG pool error:", err);
     });
   }
   return pool;
@@ -27,9 +28,9 @@ export const connectDB = async (): Promise<void> => {
     const client = await getPool().connect();
     await client.query("SELECT 1");
     client.release();
-    console.log("[PaymentService] PostgreSQL connected");
+    logger.info("PaymentService PostgreSQL connected");
   } catch (error) {
-    console.error("[PaymentService] DB connection error:", error);
+    logger.error("PaymentService DB connection error:", error);
     throw error;
   }
 };

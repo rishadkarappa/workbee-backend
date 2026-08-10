@@ -26,11 +26,15 @@ app.use("/", paymentRoutes);
 
 const startServer = async () => {
   try {
+    // connecton DB
     await connectDB();
+
+    // worker payout
     startPayoutWorker();
-    app.listen(ENV.PORT, () => {
-      logger.info(`PaymentService Running on port ${ENV.PORT}`);
-    });
+
+    // server 
+    app.listen(ENV.PORT, () => logger.info(`PaymentService Running on port ${ENV.PORT}`));
+
   } catch (error) {
     logger.error("PaymentService Failed to start:", error);
     process.exit(1);
