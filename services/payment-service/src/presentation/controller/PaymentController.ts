@@ -9,6 +9,7 @@ import { IGetWalletUseCase } from "../../application/ports/wallet/IGetWalletUseC
 import { IGetAdminPaymentSummaryUseCase } from "../../application/ports/admin/IGetAdminPaymentSummaryUseCase";
 import { IGetAdminPaymentsListUseCase } from "../../application/ports/admin/IGetAdminPaymentsListUseCase";
 import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
+import { UserRole } from "workbee-common";
 
 @injectable()
 export class PaymentController implements IPaymentController {
@@ -25,7 +26,7 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
-      if (!userId || userRole !== "user") {
+      if (!userId || userRole !== UserRole.USER) {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
@@ -50,7 +51,8 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
-      if (!userId || userRole !== "user") {
+
+      if (!userId || userRole !== UserRole.USER) {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
@@ -75,7 +77,7 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
-      if (!userId || (userRole !== "worker" && userRole !== "admin")) {
+      if (!userId || (userRole !== UserRole.WORKER && userRole !== UserRole.ADMIN)) {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
@@ -103,6 +105,7 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
+
       if (!userId) {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
@@ -119,7 +122,7 @@ export class PaymentController implements IPaymentController {
   async getAdminSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userRole = req.headers["x-user-role"] as string;
-      if (userRole !== "admin") {
+      if (userRole !== UserRole.ADMIN) {
         res.status(403).json({ success: false, message: "Forbidden" });
         return;
       }
@@ -134,7 +137,7 @@ export class PaymentController implements IPaymentController {
   async getAdminPaymentsList(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userRole = req.headers["x-user-role"] as string;
-      if (userRole !== "admin") {
+      if (userRole !== UserRole.ADMIN) {
         res.status(403).json({ success: false, message: "Forbidden" });
         return;
       }
@@ -144,7 +147,7 @@ export class PaymentController implements IPaymentController {
 
       const data = await this._adminPaymentsListUseCase.execute({ page, limit });
       res.status(200).json({ success: true, data });
-      
+
     } catch (err) {
       next(err);
     }
