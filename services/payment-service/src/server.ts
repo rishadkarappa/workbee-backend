@@ -1,8 +1,8 @@
 import "reflect-metadata";
+import "dotenv/config";
+
 import "./infrastructure/di/container";
 
-import dotenv from "dotenv";
-dotenv.config();
 
 import express from "express";
 import cors from "cors";
@@ -16,7 +16,7 @@ import { ENV } from "./infrastructure/config/env";
 const app = express();
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN,
+  origin: ENV.CORS_ORIGIN,
   credentials: true,
 }));
 

@@ -1,11 +1,13 @@
 import { Queue, Worker, Job } from "bullmq";
 import { container } from "tsyringe";
 import { ReleaseWorkerPayoutUseCase } from "../../application/use-cases/payment/ReleaseWorkerPayoutUseCase";
+import { ENV } from "../config/env";
+import { logger } from "../logger/logger";
 
 const REDIS_CONNECTION = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: Number(process.env.REDIS_PORT) || 6379,
-  password: process.env.REDIS_PASSWORD || undefined,
+  host: ENV.REDIS_HOST,
+  port: Number(ENV.REDIS_PORT),
+  password: ENV.REDIS_PASSWORD,
 };
 
 const QUEUE_NAME = "worker-payout";
@@ -26,44 +28,38 @@ export const getPayoutQueue = (): Queue => {
         removeOnFail:     50,
       },
     });
-    console.log("[PayoutQueue] Queue created");
+    logger.info("[PayoutQueue] Queue created");
   }
   return payoutQueue;
 };
 
 export const scheduleWorkerPayout = async (paymentId: string): Promise<void> => {
   const queue = getPayoutQueue();
-  await queue.add(
-    "release-payout",
-    { paymentId },
-    { delay: DELAY_MS }
-  );
-  console.log(`[PayoutQueue] Scheduled payout for payment ${paymentId} in 1 hour`);
+  await queue.add( "release-payout", { paymentId }, { delay: DELAY_MS });
+  logger.info(`[PayoutQueue] Scheduled payout for payment ${paymentId} in 1 hour`);
 };
 
 // Worker (consumer)
 export const startPayoutWorker = (): void => {
-  payoutWorker = new Worker(
-    QUEUE_NAME,
+  payoutWorker = new Worker( QUEUE_NAME,
     async (job: Job) => {
       const { paymentId } = job.data;
-      console.log(`[PayoutWorker] Processing payout for payment ${paymentId}`);
+      logger.info(`[PayoutWorker] Processing payout for payment ${paymentId}`);
 
       const releaseUseCase = container.resolve(ReleaseWorkerPayoutUseCase);
       await releaseUseCase.execute(paymentId);
 
-      console.log(`[PayoutWorker] Payout complete for payment ${paymentId}`);
-    },
-    { connection: REDIS_CONNECTION, concurrency: 5 }
+      logger.info(`[PayoutWorker] Payout complete for payment ${paymentId}`);
+    }, { connection: REDIS_CONNECTION, concurrency: 5 }
   );
 
   payoutWorker.on("completed", (job) => {
-    console.log(`[PayoutWorker] Job ${job.id} completed`);
+    logger.info(`[PayoutWorker] Job ${job.id} completed`);
   });
 
   payoutWorker.on("failed", (job, err) => {
-    console.error(`[PayoutWorker] Job ${job?.id} failed:`, err.message);
+    logger.error(`[PayoutWorker] Job ${job?.id} failed:`, err.message);
   });
 
-  console.log("[PayoutWorker] Worker started, listening for payout jobs");
+  logger.info("[PayoutWorker] Worker started, listening for payout jobs");
 };
