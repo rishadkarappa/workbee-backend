@@ -91,11 +91,8 @@ export class PaymentRepository implements IPaymentRepository {
         return rows[0] ? this.mapPayment(rows[0]) : null;
     }
 
-    async findAllPaginated(page: number, limit: number): Promise<{
-        payments: Payment[];
-        total: number;
-        totalPages: number;
-    }> {
+    async findAllPaginated(page: number, limit: number):
+        Promise<{ payments: Payment[]; total: number; totalPages: number; }> {
         const offset = (page - 1) * limit;
 
         const { rows } = await this.db.query(

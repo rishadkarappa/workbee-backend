@@ -1,8 +1,9 @@
 import { inject, injectable } from "tsyringe";
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
+import { IGetAdminPaymentsListUseCase } from "../../ports/admin/IGetAdminPaymentsListUseCase";
 
 @injectable()
-export class GetAdminPaymentsListUseCase {
+export class GetAdminPaymentsListUseCase implements IGetAdminPaymentsListUseCase {
   constructor(
     @inject("PaymentRepository") private paymentRepo: IPaymentRepository
   ) {}
