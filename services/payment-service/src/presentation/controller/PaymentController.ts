@@ -19,7 +19,7 @@ export class PaymentController implements IPaymentController {
     @inject("GetWalletUseCase") private readonly _getWalletUseCase: IGetWalletUseCase,
     @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: IGetAdminPaymentSummaryUseCase,
     @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase,
-  ) {}
+  ) { }
 
   async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -86,13 +86,14 @@ export class PaymentController implements IPaymentController {
         return;
       }
 
-      const result = await this._schedulePayoutUseCase.execute(workId);
-      if (result) {
-        await scheduleWorkerPayout(result.paymentId);
+      const result = await this._schedulePayoutUseCase.execute({ workId });
+      if (result.scheduled) {
+        await scheduleWorkerPayout(result.paymentId!);
         res.status(200).json({ success: true, message: "Payout scheduled in 1 hour" });
       } else {
         res.status(200).json({ success: true, message: "No paid payment found, skipped" });
       }
+
     } catch (err) {
       next(err);
     }
@@ -107,8 +108,9 @@ export class PaymentController implements IPaymentController {
         return;
       }
 
-      const data = await this._getWalletUseCase.execute(userId, userRole);
+      const data = await this._getWalletUseCase.execute({ ownerId: userId, role: userRole });
       res.status(200).json({ success: true, data });
+
     } catch (err) {
       next(err);
     }
@@ -140,8 +142,9 @@ export class PaymentController implements IPaymentController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
 
-      const data = await this._adminPaymentsListUseCase.execute(page, limit);
+      const data = await this._adminPaymentsListUseCase.execute({ page, limit });
       res.status(200).json({ success: true, data });
+      
     } catch (err) {
       next(err);
     }

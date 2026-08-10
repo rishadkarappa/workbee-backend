@@ -11,6 +11,10 @@ export interface AdminPaymentDTO {
   createdAt: Date;
 }
 
+export interface AdminPaymentsListRequestDTO {
+  page: number;
+  limit: number;
+}
 export interface AdminPaymentsListResponseDTO {
   payments: AdminPaymentDTO[];
   total: number;

@@ -1,9 +1,8 @@
 import { inject, injectable } from "tsyringe";
-
 import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
 import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 import { IGetWalletUseCase } from "../../ports/wallet/IGetWalletUseCase";
-import { WalletResponseDTO } from "../../dtos/wallet/TransactionDTO";
+import { GetWalletRequestDTO,WalletResponseDTO } from "../../dtos/wallet/TransactionDTO";
 import { WalletMapper } from "../../mappers/WalletMapper";
 
 @injectable()
@@ -13,8 +12,8 @@ export class GetWalletUseCase implements IGetWalletUseCase {
     @inject("TransactionRepository") private txRepo: ITransactionRepository
   ) {}
 
-  async execute(ownerId: string, role: string): Promise<WalletResponseDTO> {
-    const wallet = await this.walletRepo.findOrCreate(ownerId, role);
+  async execute(data: GetWalletRequestDTO): Promise<WalletResponseDTO> {
+    const wallet = await this.walletRepo.findOrCreate(data.ownerId, data.role);
     const transactions = await this.txRepo.findByWalletId(wallet.id);
     return WalletMapper.toResponseDTO(wallet, transactions);
   }

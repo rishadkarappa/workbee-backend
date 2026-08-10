@@ -1,3 +1,5 @@
+import { UserRole } from "workbee-common";
+
 export interface TransactionDTO {
   id: string;
   workId?: string;
@@ -9,9 +11,14 @@ export interface TransactionDTO {
   createdAt: Date;
 }
 
+export interface GetWalletRequestDTO {
+  ownerId: string;
+  role: string;
+}
+
 export interface WalletResponseDTO {
   id: string;
-  role: "user" | "worker" | "admin";
+  role: UserRole
   balance: number;
   pendingBalance: number;
   totalEarned: number;

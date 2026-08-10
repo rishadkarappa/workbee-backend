@@ -1,5 +1,6 @@
+import { AdminPaymentsListRequestDTO } from "../../dtos/admin/AdminPaymentDTO";
 import { AdminPaymentsListResponseDTO } from "../../dtos/admin/AdminPaymentDTO";
 
 export interface IGetAdminPaymentsListUseCase {
-  execute(page: number, limit: number): Promise<AdminPaymentsListResponseDTO>;
+  execute(data: AdminPaymentsListRequestDTO): Promise<AdminPaymentsListResponseDTO>;
 }

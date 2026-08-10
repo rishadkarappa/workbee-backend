@@ -1,10 +1,13 @@
 import { inject, injectable } from "tsyringe";
+import { logger } from "../../../infrastructure/logger/logger";
 
 import { IPlatformEarningRepository } from "../../../domain/repositories/IPlatformEarningRepository";
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
 import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
 import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 import { IReleaseWorkerPayoutUseCase } from "../../ports/worker/IReleaseWorkerPayoutUseCase";
+
+import { ReleaseWorkerPayoutRequestDTO,ReleaseWorkerPayoutResponseDTO } from "../../dtos/worker/WorkerPayoutDTO";
 
 @injectable()
 export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
@@ -15,11 +18,11 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
     @inject("PlatformEarningRepository") private platformEarningRepo: IPlatformEarningRepository
   ) {}
 
-  async execute(paymentId: string): Promise<void> {
-    const payment = await this.paymentRepo.findById(paymentId);
+  async execute(data: ReleaseWorkerPayoutRequestDTO): Promise<ReleaseWorkerPayoutResponseDTO> {
+    const payment = await this.paymentRepo.findById(data.paymentId);
     if (!payment || payment.status !== "paid") {
-      console.log(`[ReleaseWorkerPayout] skipping ${paymentId} — status: ${payment?.status}`);
-      return;
+      logger.info(`[ReleaseWorkerPayout] skipping ${data.paymentId} — status: ${payment?.status}`);
+      return { released: false };
     }
 
     const workerWallet = await this.walletRepo.findOrCreate(payment.workerId, "worker");
@@ -39,8 +42,6 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
       metadata: { platformFee: payment.platformFee, totalAmount: payment.amount },
     });
 
-    // Audit-only row. type "platform_fee" is filtered out by TransactionMapper
-    // for non-admin wallet views — see WalletMapper.
     await this.txRepo.create({
       walletId: workerWallet.id,
       workId: payment.workId,
@@ -69,9 +70,11 @@ export class ReleaseWorkerPayoutUseCase implements IReleaseWorkerPayoutUseCase {
         await this.txRepo.updateStatus(holdTx.id, "completed");
       }
     } catch (err) {
-      console.error("[ReleaseWorkerPayout] Could not update hold tx status:", err);
+      logger.error("ReleaseWorkerPayoutv- Could not update hold tx status:", err);
     }
 
-    console.log(`[ReleaseWorkerPayout] Released ₹${payment.workerPayout} to worker ${payment.workerId}`);
+    logger.info(`ReleaseWorkerPayoutvv- Released ₹${payment.workerPayout} to worker ${payment.workerId}`);
+
+    return { released: true, workerId: payment.workerId, amount: payment.workerPayout };
   }
 }

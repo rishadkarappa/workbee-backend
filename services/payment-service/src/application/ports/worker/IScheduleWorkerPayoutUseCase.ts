@@ -1,3 +1,6 @@
+import { ScheduleWorkerPayoutRequestDTO } from "../../dtos/worker/WorkerPayoutDTO";
+import { ScheduleWorkerPayoutResponseDTO } from "../../dtos/worker/WorkerPayoutDTO";
+
 export interface IScheduleWorkerPayoutUseCase {
-  execute(workId: string): Promise<{ paymentId: string; workerPayout: number } | null>;
+  execute(data: ScheduleWorkerPayoutRequestDTO): Promise<ScheduleWorkerPayoutResponseDTO>;
 }
