@@ -1,15 +1,22 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
 
+import { HttpStatusCode, UserRole } from "workbee-common";
+
 import { IPaymentController } from "../ports/IPaymentController";
+
 import { ICreateRazorpayOrderUseCase } from "../../application/ports/user/ICreateRazorpayOrderUseCase";
 import { IVerifyRazorpayPaymentUseCase } from "../../application/ports/payment/IVerifyRazorpayPaymentUseCase";
 import { IScheduleWorkerPayoutUseCase } from "../../application/ports/worker/IScheduleWorkerPayoutUseCase";
 import { IGetWalletUseCase } from "../../application/ports/wallet/IGetWalletUseCase";
 import { IGetAdminPaymentSummaryUseCase } from "../../application/ports/admin/IGetAdminPaymentSummaryUseCase";
 import { IGetAdminPaymentsListUseCase } from "../../application/ports/admin/IGetAdminPaymentsListUseCase";
+
 import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
-import { HttpStatusCode, UserRole } from "workbee-common";
+
+import { ResponseHelper } from "../../shared/helpers/reponseHelper";
+import { ResponseMessage } from "../../shared/constants/ResponseMessages";
+import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 
 @injectable()
 export class PaymentController implements IPaymentController {
@@ -19,7 +26,7 @@ export class PaymentController implements IPaymentController {
     @inject("ScheduleWorkerPayoutUseCase") private readonly _schedulePayoutUseCase: IScheduleWorkerPayoutUseCase,
     @inject("GetWalletUseCase") private readonly _getWalletUseCase: IGetWalletUseCase,
     @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: IGetAdminPaymentSummaryUseCase,
-    @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase,
+    @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase
   ) { }
 
   async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -28,21 +35,24 @@ export class PaymentController implements IPaymentController {
       const userRole = req.headers["x-user-role"] as string;
 
       if (!userId || userRole !== UserRole.USER) {
-        res.status(HttpStatusCode.UNAUTHORIZED).json({ success: false, message: "Unauthorized" });
+        res.status(HttpStatusCode.UNAUTHORIZED).json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
         return;
       }
 
       const { workId, workerId, workTitle, amount } = req.body;
+
       if (!workId || !workerId || !workTitle || !amount) {
-        res.status(HttpStatusCode.BAD_REQUEST).json({ success: false, message: "Missing required fields: workId, workerId, workTitle, amount" });
+        res
+          .status(HttpStatusCode.BAD_REQUEST)
+          .json(ResponseHelper.error(ErrorMessages.PAYMENT.MISSING_REQUIRED_FIELDS, HttpStatusCode.BAD_REQUEST));
         return;
       }
 
-      const result = await this._createOrderUseCase.execute({
-        workId, userId, workerId, workTitle, amount: Number(amount),
-      });
+      const result = await this._createOrderUseCase.execute({ workId, userId, workerId, workTitle, amount: Number(amount), });
 
-      res.status(HttpStatusCode.OK).json({ success: true, data: result });
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(result, ResponseMessage.PAYMENT.CREATED_ORDER, HttpStatusCode.OK));
     } catch (err) {
       next(err);
     }
@@ -54,21 +64,26 @@ export class PaymentController implements IPaymentController {
       const userRole = req.headers["x-user-role"] as string;
 
       if (!userId || userRole !== UserRole.USER) {
-        res.status(HttpStatusCode.UNAUTHORIZED).json({ success: false, message: "Unauthorized" });
+        res
+          .status(HttpStatusCode.UNAUTHORIZED)
+          .json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
         return;
       }
 
-      const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+      const { razorpayOrderId, razorpayPaymentId, razorpaySignature, } = req.body;
+
       if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
-        res.status(HttpStatusCode.BAD_REQUEST).json({ success: false, message: "Missing payment verification fields" });
+        res
+          .status(HttpStatusCode.BAD_REQUEST)
+          .json(ResponseHelper.error(ErrorMessages.PAYMENT.MISSING_PAYMENT_VERIFICATION_FIELDS, HttpStatusCode.BAD_REQUEST));
         return;
       }
 
-      const result = await this._verifyPaymentUseCase.execute({
-        razorpayOrderId, razorpayPaymentId, razorpaySignature,
-      });
+      const result = await this._verifyPaymentUseCase.execute({ razorpayOrderId, razorpayPaymentId, razorpaySignature, });
 
-      res.status(HttpStatusCode.OK).json({ success: true, data: result });
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(result, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
     } catch (err) {
       next(err);
     }
@@ -78,25 +93,38 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
+
       if (!userId || (userRole !== UserRole.WORKER && userRole !== UserRole.ADMIN)) {
-        res.status(HttpStatusCode.UNAUTHORIZED).json({ success: false, message: "Unauthorized" });
+        res
+          .status(HttpStatusCode.UNAUTHORIZED)
+          .json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
         return;
       }
 
       const { workId } = req.body;
+
       if (!workId) {
-        res.status(HttpStatusCode.BAD_REQUEST).json({ success: false, message: "workId required" });
+        res
+          .status(HttpStatusCode.BAD_REQUEST)
+          .json(ResponseHelper.error(ErrorMessages.PAYMENT.MISSING_WORK_ID, HttpStatusCode.BAD_REQUEST));
         return;
       }
 
-      const result = await this._schedulePayoutUseCase.execute({ workId });
+      const result = await this._schedulePayoutUseCase.execute({ workId, });
+
       if (result.scheduled) {
         await scheduleWorkerPayout(result.paymentId!);
-        res.status(HttpStatusCode.OK).json({ success: true, message: "Payout scheduled in 1 hour" });
-      } else {
-        res.status(HttpStatusCode.OK).json({ success: true, message: "No paid payment found, skipped" });
+
+        res
+          .status(HttpStatusCode.OK)
+          .json(ResponseHelper.success(null, ResponseMessage.PAYMENT.PAYOUT_SCHEDULED, HttpStatusCode.OK));
+
+        return;
       }
 
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(null, ResponseMessage.PAYMENT.NO_PAID_PAYMENT, HttpStatusCode.OK));
     } catch (err) {
       next(err);
     }
@@ -108,13 +136,20 @@ export class PaymentController implements IPaymentController {
       const userRole = req.headers["x-user-role"] as string;
 
       if (!userId) {
-        res.status(HttpStatusCode.UNAUTHORIZED).json({ success: false, message: "Unauthorized" });
+        res
+          .status(HttpStatusCode.UNAUTHORIZED)
+          .json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
         return;
       }
 
-      const data = await this._getWalletUseCase.execute({ ownerId: userId, role: userRole });
-      res.status(HttpStatusCode.OK).json({ success: true, data });
+      const data = await this._getWalletUseCase.execute({
+        ownerId: userId,
+        role: userRole,
+      });
 
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(data, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
     } catch (err) {
       next(err);
     }
@@ -123,13 +158,19 @@ export class PaymentController implements IPaymentController {
   async getAdminSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userRole = req.headers["x-user-role"] as string;
+
       if (userRole !== UserRole.ADMIN) {
-        res.status(HttpStatusCode.FORBIDDEN).json({ success: false, message: "Forbidden" });
+        res
+          .status(HttpStatusCode.FORBIDDEN)
+          .json(ResponseHelper.error(ErrorMessages.AUTH.FORBIDDEN, HttpStatusCode.FORBIDDEN));
         return;
       }
 
       const data = await this._adminSummaryUseCase.execute();
-      res.status(HttpStatusCode.OK).json({ success: true, data });
+
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(data, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
     } catch (err) {
       next(err);
     }
@@ -138,17 +179,22 @@ export class PaymentController implements IPaymentController {
   async getAdminPaymentsList(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userRole = req.headers["x-user-role"] as string;
+
       if (userRole !== UserRole.ADMIN) {
-        res.status(HttpStatusCode.FORBIDDEN).json({ success: false, message: "Forbidden" });
+        res
+          .status(HttpStatusCode.FORBIDDEN)
+          .json(ResponseHelper.error(ErrorMessages.AUTH.FORBIDDEN, HttpStatusCode.FORBIDDEN));
         return;
       }
 
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const page = Number(req.query.page ?? 1);
+      const limit = Number(req.query.limit ?? 20);
 
       const data = await this._adminPaymentsListUseCase.execute({ page, limit });
-      res.status(HttpStatusCode.OK).json({ success: true, data });
 
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(data, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
     } catch (err) {
       next(err);
     }
