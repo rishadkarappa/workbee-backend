@@ -2,61 +2,45 @@ import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
 
 import { IPaymentController } from "../ports/IPaymentController";
-
-import { CreateRazorpayOrderUseCase } from "../../application/use-cases/payment/CreateRazorpayOrderUseCase";
-import { VerifyRazorpayPaymentUseCase } from "../../application/use-cases/payment/VerifyRazorpayPaymentUseCase";
-import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/worker/ScheduleWorkerPayoutUseCase";
-import { GetWalletUseCase } from "../../application/use-cases/wallet/GetWalletUseCase";
-import { GetAdminPaymentSummaryUseCase } from "../../application/use-cases/admin/GetAdminPaymentSummaryUseCase";
+import { ICreateRazorpayOrderUseCase } from "../../application/ports/user/ICreateRazorpayOrderUseCase";
+import { IVerifyRazorpayPaymentUseCase } from "../../application/ports/payment/IVerifyRazorpayPaymentUseCase";
+import { IScheduleWorkerPayoutUseCase } from "../../application/ports/worker/IScheduleWorkerPayoutUseCase";
+import { IGetWalletUseCase } from "../../application/ports/wallet/IGetWalletUseCase";
+import { IGetAdminPaymentSummaryUseCase } from "../../application/ports/admin/IGetAdminPaymentSummaryUseCase";
+import { IGetAdminPaymentsListUseCase } from "../../application/ports/admin/IGetAdminPaymentsListUseCase";
 import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
-import { GetAdminPaymentsListUseCase } from "../../application/use-cases/admin/GetAdminPaymentsListUseCase";
 
 @injectable()
 export class PaymentController implements IPaymentController {
   constructor(
-    @inject("CreateRazorpayOrderUseCase") private readonly _createOrderUseCase: CreateRazorpayOrderUseCase,
-    @inject("VerifyRazorpayPaymentUseCase") private readonly _verifyPaymentUseCase: VerifyRazorpayPaymentUseCase,
-    @inject("ScheduleWorkerPayoutUseCase") private readonly _schedulePayoutUseCase: ScheduleWorkerPayoutUseCase,
-    @inject("GetWalletUseCase") private readonly _getWalletUseCase: GetWalletUseCase,
-    @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: GetAdminPaymentSummaryUseCase,
-    @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: GetAdminPaymentsListUseCase,
-  ) { }
+    @inject("CreateRazorpayOrderUseCase") private readonly _createOrderUseCase: ICreateRazorpayOrderUseCase,
+    @inject("VerifyRazorpayPaymentUseCase") private readonly _verifyPaymentUseCase: IVerifyRazorpayPaymentUseCase,
+    @inject("ScheduleWorkerPayoutUseCase") private readonly _schedulePayoutUseCase: IScheduleWorkerPayoutUseCase,
+    @inject("GetWalletUseCase") private readonly _getWalletUseCase: IGetWalletUseCase,
+    @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: IGetAdminPaymentSummaryUseCase,
+    @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase,
+  ) {}
 
   async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
-
       if (!userId || userRole !== "user") {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
       const { workId, workerId, workTitle, amount } = req.body;
-
       if (!workId || !workerId || !workTitle || !amount) {
         res.status(400).json({ success: false, message: "Missing required fields: workId, workerId, workTitle, amount" });
         return;
       }
 
       const result = await this._createOrderUseCase.execute({
-        workId,
-        userId,
-        workerId,
-        workTitle,
-        amount: Number(amount),
+        workId, userId, workerId, workTitle, amount: Number(amount),
       });
 
-      res.status(200).json({
-        success: true,
-        data: {
-          orderId: result.orderId,
-          amount: result.amount,
-          currency: result.currency,
-          keyId: result.keyId,
-          paymentId: result.payment.id,
-        },
-      });
+      res.status(200).json({ success: true, data: result });
     } catch (err) {
       next(err);
     }
@@ -66,23 +50,19 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
-
       if (!userId || userRole !== "user") {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
       }
 
       const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
-
       if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
         res.status(400).json({ success: false, message: "Missing payment verification fields" });
         return;
       }
 
       const result = await this._verifyPaymentUseCase.execute({
-        razorpayOrderId,
-        razorpayPaymentId,
-        razorpaySignature,
+        razorpayOrderId, razorpayPaymentId, razorpaySignature,
       });
 
       res.status(200).json({ success: true, data: result });
@@ -95,8 +75,6 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
-
-      // Only workers (or admins) should trigger payouts
       if (!userId || (userRole !== "worker" && userRole !== "admin")) {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
@@ -124,7 +102,6 @@ export class PaymentController implements IPaymentController {
     try {
       const userId = req.headers["x-user-id"] as string;
       const userRole = req.headers["x-user-role"] as string;
-
       if (!userId) {
         res.status(401).json({ success: false, message: "Unauthorized" });
         return;
@@ -140,7 +117,6 @@ export class PaymentController implements IPaymentController {
   async getAdminSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userRole = req.headers["x-user-role"] as string;
-
       if (userRole !== "admin") {
         res.status(403).json({ success: false, message: "Forbidden" });
         return;
@@ -170,5 +146,4 @@ export class PaymentController implements IPaymentController {
       next(err);
     }
   }
-
 }

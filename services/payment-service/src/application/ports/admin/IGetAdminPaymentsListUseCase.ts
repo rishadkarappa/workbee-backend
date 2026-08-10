@@ -1,8 +1,5 @@
-import { Payment } from "../../../domain/entities/Payment";
+import { AdminPaymentsListResponseDTO } from "../../dtos/admin/AdminPaymentDTO";
 
 export interface IGetAdminPaymentsListUseCase {
-    execute(page: number, limit: number):
-        Promise<{
-            payments: Payment[]; total: number; totalPages: number
-        }>
+  execute(page: number, limit: number): Promise<AdminPaymentsListResponseDTO>;
 }
