@@ -3,13 +3,13 @@ import { inject, injectable } from "tsyringe";
 
 import { IPaymentController } from "../ports/IPaymentController";
 
-import { CreateRazorpayOrderUseCase } from "../../application/use-cases/CreateRazorpayOrderUseCase";
-import { VerifyRazorpayPaymentUseCase } from "../../application/use-cases/VerifyRazorpayPaymentUseCase";
-import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/ScheduleWorkerPayoutUseCase";
-import { GetWalletUseCase } from "../../application/use-cases/GetWalletUseCase";
-import { GetAdminPaymentSummaryUseCase } from "../../application/use-cases/GetAdminPaymentSummaryUseCase";
+import { CreateRazorpayOrderUseCase } from "../../application/use-cases/payment/CreateRazorpayOrderUseCase";
+import { VerifyRazorpayPaymentUseCase } from "../../application/use-cases/payment/VerifyRazorpayPaymentUseCase";
+import { ScheduleWorkerPayoutUseCase } from "../../application/use-cases/payment/ScheduleWorkerPayoutUseCase";
+import { GetWalletUseCase } from "../../application/use-cases/wallet/GetWalletUseCase";
+import { GetAdminPaymentSummaryUseCase } from "../../application/use-cases/payment/GetAdminPaymentSummaryUseCase";
 import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
-import { GetAdminPaymentsListUseCase } from "../../application/use-cases/GetAdminPaymentsListUseCase";
+import { GetAdminPaymentsListUseCase } from "../../application/use-cases/payment/GetAdminPaymentsListUseCase";
 
 @injectable()
 export class PaymentController implements IPaymentController {
