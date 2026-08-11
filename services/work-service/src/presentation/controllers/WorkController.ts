@@ -369,10 +369,9 @@ export class WorkController implements IWorkController {
                 return;
             }
 
-            const result = await this._getWorkerAssignedWorksUseCase.execute({ workerId });
-            res.status(HttpStatus.OK).json(
-                ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_ASSIGNED_WORK_RETRIEVED)
-            );
+            const works = await this._getWorkerAssignedWorksUseCase.execute({ workerId });
+            res.status(HttpStatus.OK).json(ResponseHelper.success(works, ResponseMessage.GENERAL.SUCCESS, HttpStatus.OK));
+
         } catch (err) {
             next(err);
         }

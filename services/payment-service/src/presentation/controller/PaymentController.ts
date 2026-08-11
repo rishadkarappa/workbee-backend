@@ -142,10 +142,7 @@ export class PaymentController implements IPaymentController {
         return;
       }
 
-      const data = await this._getWalletUseCase.execute({
-        ownerId: userId,
-        role: userRole,
-      });
+      const data = await this._getWalletUseCase.execute({ownerId: userId,role: userRole,});
 
       res
         .status(HttpStatusCode.OK)
