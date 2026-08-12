@@ -34,7 +34,6 @@ export interface ConfirmResponsePayload {
   workerId?: string;
 }
 
-
 export interface WorkProgressUpdatePayload {
   chatId: string;
   workId: string;

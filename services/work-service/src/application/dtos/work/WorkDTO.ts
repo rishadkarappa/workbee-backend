@@ -51,6 +51,8 @@ export interface WorkResponseDto {
     extraRequirements?: string;
     anythingElse?: string;
     status: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'cancelled';
+    progress?: 'started' | 'ongoing' | 'completed';
+    workerId?: string;
     createdAt: Date;
     updatedAt: Date;
 }

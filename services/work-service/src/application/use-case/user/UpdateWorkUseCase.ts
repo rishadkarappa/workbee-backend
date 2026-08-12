@@ -32,7 +32,8 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
       }
     }
 
-    const { workId, ...updateData } = dto;
+    // userId is auth context only — never persist it onto the work document
+    const { workId, userId: _authUserId, ...updateData } = dto;
 
     const updatedWork = await this._workRepository.update(workId, updateData);
 

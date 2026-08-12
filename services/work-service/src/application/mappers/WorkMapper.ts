@@ -58,6 +58,8 @@ export class WorkMapper {
             extraRequirements: entity.extraRequirements,
             anythingElse: entity.anythingElse,
             status: entity.status,
+            progress: entity.progress,
+            workerId: entity.workerId,
             createdAt: entity.createdAt || new Date(),
             updatedAt: entity.updatedAt || new Date()
         };
