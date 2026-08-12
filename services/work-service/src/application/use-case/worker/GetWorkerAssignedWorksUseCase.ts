@@ -15,10 +15,17 @@ export class GetWorkerAssignedWorksUseCase implements IGetWorkerAssignedWorksUse
 
         return works.map((work): GetWorkerAssignedWorksResponseDto => ({
             id: work.id!,
+            userId: work.userId, 
             workTitle: work.workTitle,
             workCategory: work.workCategory,
+            workType: work.workType,
             status: work.status,
+            progress: work.progress,
             budget: work.budget ? Number(work.budget) : undefined,
+            startDate: work.startDate,
+            endDate: work.endDate,
+            description: work.description,
+            manualAddress: work.manualAddress,
             createdAt: work.createdAt!,
         }));
     }

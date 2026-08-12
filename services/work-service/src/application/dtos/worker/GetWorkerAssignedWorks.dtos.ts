@@ -1,13 +1,22 @@
-
 export interface GetWorkerAssignedWorksDto {
-    workerId : string;
+    workerId: string;
 }
 
 export interface GetWorkerAssignedWorksResponseDto {
     id: string;
+     userId: string;
     workTitle: string;
     workCategory: string;
-    status: "pending" | "assigned" | "in-progress" | "completed" | "cancelled";
+    workType: 'oneDay' | 'multipleDay';
+    status: 'pending' | 'assigned' | 'in-progress' | 'completed' | 'cancelled';
+    progress?: 'started' | 'ongoing' | 'completed';
     budget?: number;
+
+    startDate?: string;
+    endDate?: string;
+
+    description: string;
+    manualAddress?: string;
+
     createdAt: Date;
 }

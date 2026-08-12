@@ -34,12 +34,14 @@ export interface ConfirmResponsePayload {
   workerId?: string;
 }
 
+
 export interface WorkProgressUpdatePayload {
   chatId: string;
   workId: string;
   workTitle: string;
   progress: string;
   workerId: string;
+  userId: string;
 }
 
 export interface SendBidOfferPayload {

@@ -11,7 +11,7 @@ import {
 } from '../types/SocketTypes';
 
 export class WorkHandler {
-  constructor(private io: Server) {}
+  constructor(private io: Server) { }
 
   public register(socket: AuthenticatedSocket): void {
     socket.on('ask_for_confirm', (data: AskForConfirmPayload) => this.handleAskForConfirm(socket, data));
@@ -86,36 +86,45 @@ export class WorkHandler {
   }
 
   private async handleWorkProgressUpdate(socket: AuthenticatedSocket, data: WorkProgressUpdatePayload): Promise<void> {
-    try {
-      if (!socket.userId || !socket.userRole) {
-        socket.emit('error', { message: 'User not authenticated' });
-        return;
-      }
+  try {
+    if (!socket.userId || !socket.userRole) {
+      socket.emit('error', { message: 'User not authenticated' });
+      return;
+    }
 
-      const sendMessageUseCase = container.resolve(SendMessageUseCase);
+    const sendMessageUseCase = container.resolve(SendMessageUseCase);
 
-      const savedMessage = await sendMessageUseCase.execute({
-        chatId: data.chatId,
-        senderId: data.workerId,
-        senderRole: UserRole.WORKER,
-        content: JSON.stringify({
-          type: 'WORK_PROGRESS_UPDATE',
-          workId: data.workId,
-          workTitle: data.workTitle,
-          progress: data.progress,
-        }),
-        type: 'system',
-      });
+    const savedMessage = await sendMessageUseCase.execute({
+      chatId: data.chatId,
+      senderId: data.workerId,
+      senderRole: UserRole.WORKER,
+      content: JSON.stringify({
+        type: 'WORK_PROGRESS_UPDATE',
+        workId: data.workId,
+        workTitle: data.workTitle,
+        progress: data.progress,
+      }),
+      type: 'system',
+    });
 
-      const enrichedMessage = { ...savedMessage, chatId: data.chatId };
+    const enrichedMessage = { ...savedMessage, chatId: data.chatId };
 
-      this.io.to(`chat:${data.chatId}`).emit('new_message', enrichedMessage);
-      this.io.to(`chat:${data.chatId}`).emit('work_progress_changed', {
+    this.io.to(`chat:${data.chatId}`).emit('new_message', enrichedMessage);
+    this.io.to(`chat:${data.chatId}`).emit('work_progress_changed', {
+      workId: data.workId,
+      progress: data.progress,
+    });
+
+    // fallback: reach the client wherever they are in the app
+    if (data.userId) {
+      this.io.to(`user:${data.userId}`).emit('new_message', enrichedMessage);
+      this.io.to(`user:${data.userId}`).emit('work_progress_changed', {
         workId: data.workId,
         progress: data.progress,
       });
-    } catch (error) {
-      socket.emit('error', { message: getErrorMessage(error) });
     }
+  } catch (error) {
+    socket.emit('error', { message: getErrorMessage(error) });
   }
+}
 }
