@@ -11,7 +11,9 @@ import { PlatformEarningRow } from "../row/PlatformEarningRow";
 
 @injectable()
 export class PlatformEarningRepository implements IPlatformEarningRepository {
-  private get db() { return getPool(); }
+  private get db() {
+    return getPool();
+  }
 
   private mapEarning(row: PlatformEarningRow): PlatformEarning {
     return {

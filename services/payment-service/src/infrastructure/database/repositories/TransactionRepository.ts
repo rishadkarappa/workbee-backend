@@ -6,7 +6,9 @@ import { TransactionRow } from "../row/TransactionRow";
 
 @injectable()
 export class TransactionRepository implements ITransactionRepository {
-    private get db() { return getPool(); }
+    private get db() {
+        return getPool();
+    }
 
     private mapTx(row: TransactionRow): Transaction {
         return {

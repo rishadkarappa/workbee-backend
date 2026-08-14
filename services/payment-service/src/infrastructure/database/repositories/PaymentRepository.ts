@@ -6,7 +6,9 @@ import { PaymentRow } from "../row/PaymentRow";
 
 @injectable()
 export class PaymentRepository implements IPaymentRepository {
-    private get db() { return getPool(); }
+    private get db() {
+        return getPool();
+    }
 
     private mapPayment(row: PaymentRow): Payment {
         return {

@@ -6,21 +6,23 @@ import { WalletRow } from "../row/WalletRow";
 
 @injectable()
 export class WalletRepository implements IWalletRepository {
-  private get db() { return getPool(); }
+  private get db() {
+    return getPool();
+  }
 
   private mapWallet(row: WalletRow): Wallet {
-  return {
-    id: row.id,
-    ownerId: row.owner_id,
-    role: row.role,
-    balance: Number(row.balance),
-    pendingBalance: Number(row.pending_balance),
-    totalEarned: Number(row.total_earned),
-    totalSpent: Number(row.total_spent),
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-  };
-}
+    return {
+      id: row.id,
+      ownerId: row.owner_id,
+      role: row.role,
+      balance: Number(row.balance),
+      pendingBalance: Number(row.pending_balance),
+      totalEarned: Number(row.total_earned),
+      totalSpent: Number(row.total_spent),
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+  }
 
   async findByOwner(ownerId: string, role: string): Promise<Wallet | null> {
     const { rows } = await this.db.query(
