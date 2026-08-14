@@ -18,6 +18,9 @@ export const ENV = {
     NODE_ENV: getEnv("NODE_ENV"),
     CORS_ORIGIN: getEnv("CORS_ORIGIN"),
 
+    // psql db url
+    DATABASE_URL: getEnv("DATABASE_URL"),
+
     // jwt
     JWT_SECRET: getEnv("JWT_SECRET"),
     JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
