@@ -17,4 +17,5 @@ logs/
 # uploads
 uploads/
 
+generated
 /src/generated/prisma
