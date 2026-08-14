@@ -3,10 +3,9 @@ import "dotenv/config";
 
 import "./infrastructure/di/container";
 
-
 import express from "express";
 import cors from "cors";
-import { connectDB } from "./infrastructure/config/connectDB";
+import { connectDB } from "./infrastructure/config/prisma";
 
 import paymentRoutes from "./presentation/routes/PaymentRoutes";
 import { startPayoutWorker } from "./infrastructure/queue/PayoutQueue";
