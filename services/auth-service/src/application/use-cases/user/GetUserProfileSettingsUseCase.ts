@@ -6,7 +6,7 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { UserMapper } from "../../mappers/UserMapper";
 
 @injectable()
-class GetUserProfileSettings implements IGetUserProfileSettingsUseCase {
+export class GetUserProfileSettingsUseCase implements IGetUserProfileSettingsUseCase {
     constructor(
         @inject("UserRepository") private readonly IUserRepository: IUserRepository
     ){}

@@ -37,6 +37,8 @@ import { ResendOtpUseCase } from "../../application/use-cases/user/ResendOtpUseC
 import { IResendOtpUseCase } from "../../application/ports/user/IResendOtpUseCase";
 import { GetUserProfileUseCase } from "../../application/use-cases/isc/chat/GetUserProfileUseCase";
 import { GetUserProfilesBatchUseCase } from "../../application/use-cases/isc/chat/GetUserProfilesBatchUseCase";
+import { GetUserProfileSettingsUseCase } from "../../application/use-cases/user/GetUserProfileSettingsUseCase";
+import { IGetUserProfileSettingsUseCase } from "../../application/ports/user/IGetUserProfileSettingsUseCase";
 
 
 //usecases will injected by auto via @inject
@@ -52,6 +54,7 @@ container.registerSingleton<IVerifyOtpUseCase>("VerifyOtpUseCase",VerifyOtpUseCa
 container.registerSingleton<IResendOtpUseCase>("ResendOtpUseCase",ResendOtpUseCase)
 container.register<IRefreshTokenUseCase>("RefreshTokenUseCase", RefreshTokenUseCase);
 container.register<ILogoutUserUseCase>("LogoutUserUseCase", LogoutUserUseCase);
+container.register<IGetUserProfileSettingsUseCase>("GetUserProfileSettingsUseCase", GetUserProfileSettingsUseCase);
 
 container.register("GetUserProfileUseCase", GetUserProfileUseCase);
 container.register("GetUserProfilesBatchUseCase", GetUserProfilesBatchUseCase);
