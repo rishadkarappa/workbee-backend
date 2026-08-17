@@ -3,6 +3,7 @@ import { LoginUserResponseDTO } from "../dtos/user/LoginUserDTO";
 import { RegisterUserResponseDTO } from "../dtos/user/RegisterUserDTO";
 import { GoogleLoginResponseDTO } from "../dtos/user/GoogleLoginDTO";
 import { VerifyOtpResponseDTO } from "../dtos/user/VerifyOtpDTO";
+import { UserProfileSettingsResponseDto } from "../dtos/user/UserProfileSettingsDto";
 
 export class UserMapper {
 
@@ -48,5 +49,15 @@ export class UserMapper {
       accessToken,
       refreshToken
     };
+  }
+
+  static toUserProfileSettingsMapper(user: User): UserProfileSettingsResponseDto {
+    return {
+      name: user.name,
+      email: user.name,
+      phone: user.phone,
+      createdAt : user.createdAt,
+      updatedAt : user.updatedAt
+    }
   }
 }

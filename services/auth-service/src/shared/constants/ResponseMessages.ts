@@ -24,7 +24,8 @@ export const ResponseMessage = {
         SENT_RESET_LINK:"Reset link sent successfully",
         PASSOWORD_UPDATED:"password reset successfully",
         USER_PROFILE_RETRIEVED:'User profile retrieved FROM auth service',
-        USER_PROFILES_ARE_RETRIEVED:'User profiles are retrieved FROM auth service'
+        USER_PROFILES_ARE_RETRIEVED:'User profiles are retrieved FROM auth service',
+        GET_USER_PROFILE_DETAILS:'get user profile settings details successfully',
     },
 
     ADMIN:{

@@ -24,8 +24,9 @@ import { IRefreshTokenUseCase } from "../../../application/ports/user/IRefreshTo
 import { ILogoutUserUseCase } from "../../../application/ports/user/ILogoutUserUseCase";
 import { IGetUserProfileUseCase } from "../../../application/ports/isc/IGetUserProfileUseCase";
 import { IGetUserProfilesBatchUseCase } from "../../../application/ports/isc/IGetUserProfilesBatchUseCase";
-
+import { IGetUserProfileSettingsUseCase } from "../../../application/ports/user/IGetUserProfileSettingsUseCase";
 import { IUserController } from "../../ports/IUserContoller";
+import { UserProfileSettingsRequestDto } from "../../../application/dtos/user/UserProfileSettingsDto";
 
 @injectable()
 export class UserController implements IUserController {
@@ -42,6 +43,7 @@ export class UserController implements IUserController {
     @inject("LogoutUserUseCase") private readonly _logoutUserUseCase: ILogoutUserUseCase,
     @inject("GetUserProfileUseCase") private readonly _getUserProfileUseCase: IGetUserProfileUseCase,
     @inject("GetUserProfilesBatchUseCase") private readonly _getUserProfilesBatchUseCase: IGetUserProfilesBatchUseCase,
+    @inject("GetUserProfileSettingsUseCase") private readonly _getUserProfileSettingsUseCase: IGetUserProfileSettingsUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -205,7 +207,19 @@ export class UserController implements IUserController {
     }
   }
 
- 
+  async getUserProfileSettings(req: Request<{ userId: string }>, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { userId } = req.params
+      const dto: UserProfileSettingsRequestDto = { userId }
+      const resp = this._getUserProfileSettingsUseCase.execute(dto)
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(resp, ResponseMessage.USER.GET_USER_PROFILE_DETAILS, HttpStatus.OK))
+    } catch (error) {
+      next(error)
+    }
+  }
+
 
 
   // ------- 
