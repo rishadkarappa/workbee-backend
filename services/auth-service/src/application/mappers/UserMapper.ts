@@ -54,7 +54,7 @@ export class UserMapper {
   static toUserProfileSettingsMapper(user: User): UserProfileSettingsResponseDto {
     return {
       name: user.name,
-      email: user.name,
+      email: user.email,
       phone: user.phone,
       createdAt : user.createdAt,
       updatedAt : user.updatedAt

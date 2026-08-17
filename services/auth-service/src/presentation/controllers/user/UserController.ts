@@ -211,7 +211,7 @@ export class UserController implements IUserController {
     try {
       const { userId } = req.params
       const dto: UserProfileSettingsRequestDto = { userId }
-      const resp = this._getUserProfileSettingsUseCase.execute(dto)
+      const resp = await this._getUserProfileSettingsUseCase.execute(dto)
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(resp, ResponseMessage.USER.GET_USER_PROFILE_DETAILS, HttpStatus.OK))
