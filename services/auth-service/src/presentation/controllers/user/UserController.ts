@@ -212,8 +212,11 @@ export class UserController implements IUserController {
 
   async getUserProfileSettings(req: Request<{ userId: string }>, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { userId } = req.params
-      const dto: UserProfileSettingsRequestDto = { userId }
+      const userId = req.headers['x-user-id']
+      if (!userId || typeof userId !== "string") {
+        throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      }
+      const dto: UserProfileSettingsRequestDto = {userId}
       const resp = await this._getUserProfileSettingsUseCase.execute(dto)
       res
         .status(HttpStatus.OK)
@@ -225,12 +228,13 @@ export class UserController implements IUserController {
 
   async chageUserPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.user) {
+      const userId = req.headers["x-user-id"]
+      if (!userId || typeof userId !== "string") {
         throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
       }
       const { newPassword, currentPassword } = req.body
       const dto: ChangePasswordReqDTO = {
-        userId: req.user.userId,
+        userId,
         newPassword: newPassword,
         currentPassword: currentPassword
       }

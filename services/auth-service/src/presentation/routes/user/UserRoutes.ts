@@ -16,7 +16,7 @@ router.post("/forgot-password", userController.forgotPassword.bind(userControlle
 router.post("/reset-password/:token", userController.resetPassword.bind(userController))
 router.post("/refresh-token", userController.refreshToken.bind(userController));
 router.post("/logout", userController.userLogout.bind(userController));
-router.get("/get-user-profile-settings/:userId", userController.getUserProfileSettings.bind(userController));
+router.get("/get-user-profile-settings", userController.getUserProfileSettings.bind(userController));
 router.post("/change-user-password", userController.chageUserPassword.bind(userController))
 //inter serv comm
 router.get('/get-user-profile/:userId', userController.getUserProfile.bind(userController));
