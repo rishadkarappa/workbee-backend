@@ -20,29 +20,40 @@ export class CloudinaryService implements ICloudinaryService {
    */
   async uploadBuffer(buffer: Buffer, folder: string, resourceType: 'image' | 'video'): Promise<ICloudinaryUploadResult> {
     return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder,
-          resource_type: resourceType,
-          chunk_size: 6_000_000,
-        }, (error, result) => {
-          if (error || !result) {
-            return reject(error || new Error('Cloudinary upload failed'));
-          } 
-          resolve({
-            url: result.secure_url,
-            publicId: result.public_id,
-            resourceType: resourceType,
-            format: result.format,
-            width: result.width,
-            height: result.height,
-            duration: resourceType === "video" ? result.duration : undefined,
-            bytes: result.bytes,
-          });
+      const uploadStream = cloudinary.uploader.upload_stream({
+        folder,
+        resource_type: resourceType,
+        chunk_size: 6_000_000,
+      }, (error, result) => {
+        if (error || !result) {
+          return reject(error || new Error('Cloudinary upload failed'));
         }
+        resolve({
+          url: result.secure_url,
+          publicId: result.public_id,
+          resourceType: resourceType,
+          format: result.format,
+          width: result.width,
+          height: result.height,
+          duration: resourceType === "video" ? result.duration : undefined,
+          bytes: result.bytes,
+        });
+      }
       );
       uploadStream.end(buffer);
     });
+  }
+
+  /**
+  * Sign a set of upload params so the client can upload directly to Cloudinary.
+  */
+
+  generateUploadSignature(paramsToSign: Record<string, string | number>): { signature: string; timestamp: number; } {
+    const timestamp = Math.round(Date.now() / 1000);
+    const signature = cloudinary.utils.api_sign_request({ ...paramsToSign, timestamp },
+      process.env.CLOUDINARY_API_SECRET as string
+    );
+    return { signature, timestamp };
   }
 
   /**
@@ -52,17 +63,6 @@ export class CloudinaryService implements ICloudinaryService {
     await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
   }
 
-  /**
-   * Sign a set of upload params so the client can upload directly to Cloudinary.
-   */
 
-  generateUploadSignature(paramsToSign: Record<string, string | number>): { signature: string; timestamp: number; } {
-    const timestamp = Math.round(Date.now() / 1000);
-    const signature = cloudinary.utils.api_sign_request(
-      { ...paramsToSign, timestamp },
-      process.env.CLOUDINARY_API_SECRET as string
-    );
-    return { signature, timestamp };
-  }
 }
 

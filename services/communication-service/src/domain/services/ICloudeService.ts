@@ -12,8 +12,5 @@ export interface ICloudinaryUploadResult {
 export interface ICloudinaryService {
     uploadBuffer(buffer: Buffer,folder: string,resourceType: "image" | "video"): Promise<ICloudinaryUploadResult>;
     deleteFile(publicId: string,resourceType: "image" | "video"): Promise<void>;
-    generateUploadSignature( paramsToSign: Record<string, string | number>): {
-        signature: string;
-        timestamp: number;
-    };
+    generateUploadSignature( paramsToSign: Record<string, string | number>): {signature: string;timestamp: number;};
 }
