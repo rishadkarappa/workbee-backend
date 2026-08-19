@@ -39,6 +39,8 @@ import { GetUserProfileUseCase } from "../../application/use-cases/isc/chat/GetU
 import { GetUserProfilesBatchUseCase } from "../../application/use-cases/isc/chat/GetUserProfilesBatchUseCase";
 import { GetUserProfileSettingsUseCase } from "../../application/use-cases/user/GetUserProfileSettingsUseCase";
 import { IGetUserProfileSettingsUseCase } from "../../application/ports/user/IGetUserProfileSettingsUseCase";
+import { ChangePasswordUseCase } from "../../application/use-cases/user/ChangePasswordUseCase";
+import { IChangePasswordUseCase } from "../../application/ports/user/IChangePasswordUseCase";
 
 
 //usecases will injected by auto via @inject
@@ -55,6 +57,7 @@ container.registerSingleton<IResendOtpUseCase>("ResendOtpUseCase",ResendOtpUseCa
 container.register<IRefreshTokenUseCase>("RefreshTokenUseCase", RefreshTokenUseCase);
 container.register<ILogoutUserUseCase>("LogoutUserUseCase", LogoutUserUseCase);
 container.register<IGetUserProfileSettingsUseCase>("GetUserProfileSettingsUseCase", GetUserProfileSettingsUseCase);
+container.register<IChangePasswordUseCase>("ChangePasswordUseCase", ChangePasswordUseCase);
 
 container.register("GetUserProfileUseCase", GetUserProfileUseCase);
 container.register("GetUserProfilesBatchUseCase", GetUserProfilesBatchUseCase);

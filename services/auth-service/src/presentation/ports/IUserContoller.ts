@@ -10,4 +10,5 @@ export interface IUserController {
   resetPassword(req:Request, res:Response, next:NextFunction):Promise<void>;
   refreshToken(req:Request, res:Response, next:NextFunction):Promise<void>;
   userLogout(req:Request, res:Response, next:NextFunction):Promise<void>;
+  chageUserPassword(req:Request, res:Response, next:NextFunction):Promise<void>;
 }

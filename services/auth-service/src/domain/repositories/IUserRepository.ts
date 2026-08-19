@@ -7,7 +7,4 @@ export interface IUserRepository {
     save(user: User | NewUser): Promise<User>;
     findByIds(ids: string[]): Promise<User[]>;
     saveNewPassword(userId:string, newHashedPassword:string) : Promise<boolean>;
-}
-
-
-
+};

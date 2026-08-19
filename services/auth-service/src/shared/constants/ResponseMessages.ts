@@ -26,6 +26,7 @@ export const ResponseMessage = {
         USER_PROFILE_RETRIEVED:'User profile retrieved FROM auth service',
         USER_PROFILES_ARE_RETRIEVED:'User profiles are retrieved FROM auth service',
         GET_USER_PROFILE_DETAILS:'get user profile settings details successfully',
+        CHANGE_PASS_SUCCESSFULLY:'CHANGED user password successfully',
     },
 
     ADMIN:{

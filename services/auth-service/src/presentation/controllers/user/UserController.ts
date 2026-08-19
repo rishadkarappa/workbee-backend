@@ -27,6 +27,8 @@ import { IGetUserProfilesBatchUseCase } from "../../../application/ports/isc/IGe
 import { IGetUserProfileSettingsUseCase } from "../../../application/ports/user/IGetUserProfileSettingsUseCase";
 import { IUserController } from "../../ports/IUserContoller";
 import { UserProfileSettingsRequestDto } from "../../../application/dtos/user/UserProfileSettingsDto";
+import { IChangePasswordUseCase } from "../../../application/ports/user/IChangePasswordUseCase";
+import { ChangePasswordReqDTO } from "../../../application/dtos/user/ChangePasswordDTO";
 
 @injectable()
 export class UserController implements IUserController {
@@ -44,6 +46,7 @@ export class UserController implements IUserController {
     @inject("GetUserProfileUseCase") private readonly _getUserProfileUseCase: IGetUserProfileUseCase,
     @inject("GetUserProfilesBatchUseCase") private readonly _getUserProfilesBatchUseCase: IGetUserProfilesBatchUseCase,
     @inject("GetUserProfileSettingsUseCase") private readonly _getUserProfileSettingsUseCase: IGetUserProfileSettingsUseCase,
+    @inject("ChangePasswordUseCase") private readonly _changePasswordUseCase: IChangePasswordUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -220,9 +223,21 @@ export class UserController implements IUserController {
     }
   }
 
-  async chageUserPassword(req:Request, res:Response, next:NextFunction) : Promise<void> {
+  async chageUserPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      
+      if (!req.user) {
+        throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      }
+      const { newPassword, currentPassword } = req.body
+      const dto: ChangePasswordReqDTO = {
+        userId: req.user.userId,
+        newPassword: newPassword,
+        currentPassword: currentPassword
+      }
+      const resp = await this._changePasswordUseCase.execute(dto)
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(resp, ResponseMessage.USER.CHANGE_PASS_SUCCESSFULLY, HttpStatus.OK))
     } catch (error) {
       next(error)
     }
