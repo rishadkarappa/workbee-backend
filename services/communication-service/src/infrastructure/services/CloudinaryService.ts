@@ -18,31 +18,6 @@ export class CloudinaryService implements ICloudinaryService {
    * @param folder  - cloudinary folder (e.g. 'chat/images')
    * @param resourceType - 'image' | 'video'
    */
-  async uploadBuffer(buffer: Buffer, folder: string, resourceType: 'image' | 'video'): Promise<ICloudinaryUploadResult> {
-    return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream({
-        folder,
-        resource_type: resourceType,
-        chunk_size: 6_000_000,
-      }, (error, result) => {
-        if (error || !result) {
-          return reject(error || new Error('Cloudinary upload failed'));
-        }
-        resolve({
-          url: result.secure_url,
-          publicId: result.public_id,
-          resourceType: resourceType,
-          format: result.format,
-          width: result.width,
-          height: result.height,
-          duration: resourceType === "video" ? result.duration : undefined,
-          bytes: result.bytes,
-        });
-      }
-      );
-      uploadStream.end(buffer);
-    });
-  }
 
   /**
   * Sign a set of upload params so the client can upload directly to Cloudinary.
