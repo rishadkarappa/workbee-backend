@@ -12,6 +12,7 @@ export const ErrorMessages = {
             NOT_FOUND_USERS:'NOT FOUND USERS',
             ALREADY_VERIFIED:"User is already verified",
             INVALID_USER_ID:"Invalid user id",
+            WRON_CURRENT_PASS:"you provided current password was wrong",
     },
 
     AUTH:{

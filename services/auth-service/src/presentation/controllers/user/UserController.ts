@@ -220,6 +220,13 @@ export class UserController implements IUserController {
     }
   }
 
+  async chageUserPassword(req:Request, res:Response, next:NextFunction) : Promise<void> {
+    try {
+      
+    } catch (error) {
+      next(error)
+    }
+  }
 
 
   // ------- 
