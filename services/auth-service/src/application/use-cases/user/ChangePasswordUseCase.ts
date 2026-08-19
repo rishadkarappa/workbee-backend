@@ -7,10 +7,10 @@ import { IHashService } from "../../../domain/services/IHashService";
 
 @injectable()
 export class ChangePasswordUseCase implements IChangePasswordUseCase {
-    constructor (
+    constructor(
         @inject("UserRepository") private readonly _userRepository: IUserRepository,
-        @inject("HashService") private readonly _hashService : IHashService
-    ) {}
+        @inject("HashService") private readonly _hashService: IHashService
+    ) { }
 
     async execute(dto: ChangePasswordReqDTO): Promise<ChangePasswordResponseDTO> {
 
@@ -22,18 +22,18 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
 
         const isValid = await this._hashService.compare(dto.currentPassword, user.password!)
 
-        if(!isValid) {
+        if (!isValid) {
             throw new Error(ErrorMessages.USER.WRON_CURRENT_PASS)
         }
-        
+
         // hash service : check password
-        let hashPassword = await this._hashService.hash(dto.newPassword)
+        let hashNewPassword = await this._hashService.hash(dto.newPassword)
 
 
-       let result = await this._userRepository.saveNewPassword(dto.userId, hashPassword)
+        let result = await this._userRepository.saveNewPassword(dto.userId, hashNewPassword)
 
-       return {
-        isChanged : result
-       }
+        return {
+            isChanged: result
+        }
     }
 }

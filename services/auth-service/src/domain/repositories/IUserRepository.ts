@@ -6,7 +6,7 @@ export interface IUserRepository {
     getUsers(page: number, limit: number, search: string, status?: string): Promise<{ users: User[], total: number }>;
     save(user: User | NewUser): Promise<User>;
     findByIds(ids: string[]): Promise<User[]>;
-    saveNewPassword(userId:string, newPassword:string) : Promise<boolean>;
+    saveNewPassword(userId:string, newHashedPassword:string) : Promise<boolean>;
 }
 
 

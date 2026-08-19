@@ -84,4 +84,9 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             return this.map(saved)
         }
     }
+
+    async saveNewPassword(userId:string, newHashedPassword:string):Promise<boolean> {
+        const result = await UserModel.updateOne({_id:userId},{$set:{password:newHashedPassword}})
+        return result.modifiedCount == 1
+    }
 }
