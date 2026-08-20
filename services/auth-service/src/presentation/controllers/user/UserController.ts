@@ -279,7 +279,7 @@ export class UserController implements IUserController {
         signature,
         timestamp,
         apiKey: ENV.CLOUDINARY_API_KEY,
-        cloudName: ENV.CLOUDINARY_CLOUD_NAME,
+        cloudeName: ENV.CLOUDINARY_CLOUD_NAME,
         folder
       }
 
@@ -296,12 +296,16 @@ export class UserController implements IUserController {
 
     try {
 
-      if (!req.user) throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      const userId = req.headers["x-user-id"];
+
+      if (!userId || typeof userId !== "string") {
+        throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      }
 
       const { imageUrl, publicId } = req.body;
 
       const dto: UpdateProfileImageReqDTO = {
-        userId: req.user.userId,
+        userId,
         imageUrl,
         publicId
       };

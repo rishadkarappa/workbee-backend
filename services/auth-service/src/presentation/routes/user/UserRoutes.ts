@@ -18,7 +18,7 @@ router.post("/refresh-token", userController.refreshToken.bind(userController));
 router.post("/logout", userController.userLogout.bind(userController));
 router.get("/get-user-profile-settings", userController.getUserProfileSettings.bind(userController));
 router.post("/change-user-password", userController.chageUserPassword.bind(userController))
-router.post("/profile-image", userController.updateProfileImage.bind(userController))
+router.patch("/profile-image", userController.updateProfileImage.bind(userController))
 
 // image uploads
 router.get("/profile-image/upload-signature",userController.getProfileImageUploadSignature.bind(userController));

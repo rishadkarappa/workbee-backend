@@ -22,12 +22,8 @@ export class UpdateProfileImageUseCase implements IUpdateProfileImageUseCase {
             dto.publicId
         );
 
-        if (!isUpdated) {
-            throw new Error(ErrorMessages.USER.FAILED_TO_UPDATE_PROFILE_IMAGE);
-        }
+        if (!isUpdated) throw new Error(ErrorMessages.USER.FAILED_TO_UPDATE_PROFILE_IMAGE);
 
-        return {
-            isUpdated: true
-        };
+        return { isUpdated: true };
     }
 }
