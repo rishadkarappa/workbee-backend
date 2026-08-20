@@ -11,6 +11,8 @@ export interface User {
   phone?: string;
   countofpost?: number;
   numberOfComplaints?: number;
+  userProfileImage?: string;
+  userProfileImagePublicId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

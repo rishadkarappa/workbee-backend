@@ -4,14 +4,21 @@ import { HttpStatus } from "../../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../../shared/helpers/responseHelper";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { ENV } from "../../../infrastructure/config/env";
 
+import { IUserController } from "../../ports/IUserContoller";
+
+// dtos
 import { RegisterUserRequestDTO } from "../../../application/dtos/user/RegisterUserDTO";
 import { LoginUserRequestDTO } from "../../../application/dtos/user/LoginUserDTO";
 import { VerifyOtpRequestDTO } from "../../../application/dtos/user/VerifyOtpDTO";
 import { GoogleLoginRequestDTO } from "../../../application/dtos/user/GoogleLoginDTO";
 import { ResendOtpRequestDTO } from "../../../application/dtos/user/ResendOtpDTO";
 import { RefreshTokenRequestDTO } from "../../../application/dtos/user/RefreshTokenDTO";
+import { UserProfileSettingsRequestDto } from "../../../application/dtos/user/UserProfileSettingsDto";
+import { ChangePasswordReqDTO } from "../../../application/dtos/user/ChangePasswordDTO";
 
+// usecases
 import { IRegisterUserUseCase } from "../../../application/ports/user/IRegisterUserUseCase";
 import { ILoginUserUseCase } from "../../../application/ports/user/ILoginUserUseCase";
 import { IVerifyOtpUseCase } from "../../../application/ports/user/IVerifyOtpUseCase";
@@ -25,12 +32,11 @@ import { ILogoutUserUseCase } from "../../../application/ports/user/ILogoutUserU
 import { IGetUserProfileUseCase } from "../../../application/ports/isc/IGetUserProfileUseCase";
 import { IGetUserProfilesBatchUseCase } from "../../../application/ports/isc/IGetUserProfilesBatchUseCase";
 import { IGetUserProfileSettingsUseCase } from "../../../application/ports/user/IGetUserProfileSettingsUseCase";
-import { IUserController } from "../../ports/IUserContoller";
-import { UserProfileSettingsRequestDto } from "../../../application/dtos/user/UserProfileSettingsDto";
 import { IChangePasswordUseCase } from "../../../application/ports/user/IChangePasswordUseCase";
-import { ChangePasswordReqDTO } from "../../../application/dtos/user/ChangePasswordDTO";
+
+// services
 import { ICloudinaryService } from "../../../domain/services/ICloudinaryService";
-import { ENV } from "../../../infrastructure/config/env";
+
 
 @injectable()
 export class UserController implements IUserController {
@@ -274,7 +280,7 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(data, ResponseMessage.USER.GET_UPLOAD_SIGNATURE))
-        
+
     } catch (error) {
       next(error)
     }
