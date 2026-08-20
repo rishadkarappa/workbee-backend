@@ -41,6 +41,8 @@ import { GetUserProfileSettingsUseCase } from "../../application/use-cases/user/
 import { IGetUserProfileSettingsUseCase } from "../../application/ports/user/IGetUserProfileSettingsUseCase";
 import { ChangePasswordUseCase } from "../../application/use-cases/user/ChangePasswordUseCase";
 import { IChangePasswordUseCase } from "../../application/ports/user/IChangePasswordUseCase";
+import { UpdateProfileImageUseCase } from "../../application/use-cases/user/UpdateProfileImageUseCase";
+import { IUpdateProfileImageUseCase } from "../../application/ports/user/IUpdateProfileImageUseCase";
 
 
 //usecases will injected by auto via @inject
@@ -58,6 +60,7 @@ container.register<IRefreshTokenUseCase>("RefreshTokenUseCase", RefreshTokenUseC
 container.register<ILogoutUserUseCase>("LogoutUserUseCase", LogoutUserUseCase);
 container.register<IGetUserProfileSettingsUseCase>("GetUserProfileSettingsUseCase", GetUserProfileSettingsUseCase);
 container.register<IChangePasswordUseCase>("ChangePasswordUseCase", ChangePasswordUseCase);
+container.register<IUpdateProfileImageUseCase>("UpdateProfileImageUseCase", UpdateProfileImageUseCase);
 
 container.register("GetUserProfileUseCase", GetUserProfileUseCase);
 container.register("GetUserProfilesBatchUseCase", GetUserProfilesBatchUseCase);
