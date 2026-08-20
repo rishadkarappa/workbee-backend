@@ -9,15 +9,30 @@ function getEnv(name:string):string {
 }
 
 export const ENV = {
+    // jwt
     JWT_SECRET: getEnv("JWT_SECRET"),
     JWT_REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
+    
+    // service
     PORT: getEnv("PORT"),
-    RABBITMQ_URL: getEnv("RABBITMQ_URL"),
     SERVICE_NAME: getEnv("SERVICE_NAME"),
+
+    // rabbitmq
+    RABBITMQ_URL: getEnv("RABBITMQ_URL"),
+
+    // logging
     LOG_LEVEL: getEnv("LOG_LEVEL"),
     NODE_ENV: getEnv("NODE_ENV"),
     LOGSTASH_HOST: getEnv("LOGSTASH_HOST"),
     LOGSTASH_PORT: getEnv("LOGSTASH_PORT"),
+
+    // DB
     MONGO_URI: getEnv("MONGO_URI"),
+
+    // cloudinary 
+    CLOUDINARY_CLOUD_NAME: getEnv("CLOUDINARY_CLOUD_NAME"),
+    CLOUDINARY_API_KEY: getEnv("CLOUDINARY_API_KEY"),
+    CLOUDINARY_API_SECRET: getEnv("CLOUDINARY_API_SECRET"),
+
 
 }
