@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IUserRepository } from '../../../../domain/repositories/IUserRepository';
 import { IGetUserProfilesBatchUseCase, IUserProfiles } from '../../../ports/isc/IGetUserProfilesBatchUseCase';
+import { UserMapper } from '../../../mappers/UserMapper';
 
 /**
  * Use case for fetching multiple user profiles safely
@@ -18,11 +19,14 @@ export class GetUserProfilesBatchUseCase implements IGetUserProfilesBatchUseCase
             return [];
         }
         const users = await this._userRepository.findByIds(userIds);
-        return users.map(user => ({
-            id: user.id,        
-            name: user.name,
-            email: user.email,
-            role: user.role
-        }));
+
+        return users.map(UserMapper.toUserProfileBatch);
+        
+        // return users.map(user => ({
+        //     id: user.id,        
+        //     name: user.name,
+        //     email: user.email,
+        //     role: user.role
+        // }));
     }
 }

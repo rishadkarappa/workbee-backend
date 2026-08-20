@@ -5,6 +5,7 @@ import { GoogleLoginResponseDTO } from "../dtos/user/GoogleLoginDTO";
 import { VerifyOtpResponseDTO } from "../dtos/user/VerifyOtpDTO";
 import { UserProfileSettingsResponseDto } from "../dtos/user/UserProfileSettingsDto";
 import { IUserProfile } from "../ports/isc/IGetUserProfileUseCase";
+import { IUserProfiles } from "../ports/isc/IGetUserProfilesBatchUseCase";
 
 export class UserMapper {
 
@@ -76,5 +77,12 @@ export class UserMapper {
     };
   }
 
-  
+  static toUserProfileBatch(user: User): IUserProfiles {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+  }
 }
