@@ -5,8 +5,7 @@ import cloudinary from "../config/cloudinary.config";
 
 @injectable()
 export class CloudinaryService implements ICloudinaryService {
-    constructor( ){ }
-
+    
     generateUploadSignature(paramsToSign: Record<string, string | number>): { signature: string; timestamp: number; } {
         const timestamp = Math.round(Date.now() / 1000)
         const signature = cloudinary.utils.api_sign_request({...paramsToSign, timestamp}, ENV.CLOUDINARY_API_SECRET)
