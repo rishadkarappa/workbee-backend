@@ -3,6 +3,7 @@ import { IUserRepository } from '../../../../domain/repositories/IUserRepository
 import { IGetUserProfileUseCase, IUserProfile } from '../../../ports/isc/IGetUserProfileUseCase';
 import { ErrorMessages } from '../../../../shared/constants/ErrorMessages';
 import { logger } from '../../../../infrastructure/logger/logger';
+import { UserMapper } from '../../../mappers/UserMapper';
 
 /**
  * comm
@@ -21,12 +22,13 @@ export class GetUserProfileUseCase implements IGetUserProfileUseCase{
       throw new Error(ErrorMessages.USER.NOT_FOUND);
     }
 
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt
-    };
+    return UserMapper.toUserProfile(user);
+    // return {
+    //   id: user.id,
+    //   name: user.name,
+    //   email: user.email,
+    //   role: user.role,
+    //   createdAt: user.createdAt
+    // };
   }
 }

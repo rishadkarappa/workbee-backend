@@ -4,6 +4,7 @@ import { RegisterUserResponseDTO } from "../dtos/user/RegisterUserDTO";
 import { GoogleLoginResponseDTO } from "../dtos/user/GoogleLoginDTO";
 import { VerifyOtpResponseDTO } from "../dtos/user/VerifyOtpDTO";
 import { UserProfileSettingsResponseDto } from "../dtos/user/UserProfileSettingsDto";
+import { IUserProfile } from "../ports/isc/IGetUserProfileUseCase";
 
 export class UserMapper {
 
@@ -56,9 +57,24 @@ export class UserMapper {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      userProfileImage : user.userProfileImage,
-      createdAt : user.createdAt,
-      updatedAt : user.updatedAt
+      userProfileImage: user.userProfileImage,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
     }
   }
+
+  /**
+   * inter service comm usecase mappers
+   */
+  static toUserProfile(user: User): IUserProfile {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+    };
+  }
+
+  
 }
