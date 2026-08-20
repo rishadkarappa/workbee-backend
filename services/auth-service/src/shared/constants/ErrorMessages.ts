@@ -13,6 +13,7 @@ export const ErrorMessages = {
             ALREADY_VERIFIED:"User is already verified",
             INVALID_USER_ID:"Invalid user id",
             WRON_CURRENT_PASS:"you provided current password was wrong",
+            FAILED_TO_UPDATE_PROFILE_IMAGE:"Failed to update profile image",
     },
 
     AUTH:{
