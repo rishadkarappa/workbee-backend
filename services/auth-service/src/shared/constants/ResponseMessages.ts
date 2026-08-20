@@ -28,6 +28,7 @@ export const ResponseMessage = {
         GET_USER_PROFILE_DETAILS:'get user profile settings details successfully',
         CHANGE_PASS_SUCCESSFULLY:'CHANGED user password successfully',
         GET_UPLOAD_SIGNATURE:'successfully got cloudinary upload signature',
+        PROFILE_IMAGE_UPDATED:"Profile image updated successfully",
     },
 
     ADMIN:{

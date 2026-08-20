@@ -17,6 +17,7 @@ import { ResendOtpRequestDTO } from "../../../application/dtos/user/ResendOtpDTO
 import { RefreshTokenRequestDTO } from "../../../application/dtos/user/RefreshTokenDTO";
 import { UserProfileSettingsRequestDto } from "../../../application/dtos/user/UserProfileSettingsDto";
 import { ChangePasswordReqDTO } from "../../../application/dtos/user/ChangePasswordDTO";
+import { UpdateProfileImageReqDTO } from "../../../application/dtos/user/UserProfileImageUploadDTO";
 
 // usecases
 import { IRegisterUserUseCase } from "../../../application/ports/user/IRegisterUserUseCase";
@@ -36,6 +37,7 @@ import { IChangePasswordUseCase } from "../../../application/ports/user/IChangeP
 
 // services
 import { ICloudinaryService } from "../../../domain/services/ICloudinaryService";
+import { IUpdateProfileImageUseCase } from "../../../application/ports/user/IUpdateProfileImageUseCase";
 
 
 @injectable()
@@ -56,6 +58,7 @@ export class UserController implements IUserController {
     @inject("GetUserProfileSettingsUseCase") private readonly _getUserProfileSettingsUseCase: IGetUserProfileSettingsUseCase,
     @inject("ChangePasswordUseCase") private readonly _changePasswordUseCase: IChangePasswordUseCase,
     @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
+    @inject("UpdateProfileImageUseCase") private readonly _updateProfileImageUseCase: IUpdateProfileImageUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -286,37 +289,33 @@ export class UserController implements IUserController {
     }
   }
 
-//   async updateProfileImage(
-//     req: Request,
-//     res: Response,
-//     next: NextFunction
-// ): Promise<void> {
+  async updateProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
 
-//     try {
+    try {
 
-//         if (!req.user) throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      if (!req.user) {
+        throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      }
 
-//         const { imageUrl, publicId } = req.body;
+      const { imageUrl, publicId } = req.body;
 
-//         const result = await this._userRepository.updateProfileImage(
-//             req.user.userId,
-//             imageUrl,
-//             publicId
-//         );
+      const dto: UpdateProfileImageReqDTO = {
+        userId: req.user.userId,
+        imageUrl,
+        publicId
+      };
 
-//         if (!result) {
-//             throw new Error("Failed to update profile image");
-//         }
+      const result = await this._updateProfileImageUseCase.execute(dto);
 
-//         res.status(200).json({
-//             success: true,
-//             message: "Profile image updated successfully"
-//         });
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(result, ResponseMessage.USER.PROFILE_IMAGE_UPDATED))
+        .json({ success: result.isUpdated, message: "Profile image updated successfully" });
 
-//     } catch (error) {
-//         next(error);
-//     }
-// }
+    } catch (error) {
+      next(error);
+    }
+  }
 
 
   // ------- 
