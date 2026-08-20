@@ -1,4 +1,4 @@
 export interface ICloudinaryService {
-    generateUploadSignature(paramsToSign: Record<string, string | number>):{signature:string, timestamp:string};
+    generateUploadSignature(paramsToSign: Record<string, string | number>):{signature:string, timestamp:number};
     deleteFile(publicId:string):Promise<void>;
 }
