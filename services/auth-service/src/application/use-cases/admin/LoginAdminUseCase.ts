@@ -21,23 +21,18 @@ export class LoginAdminUseCase implements ILoginAdminUseCase {
 
     async execute(data: LoginAdminRequestDTO): Promise<LoginAdminResponseDTO> {
         const { email, password } = data;
-
         const admin = await this._userRepository.findByEmail(email);
         
-        if (!admin || admin.role !== UserRole.ADMIN) {
-            throw new Error(ErrorMessages.ADMIN.ADMIN_NOT_FOUND);
-        }
+        if (!admin || admin.role !== UserRole.ADMIN) throw new Error(ErrorMessages.ADMIN.ADMIN_NOT_FOUND);
 
         const isPasswordValid = await this._hashService.compare(password, admin.password!);
-        if (!isPasswordValid) {
-            throw new Error(ErrorMessages.ADMIN.WRONG_PASSWORD);
-        }
+        if (!isPasswordValid) throw new Error(ErrorMessages.ADMIN.WRONG_PASSWORD);
 
-        // Generate both access and refresh tokens
+        // generate access and refresh tokens
         const accessToken = this._tokenService.generateAccess(admin.id!, UserRole.ADMIN);
         const refreshToken = this._tokenService.generateRefresh(admin.id!, UserRole.ADMIN);
-
-        // Store refresh token in Redis
+        
+        // store refresh token in redis
         await this._tokenService.storeRefreshToken(admin.id!, refreshToken);
 
         return AdminMapper.toLoginResponse(admin, accessToken, refreshToken);

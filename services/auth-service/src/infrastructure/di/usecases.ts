@@ -43,6 +43,8 @@ import { ChangePasswordUseCase } from "../../application/use-cases/user/profile-
 import { IChangePasswordUseCase } from "../../application/ports/user/profile-settings/IChangePasswordUseCase";
 import { UpdateProfileImageUseCase } from "../../application/use-cases/user/profile-settings/UpdateProfileImageUseCase";
 import { IUpdateProfileImageUseCase } from "../../application/ports/user/profile-settings/IUpdateProfileImageUseCase";
+import { IGetUserProfileUseCase } from "../../application/ports/isc/IGetUserProfileUseCase";
+import { IGetUserProfilesBatchUseCase } from "../../application/ports/isc/IGetUserProfilesBatchUseCase";
 
 //usecases will injected by auto via @inject
 //user
@@ -61,8 +63,9 @@ container.register<IGetUserProfileSettingsUseCase>("GetUserProfileSettingsUseCas
 container.register<IChangePasswordUseCase>("ChangePasswordUseCase", ChangePasswordUseCase);
 container.register<IUpdateProfileImageUseCase>("UpdateProfileImageUseCase", UpdateProfileImageUseCase);
 
-container.register("GetUserProfileUseCase", GetUserProfileUseCase);
-container.register("GetUserProfilesBatchUseCase", GetUserProfilesBatchUseCase);
+//inter ser-comm
+container.register<IGetUserProfileUseCase>("GetUserProfileUseCase", GetUserProfileUseCase);
+container.register<IGetUserProfilesBatchUseCase>("GetUserProfilesBatchUseCase", GetUserProfilesBatchUseCase);
 
 //admin
 container.registerSingleton<ILoginAdminUseCase>("LoginAdminUseCase",LoginAdminUseCase)
