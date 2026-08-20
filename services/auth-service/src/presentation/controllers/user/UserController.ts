@@ -32,12 +32,12 @@ import { IRefreshTokenUseCase } from "../../../application/ports/user/IRefreshTo
 import { ILogoutUserUseCase } from "../../../application/ports/user/ILogoutUserUseCase";
 import { IGetUserProfileUseCase } from "../../../application/ports/isc/IGetUserProfileUseCase";
 import { IGetUserProfilesBatchUseCase } from "../../../application/ports/isc/IGetUserProfilesBatchUseCase";
-import { IGetUserProfileSettingsUseCase } from "../../../application/ports/user/IGetUserProfileSettingsUseCase";
-import { IChangePasswordUseCase } from "../../../application/ports/user/IChangePasswordUseCase";
+import { IGetUserProfileSettingsUseCase } from "../../../application/ports/user/profile-settings/IGetUserProfileSettingsUseCase";
+import { IChangePasswordUseCase } from "../../../application/ports/user/profile-settings/IChangePasswordUseCase";
 
 // services
 import { ICloudinaryService } from "../../../domain/services/ICloudinaryService";
-import { IUpdateProfileImageUseCase } from "../../../application/ports/user/IUpdateProfileImageUseCase";
+import { IUpdateProfileImageUseCase } from "../../../application/ports/user/profile-settings/IUpdateProfileImageUseCase";
 
 
 @injectable()
@@ -293,9 +293,7 @@ export class UserController implements IUserController {
   }
 
   async updateProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
-
     try {
-
       const userId = req.headers["x-user-id"];
 
       if (!userId || typeof userId !== "string") {

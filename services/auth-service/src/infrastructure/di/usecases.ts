@@ -37,13 +37,12 @@ import { ResendOtpUseCase } from "../../application/use-cases/user/ResendOtpUseC
 import { IResendOtpUseCase } from "../../application/ports/user/IResendOtpUseCase";
 import { GetUserProfileUseCase } from "../../application/use-cases/isc/chat/GetUserProfileUseCase";
 import { GetUserProfilesBatchUseCase } from "../../application/use-cases/isc/chat/GetUserProfilesBatchUseCase";
-import { GetUserProfileSettingsUseCase } from "../../application/use-cases/user/GetUserProfileSettingsUseCase";
-import { IGetUserProfileSettingsUseCase } from "../../application/ports/user/IGetUserProfileSettingsUseCase";
-import { ChangePasswordUseCase } from "../../application/use-cases/user/ChangePasswordUseCase";
-import { IChangePasswordUseCase } from "../../application/ports/user/IChangePasswordUseCase";
-import { UpdateProfileImageUseCase } from "../../application/use-cases/user/UpdateProfileImageUseCase";
-import { IUpdateProfileImageUseCase } from "../../application/ports/user/IUpdateProfileImageUseCase";
-
+import { GetUserProfileSettingsUseCase } from "../../application/use-cases/user/profile-settings/GetUserProfileSettingsUseCase";
+import { IGetUserProfileSettingsUseCase } from "../../application/ports/user/profile-settings/IGetUserProfileSettingsUseCase";
+import { ChangePasswordUseCase } from "../../application/use-cases/user/profile-settings/ChangePasswordUseCase";
+import { IChangePasswordUseCase } from "../../application/ports/user/profile-settings/IChangePasswordUseCase";
+import { UpdateProfileImageUseCase } from "../../application/use-cases/user/profile-settings/UpdateProfileImageUseCase";
+import { IUpdateProfileImageUseCase } from "../../application/ports/user/profile-settings/IUpdateProfileImageUseCase";
 
 //usecases will injected by auto via @inject
 //user

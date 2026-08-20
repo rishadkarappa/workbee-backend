@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { IUpdateProfileImageUseCase } from "../../ports/user/IUpdateProfileImageUseCase";
-import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { UpdateProfileImageReqDTO, UpdateProfileImageResponseDTO } from "../../dtos/user/UserProfileImageUploadDTO";
-import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { IUpdateProfileImageUseCase } from "../../../ports/user/profile-settings/IUpdateProfileImageUseCase";
+import { IUserRepository } from "../../../../domain/repositories/IUserRepository";
+import { UpdateProfileImageReqDTO, UpdateProfileImageResponseDTO } from "../../../dtos/user/UserProfileImageUploadDTO";
+import { ErrorMessages } from "../../../../shared/constants/ErrorMessages";
 
 @injectable()
 export class UpdateProfileImageUseCase implements IUpdateProfileImageUseCase {

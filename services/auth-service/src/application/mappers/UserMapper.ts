@@ -56,6 +56,7 @@ export class UserMapper {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      userProfileImage : user.userProfileImage,
       createdAt : user.createdAt,
       updatedAt : user.updatedAt
     }

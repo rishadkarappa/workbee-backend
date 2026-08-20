@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import { IChangePasswordUseCase } from "../../ports/user/IChangePasswordUseCase";
-import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { ChangePasswordReqDTO, ChangePasswordResponseDTO } from "../../dtos/user/ChangePasswordDTO";
-import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-import { IHashService } from "../../../domain/services/IHashService";
+import { IChangePasswordUseCase } from "../../../ports/user/profile-settings/IChangePasswordUseCase";
+import { IUserRepository } from "../../../../domain/repositories/IUserRepository";
+import { ChangePasswordReqDTO, ChangePasswordResponseDTO } from "../../../dtos/user/ChangePasswordDTO";
+import { ErrorMessages } from "../../../../shared/constants/ErrorMessages";
+import { IHashService } from "../../../../domain/services/IHashService";
 
 @injectable()
 export class ChangePasswordUseCase implements IChangePasswordUseCase {

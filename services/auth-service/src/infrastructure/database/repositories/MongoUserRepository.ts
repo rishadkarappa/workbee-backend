@@ -20,6 +20,9 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             role: user.role,
             isVerified: user.isVerified,
             isBlocked: user.isBlocked,
+            userProfileImage: user.userProfileImage,
+            userProfileImagePublicId: user.userProfileImagePublicId,
+            
             createdAt: user.createdAt
         }
     }
@@ -85,16 +88,18 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
         }
     }
 
-    async saveNewPassword(userId:string, newHashedPassword:string):Promise<boolean> {
-        const result = await UserModel.updateOne({_id:userId},{$set:{password:newHashedPassword}})
+    async saveNewPassword(userId: string, newHashedPassword: string): Promise<boolean> {
+        const result = await UserModel.updateOne({ _id: userId }, { $set: { password: newHashedPassword } })
         return result.modifiedCount == 1
     }
 
     async updateProfileImage(userId: string, imageUrl: string, publicId: string): Promise<boolean> {
-        const result = await UserModel.findByIdAndUpdate(userId,{$set:{
-            userProfileImage:imageUrl,
-            userProfileImagePublicId:publicId
-        }},{new:true})
+        const result = await UserModel.findByIdAndUpdate(userId, {
+            $set: {
+                userProfileImage: imageUrl,
+                userProfileImagePublicId: publicId
+            }
+        }, { new: true })
         return !!result;
     }
 }

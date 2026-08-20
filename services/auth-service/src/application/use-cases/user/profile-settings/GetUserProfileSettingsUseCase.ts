@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import { IUserRepository } from "../../../domain/repositories/IUserRepository";
-import { IGetUserProfileSettingsUseCase } from "../../ports/user/IGetUserProfileSettingsUseCase";
-import { UserProfileSettingsResponseDto, UserProfileSettingsRequestDto } from "../../dtos/user/UserProfileSettingsDto";
-import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
-import { UserMapper } from "../../mappers/UserMapper";
+import { IUserRepository } from "../../../../domain/repositories/IUserRepository";
+import { IGetUserProfileSettingsUseCase } from "../../../ports/user/profile-settings/IGetUserProfileSettingsUseCase";
+import { UserProfileSettingsResponseDto, UserProfileSettingsRequestDto } from "../../../dtos/user/UserProfileSettingsDto";
+import { ErrorMessages } from "../../../../shared/constants/ErrorMessages";
+import { UserMapper } from "../../../mappers/UserMapper";
 
 @injectable()
 export class GetUserProfileSettingsUseCase implements IGetUserProfileSettingsUseCase {
