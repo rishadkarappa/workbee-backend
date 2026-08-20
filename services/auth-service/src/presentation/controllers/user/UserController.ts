@@ -266,9 +266,12 @@ export class UserController implements IUserController {
   async getProfileImageUploadSignature(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
 
-      if (!req.user) throw new Error(ErrorMessages.AUTH.UNAUTHORIZED)
+      const userId = req.headers["x-user-id"];
 
-      const userId = req.user.userId;
+      if (!userId || typeof userId !== "string") {
+        throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      }
+
       const folder = `workbee/profiles/${userId}`
       const { signature, timestamp } = this._cloudinaryService.generateUploadSignature({ folder })
 
@@ -276,7 +279,7 @@ export class UserController implements IUserController {
         signature,
         timestamp,
         apiKey: ENV.CLOUDINARY_API_KEY,
-        cloudeName: ENV.CLOUDINARY_CLOUD_NAME,
+        cloudName: ENV.CLOUDINARY_CLOUD_NAME,
         folder
       }
 
@@ -308,7 +311,7 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(result, ResponseMessage.USER.PROFILE_IMAGE_UPDATED))
-        
+
     } catch (error) {
       next(error);
     }
