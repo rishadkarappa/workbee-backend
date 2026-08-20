@@ -293,9 +293,7 @@ export class UserController implements IUserController {
 
     try {
 
-      if (!req.user) {
-        throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
-      }
+      if (!req.user) throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
 
       const { imageUrl, publicId } = req.body;
 
@@ -310,8 +308,7 @@ export class UserController implements IUserController {
       res
         .status(HttpStatus.OK)
         .json(ResponseHelper.success(result, ResponseMessage.USER.PROFILE_IMAGE_UPDATED))
-        .json({ success: result.isUpdated, message: "Profile image updated successfully" });
-
+        
     } catch (error) {
       next(error);
     }
