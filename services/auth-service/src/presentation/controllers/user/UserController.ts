@@ -294,9 +294,7 @@ export class UserController implements IUserController {
 
     try {
 
-        if (!req.user) {
-            throw new Error("Unauthorized access");
-        }
+        if (!req.user) throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
 
         const { imageUrl, publicId } = req.body;
 
