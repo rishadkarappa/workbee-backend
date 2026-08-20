@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { injectable } from 'tsyringe';
-import { ICloudinaryService, ICloudinaryUploadResult } from '../../domain/services/ICloudeService';
+import { ICloudinaryService } from '../../domain/services/ICloudeService';
 
 @injectable()
 export class CloudinaryService implements ICloudinaryService {
