@@ -247,6 +247,11 @@ export class UserController implements IUserController {
     }
   }
 
+  /**
+   * Profile Image Upload Signed URL Cloudinary
+   */
+  async 
+
 
   // ------- 
   /**
