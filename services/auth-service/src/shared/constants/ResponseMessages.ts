@@ -27,6 +27,7 @@ export const ResponseMessage = {
         USER_PROFILES_ARE_RETRIEVED:'User profiles are retrieved FROM auth service',
         GET_USER_PROFILE_DETAILS:'get user profile settings details successfully',
         CHANGE_PASS_SUCCESSFULLY:'CHANGED user password successfully',
+        GET_UPLOAD_SIGNATURE:'successfully got cloudinary upload signature',
     },
 
     ADMIN:{

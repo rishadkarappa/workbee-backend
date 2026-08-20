@@ -29,6 +29,8 @@ import { IUserController } from "../../ports/IUserContoller";
 import { UserProfileSettingsRequestDto } from "../../../application/dtos/user/UserProfileSettingsDto";
 import { IChangePasswordUseCase } from "../../../application/ports/user/IChangePasswordUseCase";
 import { ChangePasswordReqDTO } from "../../../application/dtos/user/ChangePasswordDTO";
+import { ICloudinaryService } from "../../../domain/services/ICloudinaryService";
+import { ENV } from "../../../infrastructure/config/env";
 
 @injectable()
 export class UserController implements IUserController {
@@ -47,6 +49,7 @@ export class UserController implements IUserController {
     @inject("GetUserProfilesBatchUseCase") private readonly _getUserProfilesBatchUseCase: IGetUserProfilesBatchUseCase,
     @inject("GetUserProfileSettingsUseCase") private readonly _getUserProfileSettingsUseCase: IGetUserProfileSettingsUseCase,
     @inject("ChangePasswordUseCase") private readonly _changePasswordUseCase: IChangePasswordUseCase,
+    @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -216,7 +219,7 @@ export class UserController implements IUserController {
       if (!userId || typeof userId !== "string") {
         throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
       }
-      const dto: UserProfileSettingsRequestDto = {userId}
+      const dto: UserProfileSettingsRequestDto = { userId }
       const resp = await this._getUserProfileSettingsUseCase.execute(dto)
       res
         .status(HttpStatus.OK)
@@ -250,7 +253,32 @@ export class UserController implements IUserController {
   /**
    * Profile Image Upload Signed URL Cloudinary
    */
-  async 
+
+  async getProfileImageUploadSignature(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+
+      if (!req.user) throw new Error(ErrorMessages.AUTH.UNAUTHORIZED)
+
+      const userId = req.user.userId;
+      const folder = `workbee/profiles/${userId}`
+      const { signature, timestamp } = this._cloudinaryService.generateUploadSignature({ folder })
+
+      const data = {
+        signature,
+        timestamp,
+        apiKey: ENV.CLOUDINARY_API_KEY,
+        cloudeName: ENV.CLOUDINARY_CLOUD_NAME,
+        folder
+      }
+
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(data, ResponseMessage.USER.GET_UPLOAD_SIGNATURE))
+        
+    } catch (error) {
+      next(error)
+    }
+  }
 
 
   // ------- 
