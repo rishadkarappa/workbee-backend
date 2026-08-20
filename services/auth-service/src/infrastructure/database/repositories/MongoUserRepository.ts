@@ -89,4 +89,12 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
         const result = await UserModel.updateOne({_id:userId},{$set:{password:newHashedPassword}})
         return result.modifiedCount == 1
     }
+
+    async updateProfileImage(userId: string, imageUrl: string, publicId: string): Promise<boolean> {
+        const result = await UserModel.findByIdAndUpdate(userId,{$set:{
+            userProfileImage:imageUrl,
+            userProfileImagePublicId:publicId
+        }},{new:true})
+        return !!result;
+    }
 }
