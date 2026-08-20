@@ -286,6 +286,40 @@ export class UserController implements IUserController {
     }
   }
 
+  async updateProfileImage(
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> {
+
+    try {
+
+        if (!req.user) {
+            throw new Error("Unauthorized access");
+        }
+
+        const { imageUrl, publicId } = req.body;
+
+        const result = await this._userRepository.updateProfileImage(
+            req.user.userId,
+            imageUrl,
+            publicId
+        );
+
+        if (!result) {
+            throw new Error("Failed to update profile image");
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Profile image updated successfully"
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 
   // ------- 
   /**
