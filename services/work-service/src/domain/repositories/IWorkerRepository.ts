@@ -10,7 +10,7 @@ export interface IWorkerRepository{
     getWorkersCount():Promise<number>;
     findByIds(ids: string[]): Promise<Worker[]>;
 
-    addReviewField(workerId:string):Promise<boolean>
+    // addReviewField(workerId:string):Promise<boolean>
 }
 
 

@@ -21,12 +21,5 @@ export class GetUserProfilesBatchUseCase implements IGetUserProfilesBatchUseCase
         const users = await this._userRepository.findByIds(userIds);
 
         return users.map(UserMapper.toUserProfileBatch);
-        
-        // return users.map(user => ({
-        //     id: user.id,        
-        //     name: user.name,
-        //     email: user.email,
-        //     role: user.role
-        // }));
     }
 }
