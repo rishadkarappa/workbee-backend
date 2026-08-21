@@ -4,6 +4,7 @@ import { Worker } from "../../../domain/entities/Worker";
 import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
 import { WorkerModel, WorkerDocument, WorkerStatus } from "../models/WorkerSchema";
 import mongoose, { FilterQuery } from "mongoose";
+import { addWorkerReviewReqDto } from "../../../application/dtos/worker/AddWorkerReviewClientReqDTO";
 
 @injectable()
 export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDocument> implements IWorkerRepository {
@@ -142,5 +143,19 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
   async getWorkersCount(): Promise<number> {
     const count = await WorkerModel.countDocuments({ status: WorkerStatus.APPROVED });
     return count;
+  }
+
+  async addReviewField(dto: addWorkerReviewReqDto): Promise<boolean> {
+
+    const addReview = await await WorkerModel.updateMany(
+      { _id: workerId },
+      {
+        $set: {
+          "review.rate": dto.rate,
+          "review.discrption": dto.disc
+        }
+      }
+    );
+
   }
 }
