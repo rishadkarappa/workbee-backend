@@ -23,7 +23,8 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     const token = authHeader.split(" ")[1];
     const payload = jwt.verify(token, ENV.JWT_SECRET) as IJwtPayload;
 
-    const userId = payload.userId || payload.id;
+    // const userId = payload.userId || payload.id;
+    const userId = payload.userId;
     const role = payload.role;
 
     // Check Redis blocklist — set by auth service when user/worker is blocked

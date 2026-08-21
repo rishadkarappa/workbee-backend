@@ -13,14 +13,32 @@ import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 export class TokenService implements ITokenService {
     private redis = RedisClient.getInstance();
 
-    generateAccess(id: string, role?: UserRole): string {
-        const payload = role ? { id, role } : { id };
-        return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: AUTH_CONFIG.ACCESS_TOKEN_EXPIRY });
-    }
+    // generateAccess(id: string, role?: UserRole): string {
+    //     const payload = role ? { id, role } : { id };
+    //     return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: AUTH_CONFIG.ACCESS_TOKEN_EXPIRY });
+    // }
 
-    generateRefresh(id: string, role?: UserRole): string {
-        const payload = role ? { id, role } : { id };
-        return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, { expiresIn: AUTH_CONFIG.REFRESH_TOKEN_EXPIRY });
+    // generateRefresh(id: string, role?: UserRole): string {
+    //     const payload = role ? { id, role } : { id };
+    //     return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, { expiresIn: AUTH_CONFIG.REFRESH_TOKEN_EXPIRY });
+    // }
+    generateAccess(userId: string, role?: UserRole): string {
+        const payload = role
+            ? { userId, role }
+            : { userId };
+
+        return jwt.sign(payload, ENV.JWT_SECRET, {
+            expiresIn: AUTH_CONFIG.ACCESS_TOKEN_EXPIRY
+        });
+    }
+    generateRefresh(userId: string, role?: UserRole): string {
+        const payload = role
+            ? { userId, role }
+            : { userId };
+
+        return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, {
+            expiresIn: AUTH_CONFIG.REFRESH_TOKEN_EXPIRY
+        });
     }
 
     verifyAccess(token: string): IJwtPayload {
@@ -40,7 +58,7 @@ export class TokenService implements ITokenService {
     }
 
     // redis
-    
+
     async storeRefreshToken(userId: string, token: string, expiresIn: number = AUTH_CONFIG.REFRESH_TOKEN_TTL): Promise<void> {
         const key = `refresh_token:${userId}`;
         await this.redis.setex(key, expiresIn, token);
@@ -60,5 +78,5 @@ export class TokenService implements ITokenService {
         const storedToken = await this.getRefreshToken(userId);
         return storedToken === token;
     }
-    
+
 }
