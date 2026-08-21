@@ -38,7 +38,7 @@ export class SocketGateway {
 
       try {
         const decoded = jwt.verify(token, ENV.JWT_SECRET) as IJwtPayload;
-        socket.userId = decoded.id || decoded.userId;
+        socket.userId = decoded.userId || decoded.id;
         socket.userRole = decoded.role;
         next();
       } catch (error) {
