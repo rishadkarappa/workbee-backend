@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 
+// usecases
 import { ScheduleWorkerPayoutUseCase } from '../../application/use-cases/worker/ScheduleWorkerPayoutUseCase';
 import { ReleaseWorkerPayoutUseCase } from '../../application/use-cases/worker/ReleaseWorkerPayoutUseCase';
 import { GetWalletUseCase } from '../../application/use-cases/wallet/GetWalletUseCase';
@@ -9,12 +10,20 @@ import { CreateRazorpayOrderUseCase } from '../../application/use-cases/payment/
 import { VerifyRazorpayPaymentUseCase } from '../../application/use-cases/payment/VerifyRazorpayPaymentUseCase';
 import { GetAdminPaymentsListUseCase } from '../../application/use-cases/admin/GetAdminPaymentsListUseCase';
 
-container.register("CreateRazorpayOrderUseCase", { useClass: CreateRazorpayOrderUseCase });
-container.register("VerifyRazorpayPaymentUseCase", { useClass: VerifyRazorpayPaymentUseCase });
-container.register("ScheduleWorkerPayoutUseCase", { useClass: ScheduleWorkerPayoutUseCase });
-container.register("ReleaseWorkerPayoutUseCase", { useClass: ReleaseWorkerPayoutUseCase });
-container.register("GetWalletUseCase", { useClass: GetWalletUseCase });
-container.register("GetAdminPaymentSummaryUseCase", { useClass: GetAdminPaymentSummaryUseCase });
-container.registerSingleton("GetAdminPaymentsListUseCase", GetAdminPaymentsListUseCase);
+// interfaces
+import { ICreateRazorpayOrderUseCase } from '../../application/ports/user/ICreateRazorpayOrderUseCase';
+import { IVerifyRazorpayPaymentUseCase } from '../../application/ports/payment/IVerifyRazorpayPaymentUseCase';
+import { IReleaseWorkerPayoutUseCase } from '../../application/ports/worker/IReleaseWorkerPayoutUseCase';
+import { IGetWalletUseCase } from '../../application/ports/wallet/IGetWalletUseCase';
+import { IGetAdminPaymentSummaryUseCase } from '../../application/ports/admin/IGetAdminPaymentSummaryUseCase';
+import { IGetAdminPaymentsListUseCase } from '../../application/ports/admin/IGetAdminPaymentsListUseCase';
+
+container.register<ICreateRazorpayOrderUseCase>("CreateRazorpayOrderUseCase", { useClass: CreateRazorpayOrderUseCase });
+container.register<IVerifyRazorpayPaymentUseCase>("VerifyRazorpayPaymentUseCase", { useClass: VerifyRazorpayPaymentUseCase });
+container.register<ScheduleWorkerPayoutUseCase>("ScheduleWorkerPayoutUseCase", { useClass: ScheduleWorkerPayoutUseCase });
+container.register<IReleaseWorkerPayoutUseCase>("ReleaseWorkerPayoutUseCase", { useClass: ReleaseWorkerPayoutUseCase });
+container.register<IGetWalletUseCase>("GetWalletUseCase", { useClass: GetWalletUseCase });
+container.register<IGetAdminPaymentSummaryUseCase>("GetAdminPaymentSummaryUseCase", { useClass: GetAdminPaymentSummaryUseCase });
+container.registerSingleton<IGetAdminPaymentsListUseCase>("GetAdminPaymentsListUseCase", GetAdminPaymentsListUseCase);
 
 export { container };
