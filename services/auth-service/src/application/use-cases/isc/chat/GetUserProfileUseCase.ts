@@ -16,13 +16,16 @@ export class GetUserProfileUseCase implements IGetUserProfileUseCase{
   ) {}
 
   async execute(userId: string):Promise<IUserProfile> {
+    
     const user = await this._userRepository.findById(userId);
+
     logger.info(user+'useresredre')
     if (!user) {  
       throw new Error(ErrorMessages.USER.NOT_FOUND);
     }
 
     return UserMapper.toUserProfile(user);
+    
     // return {
     //   id: user.id,
     //   name: user.name,
