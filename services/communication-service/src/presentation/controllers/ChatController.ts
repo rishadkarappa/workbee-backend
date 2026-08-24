@@ -47,7 +47,7 @@ export class ChatController implements IChatController {
       }
 
       const chats = await this._getUserChatsUseCase.execute({
-        userId: user.id,
+        userId: user.userId,
         role: user.role
       });
 

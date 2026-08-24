@@ -17,7 +17,7 @@ export class GetUserChatsUseCase implements IGetUserChatsUseCase {
   async execute(data: GetUserChatsDTO): Promise<Chat[]> {
     const { userId, role } = data;
 
-    const chats = role === 'user' ? await this._chatRepository.findByUserId(userId) : await this._chatRepository.findByWorkerId(userId);
+    const chats = role === UserRole.USER ? await this._chatRepository.findByUserId(userId) : await this._chatRepository.findByWorkerId(userId);
 
     const unreadMap = new Map<string, { userId: number; workerId: number }>();
     chats.forEach(c => {

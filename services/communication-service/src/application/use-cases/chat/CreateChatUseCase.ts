@@ -14,7 +14,13 @@ export class CreateChatUseCase implements ICreateChatUseCase {
   ) { }
 
   async execute(data: CreateChatDTO): Promise<Chat> {
+    
+    if (data.userId === data.workerId) {
+      throw new Error("User ID and Worker ID cannot be the same");
+    }
+
     const existingChat = await this._chatRepository.findByParticipants(data.userId, data.workerId);
+
 
     if (existingChat) {
       const userProfile = await this._cacheService.getUserProfile(data.userId);
