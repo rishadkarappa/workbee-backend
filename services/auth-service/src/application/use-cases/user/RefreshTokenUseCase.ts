@@ -17,6 +17,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     const { refreshToken } = data;
 
     let payload: IJwtPayload;
+    
     try {
       payload = this._tokenService.verifyRefresh(refreshToken);
     } catch {
