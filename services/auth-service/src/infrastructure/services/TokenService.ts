@@ -13,20 +13,17 @@ import { ErrorMessages } from '../../shared/constants/ErrorMessages';
 export class TokenService implements ITokenService {
     private redis = RedisClient.getInstance();
 
-    generateAccess(userId: string, role?: UserRole): string {
-        const payload = role ? { userId, role } : { userId };
-
-        return jwt.sign(payload, ENV.JWT_SECRET, {
+    generateAccess(userId: string, role: UserRole): string {
+        return jwt.sign({ userId, role }, ENV.JWT_SECRET, {
             expiresIn: AUTH_CONFIG.ACCESS_TOKEN_EXPIRY
         });
     }
 
-    generateRefresh(userId: string, role?: UserRole): string {
-        const payload = role ? { userId, role } : { userId };
-
-        return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, {
+    generateRefresh(userId: string, role: UserRole): string {
+        return jwt.sign({ userId, role }, ENV.JWT_REFRESH_SECRET, {
             expiresIn: AUTH_CONFIG.REFRESH_TOKEN_EXPIRY
-        });
+        }
+        );
     }
 
     verifyAccess(token: string): IJwtPayload {
