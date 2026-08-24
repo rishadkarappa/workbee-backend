@@ -53,7 +53,16 @@ export class VerifyRazorpayPaymentUseCase implements IVerifyRazorpayPaymentUseCa
         razorpayPaymentId: data.razorpayPaymentId,
       },
     });
-    await this.walletRepo.incrementTotalSpent(userWallet.id, payment.amount);
+    // await this.walletRepo.incrementTotalSpent(userWallet.id, payment.amount);
+    await this.walletRepo.incrementTotalSpent(
+  userWallet.id,
+  payment.amount
+);
+
+await this.walletRepo.updatePendingBalance(
+  userWallet.id,
+  payment.amount
+);
 
     const workerWallet = await this.walletRepo.findOrCreate(payment.workerId, "worker");
     await this.walletRepo.updatePendingBalance(workerWallet.id, payment.workerPayout);

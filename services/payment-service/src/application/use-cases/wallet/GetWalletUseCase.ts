@@ -12,9 +12,25 @@ export class GetWalletUseCase implements IGetWalletUseCase {
     @inject("TransactionRepository") private txRepo: ITransactionRepository
   ) {}
 
+  // async execute(data: GetWalletRequestDTO): Promise<WalletResponseDTO> {
+  //   const wallet = await this.walletRepo.findOrCreate(data.ownerId, data.role);
+  //   const transactions = await this.txRepo.findByWalletId(wallet.id);
+  //   return WalletMapper.toResponseDTO(wallet, transactions);
+  // }
   async execute(data: GetWalletRequestDTO): Promise<WalletResponseDTO> {
-    const wallet = await this.walletRepo.findOrCreate(data.ownerId, data.role);
-    const transactions = await this.txRepo.findByWalletId(wallet.id);
-    return WalletMapper.toResponseDTO(wallet, transactions);
-  }
+  console.log("GET WALLET DATA:", data);
+
+  const wallet = await this.walletRepo.findOrCreate(
+    data.ownerId,
+    data.role
+  );
+
+  console.log("WALLET FROM DB:", wallet);
+
+  const transactions = await this.txRepo.findByWalletId(wallet.id);
+
+  console.log("TRANSACTIONS:", transactions);
+
+  return WalletMapper.toResponseDTO(wallet, transactions);
+}
 }
