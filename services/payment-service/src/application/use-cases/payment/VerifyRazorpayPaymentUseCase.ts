@@ -5,7 +5,7 @@ import { IPaymentRepository } from "../../../domain/repositories/IPaymentReposit
 import { IWalletRepository } from "../../../domain/repositories/IWalletRepository";
 import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
 import { IVerifyRazorpayPaymentUseCase } from "../../ports/payment/IVerifyRazorpayPaymentUseCase";
-import { VerifyPaymentRequestDTO,VerifyPaymentResponseDTO } from "../../dtos/payment/VerifyPaymentDTO";
+import { VerifyPaymentRequestDTO, VerifyPaymentResponseDTO } from "../../dtos/payment/VerifyPaymentDTO";
 
 @injectable()
 export class VerifyRazorpayPaymentUseCase implements IVerifyRazorpayPaymentUseCase {
@@ -13,7 +13,7 @@ export class VerifyRazorpayPaymentUseCase implements IVerifyRazorpayPaymentUseCa
     @inject("PaymentRepository") private paymentRepo: IPaymentRepository,
     @inject("WalletRepository") private walletRepo: IWalletRepository,
     @inject("TransactionRepository") private txRepo: ITransactionRepository
-  ) {}
+  ) { }
 
   async execute(data: VerifyPaymentRequestDTO): Promise<VerifyPaymentResponseDTO> {
     const body = `${data.razorpayOrderId}|${data.razorpayPaymentId}`;
@@ -53,16 +53,10 @@ export class VerifyRazorpayPaymentUseCase implements IVerifyRazorpayPaymentUseCa
         razorpayPaymentId: data.razorpayPaymentId,
       },
     });
-    // await this.walletRepo.incrementTotalSpent(userWallet.id, payment.amount);
-    await this.walletRepo.incrementTotalSpent(
-  userWallet.id,
-  payment.amount
-);
 
-await this.walletRepo.updatePendingBalance(
-  userWallet.id,
-  payment.amount
-);
+    await this.walletRepo.incrementTotalSpent(userWallet.id,payment.amount);
+
+    await this.walletRepo.updatePendingBalance(userWallet.id,payment.amount);
 
     const workerWallet = await this.walletRepo.findOrCreate(payment.workerId, "worker");
     await this.walletRepo.updatePendingBalance(workerWallet.id, payment.workerPayout);
