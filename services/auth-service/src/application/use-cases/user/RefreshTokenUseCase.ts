@@ -23,7 +23,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
       throw new Error(ErrorMessages.AUTH.INVALID_REFRESH_TOKEN);
     }
 
-    const userId = payload.id;
+    const userId = payload.userId;
     const role = payload.role;
 
     const isValid = await this._tokenService.validateRefreshToken(userId, refreshToken);
@@ -31,13 +31,13 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
       throw new Error(ErrorMessages.AUTH.REFRESH_TOKEN_NOT_FOUND);
     }
 
-    if (role === "user") {
+    if (role === UserRole.USER) {
       const user = await this._userRepository.findById(userId);
       if (!user) throw new Error(ErrorMessages.USER.NOT_FOUND);
       if (!user.isVerified) throw new Error(ErrorMessages.USER.NOT_VERIFIED);
-      if (user.isBlocked) throw new Error("User is blocked");
+      if (user.isBlocked) throw new Error(ErrorMessages.USER.BLOCKED);
 
-    } else if (role === "admin") {
+    } else if (role === UserRole.ADMIN) {
       const admin = await this._userRepository.findById(userId);
       if (!admin) throw new Error(ErrorMessages.USER.NOT_FOUND);
 
