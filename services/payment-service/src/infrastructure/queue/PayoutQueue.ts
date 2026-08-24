@@ -11,7 +11,7 @@ const REDIS_CONNECTION = {
 };
 
 const QUEUE_NAME = "worker-payout";
-const DELAY_MS   = 60 * 1000; // change later
+const DELAY_MS = 60 * 1000; //change later : now 1 minute for test
 
 let payoutQueue: Queue | null = null;
 let payoutWorker: Worker | null = null;
@@ -22,10 +22,10 @@ export const getPayoutQueue = (): Queue => {
     payoutQueue = new Queue(QUEUE_NAME, {
       connection: REDIS_CONNECTION,
       defaultJobOptions: {
-        attempts:    3,
-        backoff:     { type: "exponential", delay: 5000 },
+        attempts: 3,
+        backoff: { type: "exponential", delay: 5000 },
         removeOnComplete: 100,
-        removeOnFail:     50,
+        removeOnFail: 50,
       },
     });
     logger.info("[PayoutQueue] Queue created");
@@ -35,31 +35,59 @@ export const getPayoutQueue = (): Queue => {
 
 export const scheduleWorkerPayout = async (paymentId: string): Promise<void> => {
   const queue = getPayoutQueue();
-  await queue.add( "release-payout", { paymentId }, { delay: DELAY_MS });
+  await queue.add("release-payout", { paymentId }, { delay: DELAY_MS });
   logger.info(`[PayoutQueue] Scheduled payout for payment ${paymentId} in 1 hour`);
 };
 
 // Worker (consumer)
 export const startPayoutWorker = (): void => {
-  payoutWorker = new Worker( QUEUE_NAME,
+  payoutWorker = new Worker(
+    QUEUE_NAME,
+
     async (job: Job) => {
       const { paymentId } = job.data;
-      logger.info(`[PayoutWorker] Processing payout for payment ${paymentId}`);
 
-      const releaseUseCase = container.resolve(ReleaseWorkerPayoutUseCase);
-      await releaseUseCase.execute(paymentId);
+      logger.info(
+        `[PayoutWorker] Processing payout for payment ${paymentId}`
+      );
 
-      logger.info(`[PayoutWorker] Payout complete for payment ${paymentId}`);
-    }, { connection: REDIS_CONNECTION, concurrency: 5 }
+      try {
+        const releaseUseCase =
+          container.resolve(ReleaseWorkerPayoutUseCase);
+
+        await releaseUseCase.execute({ paymentId });
+
+        logger.info(
+          `[PayoutWorker] Payout complete for payment ${paymentId}`
+        );
+      } catch (error) {
+        logger.error(
+          `[PayoutWorker] Failed payout for payment ${paymentId}`
+        );
+
+        console.error(error);
+
+        throw error;
+      }
+    },
+
+    {
+      connection: REDIS_CONNECTION,
+      concurrency: 5,
+    }
   );
 
   payoutWorker.on("completed", (job) => {
-    logger.info(`[PayoutWorker] Job ${job.id} completed`);
+    logger.info(
+      `[PayoutWorker] Job ${job.id} completed`
+    );
   });
 
   payoutWorker.on("failed", (job, err) => {
     logger.error(`[PayoutWorker] Job ${job?.id} failed:`, err.message);
   });
 
-  logger.info("[PayoutWorker] Worker started, listening for payout jobs");
+  logger.info(
+    "[PayoutWorker] Worker started, listening for payout jobs"
+  );
 };
