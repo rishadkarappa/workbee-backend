@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { logger } from "../logger/logger";
 import { ChangeWorkerPasswordResponseRMQDTO } from "../../application/dtos/worker/RMQ/ChangeWorkerPasswordRMQDTO";
 
-export class WorkerPasswordClient {
+export class WorkerChangePasswordClient {
 
     private readonly REQUEST_QUEUE = "worker.change-password.request";
     private readonly RESPONSE_QUEUE = "worker.change-password.response";
