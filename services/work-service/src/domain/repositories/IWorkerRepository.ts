@@ -9,6 +9,8 @@ export interface IWorkerRepository{
 
     getWorkersCount():Promise<number>;
     findByIds(ids: string[]): Promise<Worker[]>;
+    
+    updateProfileImage(userId:string, imageUrl:string, publicId:string):Promise<boolean>;
 
     // addReviewField(workerId:string):Promise<boolean>
 }

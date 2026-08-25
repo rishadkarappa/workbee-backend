@@ -31,4 +31,9 @@ router.post('/get-worker-profile/batch', workController.getWorkerProfilesBatch.b
 
 router.get('/worker-assigned-works', workController.getWorkerAssignedWorks.bind(workController));
 
+// worker prifile settings
+router.get("/worker/profile",workController.getWorkerProfileSettings.bind(workController));
+router.get("/worker/profile-image/upload-signature",workController.getWorkerProfileImageUploadSignature.bind(workController));
+router.patch("/worker/profile-image",workController.updateWorkerProfileImage.bind(workController));
+
 export default router

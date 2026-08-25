@@ -20,4 +20,9 @@ export const ENV = {
   LOGSTASH_HOST: getEnvVariable("LOGSTASH_HOST"),
   LOGSTASH_PORT: getEnvVariable("LOGSTASH_PORT"),
   MONGO_URI: getEnvVariable("MONGO_URI"),
+
+  // cloudinary 
+  CLOUDINARY_CLOUD_NAME: getEnvVariable("CLOUDINARY_CLOUD_NAME"),
+  CLOUDINARY_API_KEY: getEnvVariable("CLOUDINARY_API_KEY"),
+  CLOUDINARY_API_SECRET: getEnvVariable("CLOUDINARY_API_SECRET"),
 };

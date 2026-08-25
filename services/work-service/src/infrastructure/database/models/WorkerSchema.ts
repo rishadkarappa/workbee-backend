@@ -2,16 +2,16 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 
 export enum WorkerStatus {
   PENDING = "pending",
-  APPROVED = "approved", 
+  APPROVED = "approved",
   REJECTED = "rejected"
 }
 
 export interface WorkerDocument extends Document {
-  _id: Types.ObjectId; 
+  _id: Types.ObjectId;
   name: string;
   email: string;
   phone: string;
-  password:string;
+  password: string;
   location: string;
   workType: string;
   preferredWorks: string[];
@@ -20,11 +20,13 @@ export interface WorkerDocument extends Document {
     honest: boolean;
     termsAccepted: boolean;
   };
-  isBlocked:boolean;
-  status:WorkerStatus;
-  rejectionReason?: string; 
-  rejectedAt?: Date; 
-  canReapply?: boolean; 
+  workerProfileImage?: string;
+  workerProfileImagePublicId?: string;
+  isBlocked: boolean;
+  status: WorkerStatus;
+  rejectionReason?: string;
+  rejectedAt?: Date;
+  canReapply?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,7 +35,7 @@ const WorkerSchema = new Schema<WorkerDocument>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true },
-  password: { type: String, required:true},
+  password: { type: String, required: true },
   location: { type: String, required: true },
   workType: { type: String, required: true },
   preferredWorks: { type: [String], required: true },
@@ -42,11 +44,23 @@ const WorkerSchema = new Schema<WorkerDocument>({
     honest: { type: Boolean, required: true },
     termsAccepted: { type: Boolean, required: true },
   },
-  isBlocked:{ type:Boolean, default:false},
-  status:{
-    type:String,
-    enum:Object.values(WorkerStatus),
-    default:WorkerStatus.PENDING
+  isBlocked: { type: Boolean, default: false },
+
+  workerProfileImage: {
+    type: String,
+    required: false
+  },
+
+  workerProfileImagePublicId: {
+    type: String,
+    required: false
+  },
+
+
+  status: {
+    type: String,
+    enum: Object.values(WorkerStatus),
+    default: WorkerStatus.PENDING
   },
   rejectionReason: { type: String },
   rejectedAt: { type: Date },

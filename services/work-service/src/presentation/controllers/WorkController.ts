@@ -27,6 +27,10 @@ import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 import { GetAllWorksFilterDto } from "../../application/dtos/work/GetAllWorksFilterDto";
 import { WorkUploadFiles } from "../types/WorkUploadFiles";
 import { logger } from "../../infrastructure/logger/logger";
+import { ENV } from "../../infrastructure/config/env";
+import { UpdateWorkerProfileImageUseCase } from "../../application/use-case/worker/profile-settings/UpdateWorkerProfileImageUseCase";
+import { GetWorkerProfileSettingsUseCase } from "../../application/use-case/worker/profile-settings/GetWorkerProfileUseCase";
+import { ICloudinaryService } from "../../domain/services/ICloudinaryService";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -45,6 +49,10 @@ export class WorkController implements IWorkController {
         @inject("GetWorkerProfileUseCase") private readonly _getWorkerProfileUseCase: IGetWorkerProfileUseCase,
         @inject("GetWorkerProfilesBatchUseCase") private readonly _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
         @inject("GetWorkerAssignedWorksUseCase") private readonly _getWorkerAssignedWorksUseCase: IGetWorkerAssignedWorksUseCase,
+
+        @inject("UpdateWorkerProfileImageUseCase") private readonly _updateWorkerProfileImageUseCase: UpdateWorkerProfileImageUseCase,
+        @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: GetWorkerProfileSettingsUseCase,
+        @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
     ) { }
 
     async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -321,15 +329,15 @@ export class WorkController implements IWorkController {
     }
 
 
-    async getWorkerProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getWorkerProfileSettings(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = req.headers["x-user-id"];
+            const workerId = req.headers["x-user-id"];
 
-            if (!userId || typeof userId !== "string") {
+            if (!workerId || typeof workerId !== "string") {
                 throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
             }
 
-            const result = await this._getWorkerProfileUseCase.execute({ userId });
+            const result = await this._getWorkerProfileSettingsUseCase.execute({ workerId });
 
             res
                 .status(HttpStatus.OK)
@@ -342,13 +350,13 @@ export class WorkController implements IWorkController {
     async getWorkerProfileImageUploadSignature(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
-            const userId = req.headers["x-user-id"];
+            const workerId = req.headers["x-user-id"];
 
-            if (!userId || typeof userId !== "string") {
+            if (!workerId || typeof workerId !== "string") {
                 throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
             }
 
-            const folder = `workbee/worker-profiles/${userId}`;
+            const folder = `workbee/worker-profiles/${workerId}`;
 
             const { signature, timestamp } = this._cloudinaryService.generateUploadSignature({ folder, });
 
@@ -369,6 +377,28 @@ export class WorkController implements IWorkController {
         }
     }
 
+
+    async updateWorkerProfileImage(req: Request,res: Response,next: NextFunction): Promise<void> {
+        try {
+
+            const workerId = req.headers["x-user-id"];
+
+            if (!workerId || typeof workerId !== "string") {
+                throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+            }
+
+            const { imageUrl, publicId } = req.body;
+
+            const result = await this._updateWorkerProfileImageUseCase.execute({ workerId, imageUrl, publicId, });
+
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(result, "Worker profile image updated successfully"));
+
+        } catch (error) {
+            next(error);
+        }
+    }
 
     /** ==========================================================
      * inter ser comm with chat

@@ -14,10 +14,15 @@ export interface Worker {
         honest: boolean;
         termsAccepted: boolean;
     };
-    status:WorkerStatus;
+
+    status: WorkerStatus;
     rejectionReason?: string;
     rejectedAt?: Date;
-    canReapply?: boolean; 
+    canReapply?: boolean;
+
+    workerProfileImage?: string;
+    workerProfileImagePublicId?: string;
+
     isBlocked?: boolean;
     createdAt?: Date;
     updatedAt?: Date;

@@ -145,6 +145,16 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     return count;
   }
 
+  async updateProfileImage(workerId: string, imageUrl: string, publicId: string): Promise<boolean> {
+        const result = await WorkerModel.findByIdAndUpdate(workerId, {
+            $set: {
+                userProfileImage: imageUrl,
+                userProfileImagePublicId: publicId
+            }
+        }, { new: true })
+        return !!result;
+    }
+
   // async addReviewField(dto: addWorkerReviewReqDto): Promise<boolean> {
 
   //   const addReview = await await WorkerModel.updateMany(

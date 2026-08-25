@@ -37,6 +37,7 @@ export const ErrorMessages = {
         WORKER_NOT_FOUND: "Worker not found",
         WORKER_NOT_FOUND_TO_BLOCK: "Worker not found to block",
         WORKER_ID_REQUIRED: "Worker ID is required",
+        FAILED_TO_UPDATE_PROFILE_IMAGE: "failed to update profile image",
     },
     WORK: {
         WRONG_WORK_ID: 'wrong work id',

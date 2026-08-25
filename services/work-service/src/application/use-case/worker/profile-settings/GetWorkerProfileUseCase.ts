@@ -4,30 +4,30 @@ import { ErrorMessages } from "../../../../shared/constants/ErrorMessages";
 
 
 @injectable()
-export class GetWorkerProfileUseCase {
+export class GetWorkerProfileSettingsUseCase {
     constructor(
         @inject("IWorkerRepository")
         private readonly workerRepository: IWorkerRepository
     ) { }
 
-    async execute(dto: {userId: string;}) {
+    async execute(dto: {workerId: string;}) {
 
-        const worker = await this.workerRepository.findById(dto.userId);
+        const worker = await this.workerRepository.findById(dto.workerId);
 
         if (!worker) {
             throw new Error(ErrorMessages.WORKER.WORKER_NOT_FOUND);
         }
 
         return {
-            id: worker._id,
+            id: worker.id,
             name: worker.name,
             email: worker.email,
             phone: worker.phone,
             location: worker.location,
             workType: worker.workType,
             preferredWorks: worker.preferredWorks,
-            profileImage: worker.profileImage,
-            profileImagePublicId: worker.profileImagePublicId,
+            workerProfileImage: worker.workerProfileImage,
+            workerProfileImagePublicId: worker.workerProfileImagePublicId,
             createdAt: worker.createdAt,
         };
     }
