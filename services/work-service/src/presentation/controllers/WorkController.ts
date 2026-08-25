@@ -53,6 +53,8 @@ export class WorkController implements IWorkController {
         @inject("UpdateWorkerProfileImageUseCase") private readonly _updateWorkerProfileImageUseCase: UpdateWorkerProfileImageUseCase,
         @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: GetWorkerProfileSettingsUseCase,
         @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
+
+        
     ) { }
 
     async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {

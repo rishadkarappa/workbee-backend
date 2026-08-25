@@ -28,6 +28,10 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       rejectionReason: worker.rejectionReason,
       rejectedAt: worker.rejectedAt,
       canReapply: worker.canReapply,
+
+      workerProfileImage: worker.workerProfileImage,
+      workerProfileImagePublicId: worker.workerProfileImagePublicId,
+
       createdAt: worker.createdAt,
       updatedAt: worker.updatedAt
     }
@@ -146,14 +150,19 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
   }
 
   async updateProfileImage(workerId: string, imageUrl: string, publicId: string): Promise<boolean> {
-        const result = await WorkerModel.findByIdAndUpdate(workerId, {
-            $set: {
-                userProfileImage: imageUrl,
-                userProfileImagePublicId: publicId
-            }
-        }, { new: true })
-        return !!result;
-    }
+    const result = await WorkerModel.findByIdAndUpdate(
+      workerId,
+      {
+        $set: {
+          workerProfileImage: imageUrl,
+          workerProfileImagePublicId: publicId
+        }
+      },
+      { new: true }
+    );
+
+    return !!result;
+  }
 
   // async addReviewField(dto: addWorkerReviewReqDto): Promise<boolean> {
 

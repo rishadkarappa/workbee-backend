@@ -6,13 +6,12 @@ import { ErrorMessages } from "../../../../shared/constants/ErrorMessages";
 @injectable()
 export class GetWorkerProfileSettingsUseCase {
     constructor(
-        @inject("IWorkerRepository")
-        private readonly workerRepository: IWorkerRepository
+        @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository
     ) { }
 
     async execute(dto: {workerId: string;}) {
 
-        const worker = await this.workerRepository.findById(dto.workerId);
+        const worker = await this._workerRepository.findById(dto.workerId);
 
         if (!worker) {
             throw new Error(ErrorMessages.WORKER.WORKER_NOT_FOUND);

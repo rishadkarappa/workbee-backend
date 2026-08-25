@@ -9,7 +9,12 @@ import { IFileUploadService } from "../../domain/services/IFileUploadService";
 import { FileUploadService } from "../services/FileUploadService";
 import { IEmailService } from "../../domain/services/IEmailService";
 import { EmailService } from "../services/EmailService";
+import { CloudinaryService } from "../services/CloudinaryService";
+import { ICloudinaryService } from "../../domain/services/ICloudinaryService";
 
 container.registerSingleton<IHashService>("HashService",HashService)
 container.registerSingleton<IFileUploadService>("FileUploadService",FileUploadService)
 container.registerSingleton<IEmailService>("EmailService",EmailService)
+
+//cloudinary
+container.registerSingleton<ICloudinaryService>("CloudinaryService",CloudinaryService)
