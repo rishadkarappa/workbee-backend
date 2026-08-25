@@ -321,7 +321,7 @@ export class WorkController implements IWorkController {
     }
 
 
-    async getWorkerProfile(req: Request,res: Response,next: NextFunction): Promise<void> {
+    async getWorkerProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.headers["x-user-id"];
 
@@ -329,11 +329,41 @@ export class WorkController implements IWorkController {
                 throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
             }
 
-            const result =await this._getWorkerProfileUseCase.execute({userId});
+            const result = await this._getWorkerProfileUseCase.execute({ userId });
 
             res
                 .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result,"Worker profile fetched successfully",HttpStatus.OK));
+                .json(ResponseHelper.success(result, "Worker profile fetched successfully", HttpStatus.OK));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getWorkerProfileImageUploadSignature(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+
+            const userId = req.headers["x-user-id"];
+
+            if (!userId || typeof userId !== "string") {
+                throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+            }
+
+            const folder = `workbee/worker-profiles/${userId}`;
+
+            const { signature, timestamp } = this._cloudinaryService.generateUploadSignature({ folder, });
+
+            const data = {
+                signature,
+                timestamp,
+                apiKey: ENV.CLOUDINARY_API_KEY,
+                cloudName: ENV.CLOUDINARY_CLOUD_NAME,
+                folder,
+            };
+
+            res
+                .status(HttpStatus.OK)
+                .json(ResponseHelper.success(data, "Worker upload signature generated"));
+
         } catch (error) {
             next(error);
         }
