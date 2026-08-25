@@ -7,5 +7,6 @@ const router = Router();
 const workerController = container.resolve(WorkerController);
 
 router.post("/worker-login", workerController.workerLogin.bind(workerController));
+router.post("/change-worker-password", workerController.changeWorkerPassword.bind(workerController));
 
 export default router;

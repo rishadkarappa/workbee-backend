@@ -10,13 +10,13 @@ import { IWorkerController } from "../../ports/IWorkerController";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 
 @injectable()
-export class WorkerController implements IWorkerController{
+export class WorkerController implements IWorkerController {
     constructor(
         @inject("WorkerLoginUseCase") private readonly _workerLoginUseCase: IWorkerLoginUseCase,
 
-    ){}
+    ) { }
 
-    async workerLogin(req: Request, res: Response, next:NextFunction):Promise<void> {
+    async workerLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const dto: WorkerLoginRequestDTO = req.body;
 
@@ -24,6 +24,15 @@ export class WorkerController implements IWorkerController{
 
             res.status(HttpStatus.OK)
                 .json(ResponseHelper.success(worker, ResponseMessage.AUTH.WORKER_LOGGED));
+        } catch (err) {
+            next(err)
+        }
+    }
+
+
+    async changeWorkerPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            
         } catch (err) {
             next(err)
         }
