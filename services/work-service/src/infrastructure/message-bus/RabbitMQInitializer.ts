@@ -2,6 +2,7 @@ import { container } from 'tsyringe';
 import { RabbitMQConnection } from '../config/rabbitmq';
 import { WorkerValidationConsumer } from './WorkerValidationConsumer';
 import { logger } from '../logger/logger';
+import { WorkerChangePasswordConsumer } from './WorkerChangePasswordConsumer';
 
 export class RabbitMQInitializer {
     private static isInitialized = false;
@@ -18,11 +19,19 @@ export class RabbitMQInitializer {
 
             const channel = await RabbitMQConnection.getChannel();
 
-            // consumers
+            // consumers --------------
+
             // Start Worker Validation Consumer
             const workerValidationConsumer = container.resolve(WorkerValidationConsumer);
             await workerValidationConsumer.start(channel);
             logger.info('- Worker Validation Consumer started');
+
+
+            //  Worker Change Password
+            const workerChangePasswordConsumer =container.resolve(WorkerChangePasswordConsumer);
+            await workerChangePasswordConsumer.start(channel);
+            logger.info('- Worker Change Password Consumer started');
+
 
 
             this.isInitialized = true;
@@ -36,3 +45,4 @@ export class RabbitMQInitializer {
 
 export { RabbitMQConnection } from '../config/rabbitmq';
 export { WorkerValidationConsumer } from './WorkerValidationConsumer';
+export { WorkerChangePasswordConsumer } from './WorkerChangePasswordConsumer';

@@ -45,6 +45,8 @@ import { UpdateProfileImageUseCase } from "../../application/use-cases/user/prof
 import { IUpdateProfileImageUseCase } from "../../application/ports/user/profile-settings/IUpdateProfileImageUseCase";
 import { IGetUserProfileUseCase } from "../../application/ports/isc/IGetUserProfileUseCase";
 import { IGetUserProfilesBatchUseCase } from "../../application/ports/isc/IGetUserProfilesBatchUseCase";
+import { ChangeWorkerPasswordUseCasen } from "../../application/use-cases/worker/ChangeWorkerPasswordUseCase";
+import { IChangeWorkerPasswordUseCase } from "../../application/ports/worker/IChangeWorkerPasswordUseCase";
 
 //usecases will injected by auto via @inject
 //user
@@ -66,6 +68,8 @@ container.register<IUpdateProfileImageUseCase>("UpdateProfileImageUseCase", Upda
 //inter ser-comm
 container.register<IGetUserProfileUseCase>("GetUserProfileUseCase", GetUserProfileUseCase);
 container.register<IGetUserProfilesBatchUseCase>("GetUserProfilesBatchUseCase", GetUserProfilesBatchUseCase);
+container.register<IChangeWorkerPasswordUseCase>("ChangeWorkerPasswordUseCase", ChangeWorkerPasswordUseCasen);
+
 
 //admin
 container.registerSingleton<ILoginAdminUseCase>("LoginAdminUseCase",LoginAdminUseCase)

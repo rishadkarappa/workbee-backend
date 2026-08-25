@@ -164,6 +164,10 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     return !!result;
   }
 
+  async updatePassword(workerId: string, hashedPassword: string): Promise<void> {
+    await WorkerModel.findByIdAndUpdate(workerId, { password: hashedPassword });
+  }
+
   // async addReviewField(dto: addWorkerReviewReqDto): Promise<boolean> {
 
   //   const addReview = await await WorkerModel.updateMany(
