@@ -2,13 +2,14 @@ import { Channel } from "amqplib";
 import { v4 as uuidv4 } from "uuid";
 import { logger } from "../logger/logger";
 import { ChangeWorkerPasswordResponseRMQDTO } from "../../application/dtos/worker/RMQ/ChangeWorkerPasswordRMQDTO";
+import { IWorkerChangePasswordClient } from "../../application/ports/message-bus/IWorkerChangePasswordClient";
 
 /**
  * inter service communication
  * - worker change password time want to check the password is corruct or no in work service
  */
 
-export class WorkerChangePasswordClient {
+export class WorkerChangePasswordClient implements IWorkerChangePasswordClient {
 
     private readonly REQUEST_QUEUE = "worker.change-password.request";
     private readonly RESPONSE_QUEUE = "worker.change-password.response";
