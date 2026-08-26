@@ -7,9 +7,10 @@ import { Channel } from 'amqplib';
 import { v4 as uuidv4 } from 'uuid';
 import { WorkerLoginResponseRMQDTO } from '../../application/dtos/worker/WorkerLoginRMQDTO';
 import { logger } from '../logger/logger';
+import { IWorkerValidationClient } from '../../application/ports/message-bus/IWorkerValidationClient';
 
 
-export class WorkerValidationClient {
+export class WorkerValidationClient implements IWorkerValidationClient{
     private readonly REQUEST_QUEUE = 'worker.validate.request';
     private readonly RESPONSE_QUEUE = 'worker.validate.response';
     private readonly TIMEOUT = 10000; // 10 seconds
