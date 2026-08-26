@@ -47,6 +47,8 @@ import { IGetUserProfileUseCase } from "../../application/ports/isc/IGetUserProf
 import { IGetUserProfilesBatchUseCase } from "../../application/ports/isc/IGetUserProfilesBatchUseCase";
 import { ChangeWorkerPasswordUseCase } from "../../application/use-cases/worker/ChangeWorkerPasswordUseCase";
 import { IChangeWorkerPasswordUseCase } from "../../application/ports/worker/IChangeWorkerPasswordUseCase";
+import { IGetUserProfileStatUseCase } from "../../application/ports/worker/IGetUserProfileStatUseCase";
+import { GetUserProfileStatUseCase } from "../../application/use-cases/worker/GetUserWorkStatsUseCase";
 
 //usecases will injected by auto via @inject
 //user
@@ -78,3 +80,4 @@ container.registerSingleton<IBlockUserUseCase>("BlockUserUseCase",BlockUserUseCa
 
 //worker
 container.registerSingleton<IWorkerLoginUseCase>("WorkerLoginUseCase",WorkerLoginUseCase)
+container.registerSingleton<IGetUserProfileStatUseCase>("GetUserProfileStatUseCase",GetUserProfileStatUseCase)

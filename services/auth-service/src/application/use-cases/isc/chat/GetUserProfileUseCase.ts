@@ -19,7 +19,8 @@ export class GetUserProfileUseCase implements IGetUserProfileUseCase{
     
     const user = await this._userRepository.findById(userId);
 
-    logger.info(user+'useresredre')
+    // logger.info(user+'useresredre')
+
     if (!user) {  
       throw new Error(ErrorMessages.USER.NOT_FOUND);
     }

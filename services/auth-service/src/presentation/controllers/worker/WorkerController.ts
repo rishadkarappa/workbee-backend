@@ -10,12 +10,14 @@ import { IWorkerController } from "../../ports/IWorkerController";
 import { ResponseMessage } from "../../../shared/constants/ResponseMessages";
 import { IChangeWorkerPasswordUseCase } from "../../../application/ports/worker/IChangeWorkerPasswordUseCase";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { IGetUserProfileStatUseCase } from "../../../application/ports/worker/IGetUserProfileStatUseCase";
 
 @injectable()
 export class WorkerController implements IWorkerController {
     constructor(
         @inject("WorkerLoginUseCase") private readonly _workerLoginUseCase: IWorkerLoginUseCase,
         @inject("ChangeWorkerPasswordUseCase") private readonly _changeWorkerPasswordUseCase: IChangeWorkerPasswordUseCase,
+        @inject("GetUserProfileStatUseCase") private readonly _getUserProfileStatUseCase: IGetUserProfileStatUseCase,
 
     ) { }
 
@@ -36,7 +38,7 @@ export class WorkerController implements IWorkerController {
     async changeWorkerPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const workerId = req.headers["x-user-id"];
-            
+
             if (!workerId || typeof workerId !== "string") {
                 throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
             }
@@ -48,6 +50,27 @@ export class WorkerController implements IWorkerController {
                 .status(HttpStatus.OK)
                 .json(ResponseHelper.success(null, "Password changed successfully"));
 
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getUserProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { userId } = req.params;
+
+            if (typeof userId !== 'string') {
+                res.status(HttpStatus.BAD_REQUEST).json(
+                    ResponseHelper.error(ErrorMessages.USER.WRONG_USER_ID, HttpStatus.BAD_REQUEST)
+                );
+                return;
+            }
+
+            const profile = await this._getUserProfileStatUseCase.execute({ userId });
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(profile, "User profile retrieved")
+            );
         } catch (err) {
             next(err);
         }

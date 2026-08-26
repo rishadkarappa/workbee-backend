@@ -15,6 +15,7 @@ export const ErrorMessages = {
             WRON_CURRENT_PASS:"you provided current password was wrong",
             FAILED_TO_UPDATE_PROFILE_IMAGE:"Failed to update profile image",
             BLOCKED:"User is blocked",
+            WRONG_USER_ID:"wrong user id",
     },
 
     AUTH:{
@@ -45,6 +46,9 @@ export const ErrorMessages = {
         INTERNAL_SERVER_ERROR:"something went wrong, Internal server error accured",
         BAD_REQUEST:"Invalid request",
         NOT_FOUND_OTP:'user not found when sent otp'
+    },
+    WORK:{
+        WRONG_WORK_ID:"wrong work id"
     }
 
 
