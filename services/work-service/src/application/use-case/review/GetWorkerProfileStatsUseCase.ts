@@ -4,9 +4,10 @@ import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { IReviewRepository } from "../../../domain/repositories/IReviewRepository";
 import { WorkerProfileStatsResponseDto } from "../../dtos/review/ReviewDTO";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { IGetWorkerProfileStatsUseCase } from "../../ports/review/IGetWorkerProfileStatsUseCase";
 
 @injectable()
-export class GetWorkerProfileStatsUseCase {
+export class GetWorkerProfileStatsUseCase implements IGetWorkerProfileStatsUseCase{
   constructor(
     @inject("WorkerRepository") private readonly _workerRepository: IWorkerRepository,
     @inject("WorkRepository") private readonly _workRepository: IWorkRepository,

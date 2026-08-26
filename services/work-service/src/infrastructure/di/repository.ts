@@ -7,5 +7,7 @@ import { IReviewRepository } from "../../domain/repositories/IReviewRepository";
 import { MongoReviewRepository } from "../database/repositories/MongoReviewRepository";
 
 container.register<IWorkerRepository>("WorkerRepository", { useClass: MongoWorkerRepository })
+
 container.register<IWorkRepository>("WorkRepository", { useClass: MongoWorkRepository })
+
 container.registerSingleton<IReviewRepository>("ReviewRepository", MongoReviewRepository);

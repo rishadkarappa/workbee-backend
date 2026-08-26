@@ -33,6 +33,11 @@ import { UpdateWorkerProfileImageUseCase } from "../../application/use-case/work
 import { CreateReviewUseCase } from "../../application/use-case/review/CreateReviewUseCase";
 import { CheckReviewExistsUseCase } from "../../application/use-case/review/CheckReviewExistsUseCase";
 import { GetWorkerProfileStatsUseCase } from "../../application/use-case/review/GetWorkerProfileStatsUseCase";
+import { ICreateReviewUseCase } from "../../application/ports/review/ICreateReviewUseCase";
+import { ICheckReviewExistsUseCase } from "../../application/ports/review/ICheckReviewExistsUseCase";
+import { IGetWorkerProfileStatsUseCase } from "../../application/ports/review/IGetWorkerProfileStatsUseCase";
+import { IGetWorkerProfileUseCase } from "../../application/ports/worker/IGetWorkerProfileUseCase";
+import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetWorkerProfilesBatchUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -41,8 +46,8 @@ container.registerSingleton<IGetNewAppliersUseCase>("GetNewAppliersUseCase", Get
 container.registerSingleton<IWorkerApproveUseCase>("WorkerApproveUseCase", WorkerApproveUseCase);
 container.registerSingleton<IBlockWorkerUseCase>("BlockWorkerUseCase", BlockWorkerUseCase);
 
-container.registerSingleton("GetWorkerProfileUseCase", GetWorkerProfileUseCase);
-container.registerSingleton("GetWorkerProfilesBatchUseCase", GetWorkerProfilesBatchUseCase);
+container.registerSingleton<IGetWorkerProfileUseCase>("GetWorkerProfileUseCase", GetWorkerProfileUseCase);
+container.registerSingleton<IGetWorkerProfileBatchUseCase>("GetWorkerProfilesBatchUseCase", GetWorkerProfilesBatchUseCase);
 
 // register work usecase
 container.registerSingleton<IPostWorkUseCase>("PostWorkUseCase", PostWorkUseCase);
@@ -56,9 +61,9 @@ container.registerSingleton("GetWorkerProfileSettingsUseCase", GetWorkerProfileS
 container.registerSingleton("UpdateWorkerProfileImageUseCase", UpdateWorkerProfileImageUseCase);
 
 //review
-container.register("CreateReviewUseCase",  CreateReviewUseCase);
-container.register("CheckReviewExistsUseCase",  CheckReviewExistsUseCase);
-container.register("GetWorkerProfileStatsUseCase",  GetWorkerProfileStatsUseCase);
+container.register<ICreateReviewUseCase>("CreateReviewUseCase",  CreateReviewUseCase);
+container.register<ICheckReviewExistsUseCase>("CheckReviewExistsUseCase",  CheckReviewExistsUseCase);
+container.register<IGetWorkerProfileStatsUseCase>("GetWorkerProfileStatsUseCase",  GetWorkerProfileStatsUseCase);
 
 container.registerSingleton("GetWorkerAssignedWorksUseCase", GetWorkerAssignedWorksUseCase);
 

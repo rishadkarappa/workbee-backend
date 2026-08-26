@@ -4,9 +4,10 @@ import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
 import { CreateReviewDto, ReviewResponseDto } from "../../dtos/review/ReviewDTO";
 import { ReviewMapper } from "../../mappers/ReviewMapper";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { ICreateReviewUseCase } from "../../ports/review/ICreateReviewUseCase";
 
 @injectable()
-export class CreateReviewUseCase {
+export class CreateReviewUseCase implements ICreateReviewUseCase{
   constructor(
     @inject("ReviewRepository") private readonly _reviewRepository: IReviewRepository,
     @inject("WorkRepository") private readonly _workRepository: IWorkRepository
