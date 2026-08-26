@@ -30,6 +30,9 @@ import { GetWorkerProfilesBatchUseCase } from "../../application/use-case/isc/Ge
 import { GetWorkerAssignedWorksUseCase } from "../../application/use-case/worker/GetWorkerAssignedWorksUseCase";
 import { GetWorkerProfileSettingsUseCase } from "../../application/use-case/worker/profile-settings/GetWorkerProfileUseCase";
 import { UpdateWorkerProfileImageUseCase } from "../../application/use-case/worker/profile-settings/UpdateWorkerProfileImageUseCase";
+import { CreateReviewUseCase } from "../../application/use-case/review/CreateReviewUseCase";
+import { CheckReviewExistsUseCase } from "../../application/use-case/review/CheckReviewExistsUseCase";
+import { GetWorkerProfileStatsUseCase } from "../../application/use-case/review/GetWorkerProfileStatsUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -52,6 +55,10 @@ container.registerSingleton<IDeleteMyWorkUseCase>("DeleteMyWorkUseCase", DeleteM
 container.registerSingleton("GetWorkerProfileSettingsUseCase", GetWorkerProfileSettingsUseCase);
 container.registerSingleton("UpdateWorkerProfileImageUseCase", UpdateWorkerProfileImageUseCase);
 
+//review
+container.register("CreateReviewUseCase",  CreateReviewUseCase);
+container.register("CheckReviewExistsUseCase",  CheckReviewExistsUseCase);
+container.register("GetWorkerProfileStatsUseCase",  GetWorkerProfileStatsUseCase);
 
 container.registerSingleton("GetWorkerAssignedWorksUseCase", GetWorkerAssignedWorksUseCase);
 

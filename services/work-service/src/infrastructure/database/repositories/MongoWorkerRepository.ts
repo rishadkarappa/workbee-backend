@@ -168,16 +168,4 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     await WorkerModel.findByIdAndUpdate(workerId, { password: hashedPassword });
   }
 
-  // async addReviewField(dto: addWorkerReviewReqDto): Promise<boolean> {
-
-  //   const addReview = await await WorkerModel.updateMany(
-  //     { _id: workerId },
-  //     {
-  //       $set: {
-  //         "review.rate": dto.rate,
-  //         "review.discrption": dto.disc
-  //       }
-  //     }
-  //   );
-  // }
 }

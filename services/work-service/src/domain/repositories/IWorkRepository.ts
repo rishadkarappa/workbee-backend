@@ -18,4 +18,5 @@ export interface IWorkRepository{
     getMyWorks(id:string):Promise<{works:Work[]|null}>;
     findByWorkerId(workerId: string): Promise<{ works: Work[] }>;
     
+    countCompletedByWorkerId(workerId: string): Promise<number>;
 }

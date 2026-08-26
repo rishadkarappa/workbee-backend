@@ -14,9 +14,9 @@ export const ErrorMessages = {
     AUTH: {
         TOKEN_EXPIRED: "Authentication token expired",
         UNAUTHORIZED: "Unauthorized access",
-        UNAUTHORIZED_TO_DELETE_THIS_WORK:"Unauthorized to delete this work",
+        UNAUTHORIZED_TO_DELETE_THIS_WORK: "Unauthorized to delete this work",
         ATUH_HEADER_IS_MISSING: "Authorization header is missing",
-        USER_ID_REQUIRED:"User ID is required"
+        USER_ID_REQUIRED: "User ID is required"
     },
 
     ADMIN: {
@@ -42,15 +42,21 @@ export const ErrorMessages = {
     WORK: {
         WRONG_WORK_ID: 'wrong work id',
         FAILED_TO_RETRIEVE_WORKS: "Failed to retrieve works",
-        WORK_NOT_FOUND:"work not found",
-        FAILD_TO_DELETE_WORK:"Failed to delete work",
+        WORK_NOT_FOUND: "work not found",
+        FAILD_TO_DELETE_WORK: "Failed to delete work",
         DONT_HAVE_PERMISSION_TO_UPDATE: "You do not have permission to update this work",
-        FAILED_TO_UPDATE_WORK:"Failed to update work",
+        FAILED_TO_UPDATE_WORK: "Failed to update work",
     },
     APPLY: {
         VALID_STATUS_REQUIRED: "Valid status (approved or rejected) is required",
         REJUCTION_REASON_REQUIRED: "Rejection reason is required when rejecting an application",
-        
-    }
+
+    },
+    REVIEW: {
+        INVALID_RATING: "Rating must be between 1 and 5",
+        TESTIMONIAL_TOO_LONG: "Testimonial must be under 500 characters",
+        WORK_NOT_COMPLETED: "Work must be completed before it can be reviewed",
+        ALREADY_REVIEWED: "This work has already been reviewed",
+    },
 
 }

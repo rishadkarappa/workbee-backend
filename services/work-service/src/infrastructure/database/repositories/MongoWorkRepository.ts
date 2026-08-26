@@ -170,6 +170,10 @@ export class MongoWorkRepository implements IWorkRepository {
         return { works: works.map(w => this.mapToEntity(w)) };
     }
 
+    async countCompletedByWorkerId(workerId: string): Promise<number> {
+        return WorkModel.countDocuments({ workerId, status: "completed" });
+    }
+
     private mapToEntity(doc: WorkTocument | WorkGeoResult): Work {
         return {
             id: doc._id.toString(),
