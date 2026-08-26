@@ -3,17 +3,20 @@ import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
+
 import { CreateReviewDto } from "../../application/dtos/review/ReviewDTO";
-import { CreateReviewUseCase } from "../../application/use-case/review/CreateReviewUseCase";
-import { CheckReviewExistsUseCase } from "../../application/use-case/review/CheckReviewExistsUseCase";
-import { GetWorkerProfileStatsUseCase } from "../../application/use-case/review/GetWorkerProfileStatsUseCase";
+
+import { ICreateReviewUseCase } from "../../application/ports/review/ICreateReviewUseCase";
+import { ICheckReviewExistsUseCase } from "../../application/ports/review/ICheckReviewExistsUseCase";
+import { IGetWorkerProfileStatsUseCase } from "../../application/ports/review/IGetWorkerProfileStatsUseCase";
+import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
 @injectable()
 export class ReviewController {
     constructor(
-        @inject("CreateReviewUseCase") private readonly _createReviewUseCase: CreateReviewUseCase,
-        @inject("CheckReviewExistsUseCase") private readonly _checkReviewExistsUseCase: CheckReviewExistsUseCase,
-        @inject("GetWorkerProfileStatsUseCase") private readonly _getWorkerProfileStatsUseCase: GetWorkerProfileStatsUseCase,
+        @inject("CreateReviewUseCase") private readonly _createReviewUseCase: ICreateReviewUseCase,
+        @inject("CheckReviewExistsUseCase") private readonly _checkReviewExistsUseCase: ICheckReviewExistsUseCase,
+        @inject("GetWorkerProfileStatsUseCase") private readonly _getWorkerProfileStatsUseCase: IGetWorkerProfileStatsUseCase,
     ) { }
 
     async createReview(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -56,7 +59,7 @@ export class ReviewController {
                 return
             }
             const result = await this._getWorkerProfileStatsUseCase.execute(workerId);
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Worker profile stats retrieved"));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.WORKER.PROFILE_STAT_RETRIEVED));
         } catch (err) {
             next(err);
         }

@@ -54,7 +54,7 @@ export class WorkController implements IWorkController {
         @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: GetWorkerProfileSettingsUseCase,
         @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
 
-        
+
     ) { }
 
     async applyWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -214,19 +214,15 @@ export class WorkController implements IWorkController {
             const result = await this._getAllWorksUseCase.execute(filters);
 
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(
-                    {
-                        works: result.works,
-                        pagination: {
-                            total: result.total,
-                            totalPages: result.totalPages,
-                            currentPage: parseInt(page as string),
-                            limit: parseInt(limit as string)
-                        }
-                    },
-                    "Successfully retrieved works"
-                )
-            );
+                ResponseHelper.success({
+                    works: result.works,
+                    pagination: {
+                        total: result.total,
+                        totalPages: result.totalPages,
+                        currentPage: parseInt(page as string),
+                        limit: parseInt(limit as string)
+                    }
+                }, "Successfully retrieved works"));
         } catch (err) {
             next(err);
         }
@@ -279,17 +275,11 @@ export class WorkController implements IWorkController {
                 return;
             }
 
-            const dto: UpdateWorkDto = {
-                workId,
-                userId,
-                ...updateData
-            };
+            const dto: UpdateWorkDto = { workId, userId, ...updateData };
 
             const updatedWork = await this._updateWorkUseCase.execute(dto);
 
-            res.status(HttpStatus.OK).json(
-                ResponseHelper.success(updatedWork, ResponseMessage.WORK.WORK_UPDATED)
-            );
+            res.status(HttpStatus.OK).json(ResponseHelper.success(updatedWork, ResponseMessage.WORK.WORK_UPDATED));
         } catch (err) {
             next(err);
         }
@@ -314,10 +304,7 @@ export class WorkController implements IWorkController {
                 return;
             }
 
-            const dto: DeleteWorkDto = {
-                workId,
-                userId
-            };
+            const dto: DeleteWorkDto = { workId, userId };
 
             const result = await this._deleteMyWorkUseCase.execute(dto);
 
@@ -343,7 +330,7 @@ export class WorkController implements IWorkController {
 
             res
                 .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result, "Worker profile fetched successfully", HttpStatus.OK));
+                .json(ResponseHelper.success(result, ResponseMessage.WORKER.GET_WORKER_PROFILE, HttpStatus.OK));
         } catch (error) {
             next(error);
         }
@@ -372,7 +359,7 @@ export class WorkController implements IWorkController {
 
             res
                 .status(HttpStatus.OK)
-                .json(ResponseHelper.success(data, "Worker upload signature generated"));
+                .json(ResponseHelper.success(data, ResponseMessage.WORKER.UPLOAD_SIGN_GENERATED));
 
         } catch (error) {
             next(error);
@@ -380,7 +367,7 @@ export class WorkController implements IWorkController {
     }
 
 
-    async updateWorkerProfileImage(req: Request,res: Response,next: NextFunction): Promise<void> {
+    async updateWorkerProfileImage(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
             const workerId = req.headers["x-user-id"];
@@ -395,7 +382,7 @@ export class WorkController implements IWorkController {
 
             res
                 .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result, "Worker profile image updated successfully"));
+                .json(ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
 
         } catch (error) {
             next(error);

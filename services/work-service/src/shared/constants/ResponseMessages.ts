@@ -17,7 +17,11 @@ export const ResponseMessage = {
         DONT_GET_APPLIERS:"didt get newappliers in getusecase leryer",
         WORKER_ASSIGNED_WORK_RETRIEVED:"Worker assigned works retrieved successfully",
         WORKER_PROFILE_RETRIEVED:'Worker profiles retrieved',
-        WORKER_PROFILE_RETRIEVED_BATCH:'Worker profiles retrieved BATCH'
+        WORKER_PROFILE_RETRIEVED_BATCH:'Worker profiles retrieved BATCH',
+        GET_WORKER_PROFILE:"Worker profile fetched successfully",
+        UPLOAD_SIGN_GENERATED: "Worker upload signature generated",
+        PROFILE_STAT_RETRIEVED:"Worker profile stats retrieved",
+        WORKER_PROFILE_UPDATED:"Worker profile image updated successfully"
     },
     WORK:{
         WORK_STATUS_UPDATED:"Worker status updated successfully",
