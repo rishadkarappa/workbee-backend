@@ -1,29 +1,27 @@
-import { injectable } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 
 import { IChangeWorkerPasswordUseCase } from "../../ports/worker/IChangeWorkerPasswordUseCase";
 import { ChangeWorkerPasswordRequestDTO } from "../../dtos/worker/ChangeWorkerPasswordDTO";
-
-import { RabbitMQConnection } from "../../../infrastructure/config/rabbitmq";
-import { WorkerChangePasswordClient } from "../../../infrastructure/message-bus/WorkerChangePasswordClient";
+import { IWorkerChangePasswordClient } from "../../ports/message-bus/IWorkerChangePasswordClient";
 
 @injectable()
-export class ChangeWorkerPasswordUseCasen implements IChangeWorkerPasswordUseCase {
+export class ChangeWorkerPasswordUseCase implements IChangeWorkerPasswordUseCase {
+    constructor(
+        @inject("WorkerChangePasswordClient") private readonly _workerChangePasswordClient: IWorkerChangePasswordClient
+    ) {}
 
-    async execute(workerId: string, data: ChangeWorkerPasswordRequestDTO): Promise<void> {
+    async execute(workerId: string,data: ChangeWorkerPasswordRequestDTO): Promise<void> {
 
         const { currentPassword, newPassword } = data;
 
-        const channel = await RabbitMQConnection.getChannel();
-        const client = new WorkerChangePasswordClient(channel);
-
-        const response = await client.changePassword(workerId, currentPassword, newPassword);
+        const response = await this._workerChangePasswordClient.changePassword(
+            workerId,
+            currentPassword,
+            newPassword
+        );
 
         if (!response.success) {
             throw new Error(response.error || "Failed to change worker password");
         }
     }
 }
-
-
-
-

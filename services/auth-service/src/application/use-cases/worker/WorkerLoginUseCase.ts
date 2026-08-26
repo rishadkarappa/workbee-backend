@@ -16,7 +16,7 @@ import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 export class WorkerLoginUseCase implements IWorkerLoginUseCase {
     constructor(
         @inject("TokenService") private readonly _tokenService: ITokenService,
-        @inject("IWorkerValidationClient") private readonly _workerValidationClient: IWorkerValidationClient
+        @inject("WorkerValidationClient") private readonly _workerValidationClient: IWorkerValidationClient
     ) { }
 
     async execute(data: WorkerLoginRequestDTO): Promise<WorkerLoginResponseDTO> {
