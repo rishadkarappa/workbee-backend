@@ -7,28 +7,32 @@ export const ResponseMessage = {
 
     AUTH: {
         ALREADY_EXISTS: "Worker already exists",
-        BLOCKED_WORKER:"Blocked worker",
+        BLOCKED_WORKER: "Blocked worker",
     },
 
-    WORKER:{
-        APPLIED:"Worker applied successfully!",
-        REGISTERD_SUCCESSFULLY:"Worker registered successfully",
-        GET_ALL_APPLIERS:"Successfully fetched all appliers",
-        DONT_GET_APPLIERS:"didt get newappliers in getusecase leryer",
-        WORKER_ASSIGNED_WORK_RETRIEVED:"Worker assigned works retrieved successfully",
-        WORKER_PROFILE_RETRIEVED:'Worker profiles retrieved',
-        WORKER_PROFILE_RETRIEVED_BATCH:'Worker profiles retrieved BATCH',
-        GET_WORKER_PROFILE:"Worker profile fetched successfully",
+    WORKER: {
+        APPLIED: "Worker applied successfully!",
+        REGISTERD_SUCCESSFULLY: "Worker registered successfully",
+        GET_ALL_APPLIERS: "Successfully fetched all appliers",
+        DONT_GET_APPLIERS: "didt get newappliers in getusecase leryer",
+        WORKER_ASSIGNED_WORK_RETRIEVED: "Worker assigned works retrieved successfully",
+        WORKER_PROFILE_RETRIEVED: 'Worker profiles retrieved',
+        WORKER_PROFILE_RETRIEVED_BATCH: 'Worker profiles retrieved BATCH',
+        GET_WORKER_PROFILE: "Worker profile fetched successfully",
         UPLOAD_SIGN_GENERATED: "Worker upload signature generated",
-        PROFILE_STAT_RETRIEVED:"Worker profile stats retrieved",
-        WORKER_PROFILE_UPDATED:"Worker profile image updated successfully"
+        PROFILE_STAT_RETRIEVED: "Worker profile stats retrieved",
+        WORKER_PROFILE_UPDATED: "Worker profile image updated successfully"
     },
-    WORK:{
-        WORK_STATUS_UPDATED:"Worker status updated successfully",
-        WORK_BOOKED:"Task booked successfully",
-        RETRIEVED_WORKS:"Successfully retrieved user works",
-        WORK_UPDATED:"Work updated successfully",
-        WORK_DELETED:"Work deleted successfully",
+    REVIEW: {
+        CREATED_REVIEW: "review created successfully",
+        CHECKED_REVIEW_STATUS: "Checked review status",
+    },
+    WORK: {
+        WORK_STATUS_UPDATED: "Worker status updated successfully",
+        WORK_BOOKED: "Task booked successfully",
+        RETRIEVED_WORKS: "Successfully retrieved user works",
+        WORK_UPDATED: "Work updated successfully",
+        WORK_DELETED: "Work deleted successfully",
     }
-   
+
 }

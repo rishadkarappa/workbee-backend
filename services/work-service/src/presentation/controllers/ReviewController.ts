@@ -1,15 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
+
 import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
+import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
 import { CreateReviewDto } from "../../application/dtos/review/ReviewDTO";
 
 import { ICreateReviewUseCase } from "../../application/ports/review/ICreateReviewUseCase";
 import { ICheckReviewExistsUseCase } from "../../application/ports/review/ICheckReviewExistsUseCase";
 import { IGetWorkerProfileStatsUseCase } from "../../application/ports/review/IGetWorkerProfileStatsUseCase";
-import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 
 @injectable()
 export class ReviewController {
@@ -31,11 +32,13 @@ export class ReviewController {
             const { workId, workerId, rating, testimonial } = req.body;
             const dto: CreateReviewDto = { workId, workerId, userId, rating, testimonial };
             const result = await this._createReviewUseCase.execute(dto);
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Review submitted successfully"));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.REVIEW.CREATED_REVIEW));
         } catch (err) {
             next(err);
         }
     }
+
+    
 
     async checkReviewExists(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
@@ -45,7 +48,7 @@ export class ReviewController {
                 return
             }
             const result = await this._checkReviewExistsUseCase.execute(workId);
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Checked review status"));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.REVIEW.CHECKED_REVIEW_STATUS));
         } catch (err) {
             next(err);
         }
