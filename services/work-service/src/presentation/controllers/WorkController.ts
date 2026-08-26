@@ -1,12 +1,21 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
+
 import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
+import { WorkUploadFiles } from "../types/WorkUploadFiles";
+import { logger } from "../../infrastructure/logger/logger";
+import { ENV } from "../../infrastructure/config/env";
+import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 
 import { DeleteWorkDto, PostWorkDto, UpdateWorkDto } from "../../application/dtos/work/WorkDTO";
 import { ApplyWorkerDto, WorkerApproveDto } from "../../application/dtos/worker/WorkerDTO";
+import { GetAllWorksFilterDto } from "../../application/dtos/work/GetAllWorksFilterDto";
 
+import { IWorkController } from "../ports/IWorkContoller";
+
+/** usecase interfaces */
 import { IApplyWorkerUseCase } from "../../application/ports/worker/IApplyWorkerUseCase";
 import { IGetNewAppliersUseCase } from "../../application/ports/worker/IGetNewAppliersUseCase";
 import { IWorkerApproveUseCase } from "../../application/ports/worker/IWorkerApproveUseCase";
@@ -14,8 +23,6 @@ import { IGetAllWorkersUseCase } from "../../application/ports/worker/IGetAllWor
 import { IPostWorkUseCase } from "../../application/ports/work/IPostWorkUseCase";
 import { IFileUploadService } from "../../domain/services/IFileUploadService";
 import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUseCase";
-
-import { IWorkController } from "../ports/IWorkContoller";
 import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorkerUseCase";
 import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseCase";
 import { IUpdateWorkUseCase } from "../../application/ports/user/IUpdateWorkUseCase";
@@ -23,13 +30,10 @@ import { IDeleteMyWorkUseCase } from "../../application/ports/user/IDeleteMyWork
 import { IGetWorkerProfileUseCase } from "../../application/ports/worker/IGetWorkerProfileUseCase";
 import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetWorkerProfilesBatchUseCase";
 import { IGetWorkerAssignedWorksUseCase } from "../../application/ports/isc/IGetWorkerAssignedWorksUseCase";
-import { ErrorMessages } from "../../shared/constants/ErrorMessages";
-import { GetAllWorksFilterDto } from "../../application/dtos/work/GetAllWorksFilterDto";
-import { WorkUploadFiles } from "../types/WorkUploadFiles";
-import { logger } from "../../infrastructure/logger/logger";
-import { ENV } from "../../infrastructure/config/env";
-import { UpdateWorkerProfileImageUseCase } from "../../application/use-case/worker/profile-settings/UpdateWorkerProfileImageUseCase";
-import { GetWorkerProfileSettingsUseCase } from "../../application/use-case/worker/profile-settings/GetWorkerProfileUseCase";
+import { IUpdateWorkerProfileImageUseCase } from "../../application/ports/worker/IUpdateWorkerProfileImageUseCase";
+import { IGetWorkerProfileSettingsUseCase } from "../../application/ports/worker/IGetWorkerProfileSettingsUseCase";
+
+/** service interfaces */
 import { ICloudinaryService } from "../../domain/services/ICloudinaryService";
 
 @injectable()
@@ -50,8 +54,8 @@ export class WorkController implements IWorkController {
         @inject("GetWorkerProfilesBatchUseCase") private readonly _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
         @inject("GetWorkerAssignedWorksUseCase") private readonly _getWorkerAssignedWorksUseCase: IGetWorkerAssignedWorksUseCase,
 
-        @inject("UpdateWorkerProfileImageUseCase") private readonly _updateWorkerProfileImageUseCase: UpdateWorkerProfileImageUseCase,
-        @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: GetWorkerProfileSettingsUseCase,
+        @inject("UpdateWorkerProfileImageUseCase") private readonly _updateWorkerProfileImageUseCase: IUpdateWorkerProfileImageUseCase,
+        @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: IGetWorkerProfileSettingsUseCase,
         @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
 
 
