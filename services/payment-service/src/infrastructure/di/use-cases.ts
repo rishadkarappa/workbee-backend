@@ -19,6 +19,8 @@ import { IGetAdminPaymentSummaryUseCase } from '../../application/ports/admin/IG
 import { IGetAdminPaymentsListUseCase } from '../../application/ports/admin/IGetAdminPaymentsListUseCase';
 import { IGetWorkerEarningsStatsUseCase } from '../../application/ports/worker/IGetWorkerEarningsStatsUseCase';
 import { GetWorkerEarningsStatsUseCase } from '../../application/use-cases/worker/GetWorkerEarningsStatsUseCase';
+import { GetAdminPaymentStatsUseCase } from '../../application/use-cases/admin/GetAdminPaymentStatsUseCase';
+import { IGetAdminPaymentStatsUseCase } from '../../application/ports/admin/IGetAdminPaymentStatsUseCase';
 
 container.register<ICreateRazorpayOrderUseCase>("CreateRazorpayOrderUseCase", { useClass: CreateRazorpayOrderUseCase });
 container.register<IVerifyRazorpayPaymentUseCase>("VerifyRazorpayPaymentUseCase", { useClass: VerifyRazorpayPaymentUseCase });
@@ -28,5 +30,6 @@ container.register<IGetWalletUseCase>("GetWalletUseCase", { useClass: GetWalletU
 container.register<IGetAdminPaymentSummaryUseCase>("GetAdminPaymentSummaryUseCase", { useClass: GetAdminPaymentSummaryUseCase });
 container.registerSingleton<IGetAdminPaymentsListUseCase>("GetAdminPaymentsListUseCase", GetAdminPaymentsListUseCase);
 container.register<IGetWorkerEarningsStatsUseCase>("GetWorkerEarningsStatsUseCase", GetWorkerEarningsStatsUseCase);
+container.register<IGetAdminPaymentStatsUseCase>("GetAdminPaymentStatsUseCase", GetAdminPaymentStatsUseCase);
 
 export { container };

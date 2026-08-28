@@ -18,6 +18,7 @@ import { ResponseHelper } from "../../shared/helpers/reponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 import { IGetWorkerEarningsStatsUseCase } from "../../application/ports/worker/IGetWorkerEarningsStatsUseCase";
+import { IGetAdminPaymentStatsUseCase } from "../../application/ports/admin/IGetAdminPaymentStatsUseCase";
 
 @injectable()
 export class PaymentController implements IPaymentController {
@@ -29,6 +30,7 @@ export class PaymentController implements IPaymentController {
     @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: IGetAdminPaymentSummaryUseCase,
     @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase,
     @inject("GetWorkerEarningsStatsUseCase") private readonly _getWorkerEarningsStatsUseCase: IGetWorkerEarningsStatsUseCase,
+    @inject("GetAdminPaymentStatsUseCase") private readonly _getAdminPaymentStatsUseCase: IGetAdminPaymentStatsUseCase,
 
   ) { }
 
@@ -145,7 +147,7 @@ export class PaymentController implements IPaymentController {
         return;
       }
 
-      const data = await this._getWalletUseCase.execute({ownerId: userId,role: userRole,});
+      const data = await this._getWalletUseCase.execute({ ownerId: userId, role: userRole, });
 
       res
         .status(HttpStatusCode.OK)
@@ -202,19 +204,41 @@ export class PaymentController implements IPaymentController {
 
   async getWorkerEarningsStats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const userId = req.headers["x-user-id"] as string;
-        const userRole = req.headers["x-user-role"] as string;
+      const userId = req.headers["x-user-id"] as string;
+      const userRole = req.headers["x-user-role"] as string;
 
-        if (!userId || userRole !== UserRole.WORKER) {
-            res.status(HttpStatusCode.UNAUTHORIZED).json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
-            return;
-        }
+      if (!userId || userRole !== UserRole.WORKER) {
+        res.status(HttpStatusCode.UNAUTHORIZED).json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
+        return;
+      }
 
-        const data = await this._getWorkerEarningsStatsUseCase.execute(userId);
+      const data = await this._getWorkerEarningsStatsUseCase.execute(userId);
 
-        res.status(HttpStatusCode.OK).json(ResponseHelper.success(data, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
+      res.status(HttpStatusCode.OK).json(ResponseHelper.success(data, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
     } catch (err) {
-        next(err);
+      next(err);
     }
-}
+  }
+
+  // admin dash stati
+  async getAdminPaymentStats(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userRole = req.headers["x-user-role"] as string;
+
+      if (userRole !== UserRole.ADMIN) {
+        res
+          .status(HttpStatusCode.FORBIDDEN)
+          .json(ResponseHelper.error(ErrorMessages.AUTH.FORBIDDEN, HttpStatusCode.FORBIDDEN));
+        return;
+      }
+
+      const data = await this._getAdminPaymentStatsUseCase.execute();
+
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(data, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
+    } catch (err) {
+      next(err);
+    }
+  }
 }
