@@ -19,7 +19,7 @@ export class BlockWorkerUseCase implements IBlockWorkerUseCase {
     worker.isBlocked = !worker.isBlocked;
     const updatedWorker = await this._workerRepository.save(worker);
 
-    // Publish event → auth service will delete the refresh token
+    // Publish event - auth service will delete the refresh token
     await this._eventPublisher.publishWorkerBlocked({workerId: worker.id!,isBlocked: updatedWorker.isBlocked! });
 
     return updatedWorker;
