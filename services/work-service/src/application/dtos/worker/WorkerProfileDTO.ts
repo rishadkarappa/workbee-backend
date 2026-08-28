@@ -9,6 +9,7 @@ export interface WorkerProfileSettingsResponseDto {
     phone: string;
     location: string;
     workType: string;
+    bio?:string;
     preferredWorks: string[];
     workerProfileImage?: string;
     workerProfileImagePublicId?: string;

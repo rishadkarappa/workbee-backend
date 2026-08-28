@@ -20,6 +20,7 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       phone: worker.phone,
       password: worker.password,
       location: worker.location,
+      bio: worker.bio,
       workType: worker.workType,
       preferredWorks: worker.preferredWorks,
       confirmations: worker.confirmations,
@@ -177,6 +178,32 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       status,
       createdAt: { $gte: start, $lt: end }
     });
+  }
+
+  async updateWorkerProfile(userId: string,
+    data: {
+      name: string;
+      phone: string;
+      location: string;
+      bio: string;
+    }): Promise<Worker | null> {
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return null;
+    }
+
+    const updatedWorker = await WorkerModel.findByIdAndUpdate(userId, {
+      $set: {
+        name: data.name,
+        phone: data.phone,
+        location: data.location,
+        bio: data.bio,
+      },
+    }, {
+      new: true,
+      runValidators: true,
+    });
+    return updatedWorker ? this.map(updatedWorker) : null;
   }
 
 }

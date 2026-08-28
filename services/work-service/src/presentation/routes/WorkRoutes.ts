@@ -13,11 +13,11 @@ router.get("/get-new-appliers", workController.getNewAppliers.bind(workControlle
 router.post("/approve-worker", workController.approveWorker.bind(workController))
 router.get("/get-workers", workController.getWorkers.bind(workController))
 router.get("/get-all-works", workController.getAllWorks.bind(workController))
-router.post("/post-work", 
+router.post("/post-work",
     upload.fields([
         { name: 'voiceFile', maxCount: 1 },
         { name: 'videoFile', maxCount: 1 },
-        { name: 'beforeImage', maxCount: 1 }]),workController.postWork.bind(workController));
+        { name: 'beforeImage', maxCount: 1 }]), workController.postWork.bind(workController));
 
 router.patch('/block-worker/:id', workController.blockWorker.bind(workController))
 router.get('/get-my-works', workController.getMyWorks.bind(workController));
@@ -32,10 +32,10 @@ router.post('/get-worker-profile/batch', workController.getWorkerProfilesBatch.b
 router.get('/worker-assigned-works', workController.getWorkerAssignedWorks.bind(workController));
 
 // worker prifile settings
-router.get("/worker/profile",workController.getWorkerProfileSettings.bind(workController));
-router.get("/worker/profile-image/upload-signature",workController.getWorkerProfileImageUploadSignature.bind(workController));
-router.patch("/worker/profile-image",workController.updateWorkerProfileImage.bind(workController));
-
+router.get("/worker/profile", workController.getWorkerProfileSettings.bind(workController));
+router.get("/worker/profile-image/upload-signature", workController.getWorkerProfileImageUploadSignature.bind(workController));
+router.patch("/worker/profile-image", workController.updateWorkerProfileImage.bind(workController));
+router.patch("/worker/profile", workController.updateWorkerProfile.bind(workController));
 //worker dash
 router.get('/worker/dashboard-stats', workController.getWorkerDashboardStats.bind(workController));
 

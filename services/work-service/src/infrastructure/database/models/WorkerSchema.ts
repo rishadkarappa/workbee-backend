@@ -12,6 +12,7 @@ export interface WorkerDocument extends Document {
   email: string;
   phone: string;
   password: string;
+  bio?: string;
   location: string;
   workType: string;
   preferredWorks: string[];
@@ -38,6 +39,7 @@ const WorkerSchema = new Schema<WorkerDocument>({
   password: { type: String, required: true },
   location: { type: String, required: true },
   workType: { type: String, required: true },
+  bio: { type: String, required: false },
   preferredWorks: { type: [String], required: true },
   confirmations: {
     reliable: { type: Boolean, required: true },

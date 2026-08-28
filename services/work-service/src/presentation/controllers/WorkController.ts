@@ -37,6 +37,8 @@ import { IGetWorkerProfileSettingsUseCase } from "../../application/ports/worker
 import { ICloudinaryService } from "../../domain/services/ICloudinaryService";
 import { IGetWorkerDashboardStatsUseCase } from "../../application/ports/worker/IGetWorkerDashboardStatsUseCase";
 import { IGetAdminWorkStatsUseCase } from "../../application/ports/admin/IGetAdminWorkStatsUseCase";
+import { IUpdateWorkerProfileUseCase } from "../../application/ports/worker/IUpdateWorkerProfileUseCase";
+import { UpdateWorkerProfileReqDTO } from "../../application/dtos/worker/UpdateWorkerProfileDTO";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -62,6 +64,7 @@ export class WorkController implements IWorkController {
         @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
 
         @inject("GetAdminWorkStatsUseCase") private readonly _getAdminWorkStatsUseCase: IGetAdminWorkStatsUseCase,
+        @inject("UpdateWorkerProfileUseCase") private readonly _updateWorkerProfileUseCase: IUpdateWorkerProfileUseCase,
 
 
     ) { }
@@ -398,6 +401,32 @@ export class WorkController implements IWorkController {
         }
     }
 
+    async updateWorkerProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.headers["x-user-id"];
+
+            if (!userId || typeof userId !== "string") {
+                throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+            }
+
+            const { name, phone, location, bio } = req.body;
+
+            const updateWorkerProfileData: UpdateWorkerProfileReqDTO = {
+                userId,
+                name,
+                phone,
+                location,
+                bio,
+            };
+
+            const result = await this._updateWorkerProfileUseCase.execute(updateWorkerProfileData);
+
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Profile updated successfully"));
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getWorkerDashboardStats(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const workerId = req.headers['x-user-id'] as string;
@@ -416,11 +445,11 @@ export class WorkController implements IWorkController {
         }
     }
 
-    async getAdminWorkStats(req: Request, res: Response, next: NextFunction): Promise < void> {
+    async getAdminWorkStats(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const result = await this._getAdminWorkStatsUseCase.execute();
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.GENERAL.SUCCESS));
-        } catch(err) {
+        } catch (err) {
             next(err);
         }
     }
@@ -430,56 +459,56 @@ export class WorkController implements IWorkController {
      * ===========================================================
      */
 
-    async getWorkerProfile(req: Request, res: Response, next: NextFunction): Promise < void> {
-    try {
-        const { workerId } = req.params;
-        if(typeof workerId !== 'string') {
-    res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.WORKER.WRONG_WORKER_ID, HttpStatus.BAD_REQUEST))
-    return
-}
-const profile = await this._getWorkerProfileUseCase.execute({ workerId });
-res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.WORKER.WORKER_PROFILE_RETRIEVED));
+    async getWorkerProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { workerId } = req.params;
+            if (typeof workerId !== 'string') {
+                res.status(HttpStatus.BAD_REQUEST).json(ResponseHelper.error(ErrorMessages.WORKER.WRONG_WORKER_ID, HttpStatus.BAD_REQUEST))
+                return
+            }
+            const profile = await this._getWorkerProfileUseCase.execute({ workerId });
+            res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.WORKER.WORKER_PROFILE_RETRIEVED));
         } catch (error) {
-    next(error)
-}
-    }
-
-    async getWorkerProfilesBatch(req: Request, res: Response, next: NextFunction): Promise < void> {
-    try {
-        const { workerIds } = req.body;
-
-        if(!Array.isArray(workerIds)) {
-    res.status(HttpStatus.BAD_REQUEST).json(
-        ResponseHelper.error(ErrorMessages.WORKER.WORKER_ID_MUST_BE_ARRAY, HttpStatus.BAD_REQUEST)
-    );
-    return;
-}
-
-const profiles = await this._getWorkerProfilesBatchUseCase.execute({ workerIds });
-res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, ResponseMessage.WORKER.WORKER_PROFILE_RETRIEVED_BATCH));
-        } catch (error) {
-    next(error)
-}
-    }
-
-    async getWorkerAssignedWorks(req: Request, res: Response, next: NextFunction): Promise < void> {
-    try {
-        const workerId = req.headers['x-user-id'] as string;
-
-        if(!workerId) {
-            res.status(HttpStatus.UNAUTHORIZED).json(
-                ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
-            );
-            return;
+            next(error)
         }
+    }
+
+    async getWorkerProfilesBatch(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { workerIds } = req.body;
+
+            if (!Array.isArray(workerIds)) {
+                res.status(HttpStatus.BAD_REQUEST).json(
+                    ResponseHelper.error(ErrorMessages.WORKER.WORKER_ID_MUST_BE_ARRAY, HttpStatus.BAD_REQUEST)
+                );
+                return;
+            }
+
+            const profiles = await this._getWorkerProfilesBatchUseCase.execute({ workerIds });
+            res.status(HttpStatus.OK).json(ResponseHelper.success(profiles, ResponseMessage.WORKER.WORKER_PROFILE_RETRIEVED_BATCH));
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getWorkerAssignedWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workerId = req.headers['x-user-id'] as string;
+
+            if (!workerId) {
+                res.status(HttpStatus.UNAUTHORIZED).json(
+                    ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
+                );
+                return;
+            }
 
             const works = await this._getWorkerAssignedWorksUseCase.execute({ workerId });
-        res.status(HttpStatus.OK).json(ResponseHelper.success(works, ResponseMessage.GENERAL.SUCCESS, HttpStatus.OK));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(works, ResponseMessage.GENERAL.SUCCESS, HttpStatus.OK));
 
-    } catch(err) {
-        next(err);
+        } catch (err) {
+            next(err);
+        }
     }
-}
 
     // async AddWorkerReviewByClient(req:Request, res:Response, next:NextFunction):Promise<void> {
     //     try {

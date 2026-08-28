@@ -1,5 +1,6 @@
 import { NewWorker, Worker } from "../../domain/entities/Worker";
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
+import { WorkerProfileResponseDTO } from "../dtos/worker/UpdateWorkerProfileDTO";
 import { ApplyWorkerDto } from "../dtos/worker/WorkerDTO";
 import { WorkerResponseDto } from "../dtos/worker/WorkerDTO";
 
@@ -43,5 +44,22 @@ export class WorkerMapper {
 
     static toResponseDtoList(entities: Worker[]): WorkerResponseDto[] {
         return entities.map(entity => this.toResponseDto(entity));
+    }
+
+    static toProfileResponse(worker: Worker): WorkerProfileResponseDTO {
+        return {
+            id: worker.id,
+            name: worker.name,
+            email: worker.email,
+            phone: worker.phone,
+            location: worker.location,
+            workType: worker.workType,
+            preferredWorks: worker.preferredWorks,
+            bio: worker.bio,
+            workerProfileImage: worker.workerProfileImage,
+            status: worker.status,
+            createdAt: worker.createdAt,
+            updatedAt: worker.updatedAt,
+        };
     }
 }

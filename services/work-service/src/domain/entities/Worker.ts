@@ -9,6 +9,7 @@ export interface Worker {
     location: string;
     workType: string;
     preferredWorks: string[];
+    bio?: string;
     confirmations: {
         reliable: boolean;
         honest: boolean;
