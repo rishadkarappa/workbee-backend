@@ -41,6 +41,8 @@ import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetW
 import { GetWorkerDashboardStatsUseCase } from "../../application/use-case/worker/GetWorkerDashboardStatsUseCase";
 import { IGetWorkerDashboardStatsUseCase } from "../../application/ports/worker/IGetWorkerDashboardStatsUseCase";
 import { IGetWorkerAssignedWorksUseCase } from "../../application/ports/isc/IGetWorkerAssignedWorksUseCase";
+import { IGetAdminWorkStatsUseCase } from "../../application/ports/admin/IGetAdminWorkStatsUseCase";
+import { GetAdminWorkStatsUseCase } from "../../application/use-case/admin/GetAdminWorkStatsUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -70,3 +72,4 @@ container.register<IGetWorkerProfileStatsUseCase>("GetWorkerProfileStatsUseCase"
 
 container.registerSingleton<IGetWorkerAssignedWorksUseCase>("GetWorkerAssignedWorksUseCase", GetWorkerAssignedWorksUseCase);
 container.register<IGetWorkerDashboardStatsUseCase>("GetWorkerDashboardStatsUseCase", GetWorkerDashboardStatsUseCase);
+container.register<IGetAdminWorkStatsUseCase>("GetAdminWorkStatsUseCase", GetAdminWorkStatsUseCase);

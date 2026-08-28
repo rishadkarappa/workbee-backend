@@ -168,4 +168,15 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     await WorkerModel.findByIdAndUpdate(workerId, { password: hashedPassword });
   }
 
+  async countPendingAppliers(): Promise<number> {
+    return WorkerModel.countDocuments({ status: WorkerStatus.PENDING });
+  }
+
+  async countCreatedBetween(status: WorkerStatus, start: Date, end: Date): Promise<number> {
+    return WorkerModel.countDocuments({
+      status,
+      createdAt: { $gte: start, $lt: end }
+    });
+  }
+
 }

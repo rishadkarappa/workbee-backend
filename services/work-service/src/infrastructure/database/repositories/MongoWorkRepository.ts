@@ -233,6 +233,14 @@ export class MongoWorkRepository implements IWorkRepository {
         return works.map(w => this.mapToEntity(w));
     }
 
+    async countAllActive(): Promise<number> {
+        return WorkModel.countDocuments({ status: { $in: ['assigned', 'in-progress'] } });
+    }
+
+    async countAllCompleted(): Promise<number> {
+        return WorkModel.countDocuments({ status: 'completed' });
+    }
+
     private mapToEntity(doc: WorkTocument | WorkGeoResult): Work {
         return {
             id: doc._id.toString(),

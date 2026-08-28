@@ -36,6 +36,10 @@ router.get("/worker/profile",workController.getWorkerProfileSettings.bind(workCo
 router.get("/worker/profile-image/upload-signature",workController.getWorkerProfileImageUploadSignature.bind(workController));
 router.patch("/worker/profile-image",workController.updateWorkerProfileImage.bind(workController));
 
+//worker dash
 router.get('/worker/dashboard-stats', workController.getWorkerDashboardStats.bind(workController));
+
+//admin dash
+router.get('/admin/work-stats', workController.getAdminWorkStats.bind(workController));
 
 export default router
