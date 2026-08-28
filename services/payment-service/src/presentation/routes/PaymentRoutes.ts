@@ -12,5 +12,6 @@ router.post("/work-completed", paymentController.workCompleted.bind(paymentContr
 router.get("/wallet", paymentController.getWallet.bind(paymentController));
 router.get("/admin/summary", paymentController.getAdminSummary.bind(paymentController));
 router.get("/admin/payments", paymentController.getAdminPaymentsList.bind(paymentController));
+router.get("/worker/earnings-stats", paymentController.getWorkerEarningsStats.bind(paymentController));
 
 export default router;

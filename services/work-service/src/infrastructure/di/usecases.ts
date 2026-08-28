@@ -38,6 +38,9 @@ import { ICheckReviewExistsUseCase } from "../../application/ports/review/ICheck
 import { IGetWorkerProfileStatsUseCase } from "../../application/ports/review/IGetWorkerProfileStatsUseCase";
 import { IGetWorkerProfileUseCase } from "../../application/ports/worker/IGetWorkerProfileUseCase";
 import { IGetWorkerProfileBatchUseCase } from "../../application/ports/isc/IGetWorkerProfilesBatchUseCase";
+import { GetWorkerDashboardStatsUseCase } from "../../application/use-case/worker/GetWorkerDashboardStatsUseCase";
+import { IGetWorkerDashboardStatsUseCase } from "../../application/ports/worker/IGetWorkerDashboardStatsUseCase";
+import { IGetWorkerAssignedWorksUseCase } from "../../application/ports/isc/IGetWorkerAssignedWorksUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -65,5 +68,5 @@ container.register<ICreateReviewUseCase>("CreateReviewUseCase",  CreateReviewUse
 container.register<ICheckReviewExistsUseCase>("CheckReviewExistsUseCase",  CheckReviewExistsUseCase);
 container.register<IGetWorkerProfileStatsUseCase>("GetWorkerProfileStatsUseCase",  GetWorkerProfileStatsUseCase);
 
-container.registerSingleton("GetWorkerAssignedWorksUseCase", GetWorkerAssignedWorksUseCase);
-
+container.registerSingleton<IGetWorkerAssignedWorksUseCase>("GetWorkerAssignedWorksUseCase", GetWorkerAssignedWorksUseCase);
+container.register<IGetWorkerDashboardStatsUseCase>("GetWorkerDashboardStatsUseCase", GetWorkerDashboardStatsUseCase);

@@ -35,6 +35,7 @@ import { IGetWorkerProfileSettingsUseCase } from "../../application/ports/worker
 
 /** service interfaces */
 import { ICloudinaryService } from "../../domain/services/ICloudinaryService";
+import { IGetWorkerDashboardStatsUseCase } from "../../application/ports/worker/IGetWorkerDashboardStatsUseCase";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -56,6 +57,7 @@ export class WorkController implements IWorkController {
 
         @inject("UpdateWorkerProfileImageUseCase") private readonly _updateWorkerProfileImageUseCase: IUpdateWorkerProfileImageUseCase,
         @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: IGetWorkerProfileSettingsUseCase,
+        @inject("GetWorkerDashboardStatsUseCase") private readonly _getWorkerDashboardStatsUseCase: IGetWorkerDashboardStatsUseCase,
         @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
 
 
@@ -390,6 +392,24 @@ export class WorkController implements IWorkController {
 
         } catch (error) {
             next(error);
+        }
+    }
+
+    async getWorkerDashboardStats(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workerId = req.headers['x-user-id'] as string;
+
+            if (!workerId) {
+                res.status(HttpStatus.UNAUTHORIZED).json(
+                    ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
+                );
+                return;
+            }
+
+            const result = await this._getWorkerDashboardStatsUseCase.execute(workerId);
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.GENERAL.SUCCESS));
+        } catch (err) {
+            next(err);
         }
     }
 

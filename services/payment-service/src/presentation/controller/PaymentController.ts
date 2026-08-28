@@ -17,6 +17,7 @@ import { scheduleWorkerPayout } from "../../infrastructure/queue/PayoutQueue";
 import { ResponseHelper } from "../../shared/helpers/reponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
+import { IGetWorkerEarningsStatsUseCase } from "../../application/ports/worker/IGetWorkerEarningsStatsUseCase";
 
 @injectable()
 export class PaymentController implements IPaymentController {
@@ -26,7 +27,9 @@ export class PaymentController implements IPaymentController {
     @inject("ScheduleWorkerPayoutUseCase") private readonly _schedulePayoutUseCase: IScheduleWorkerPayoutUseCase,
     @inject("GetWalletUseCase") private readonly _getWalletUseCase: IGetWalletUseCase,
     @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: IGetAdminPaymentSummaryUseCase,
-    @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase
+    @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase,
+    @inject("GetWorkerEarningsStatsUseCase") private readonly _getWorkerEarningsStatsUseCase: IGetWorkerEarningsStatsUseCase,
+
   ) { }
 
   async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -196,4 +199,22 @@ export class PaymentController implements IPaymentController {
       next(err);
     }
   }
+
+  async getWorkerEarningsStats(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const userId = req.headers["x-user-id"] as string;
+        const userRole = req.headers["x-user-role"] as string;
+
+        if (!userId || userRole !== UserRole.WORKER) {
+            res.status(HttpStatusCode.UNAUTHORIZED).json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
+            return;
+        }
+
+        const data = await this._getWorkerEarningsStatsUseCase.execute(userId);
+
+        res.status(HttpStatusCode.OK).json(ResponseHelper.success(data, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
+    } catch (err) {
+        next(err);
+    }
+}
 }

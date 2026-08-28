@@ -174,6 +174,65 @@ export class MongoWorkRepository implements IWorkRepository {
         return WorkModel.countDocuments({ workerId, status: "completed" });
     }
 
+    // dashboard
+    async countActiveByWorkerId(workerId: string): Promise<number> {
+        return WorkModel.countDocuments({
+            workerId,
+            status: { $in: ['assigned', 'in-progress'] }
+        });
+    }
+
+    async countDueThisWeek(workerId: string): Promise<number> {
+        const now = new Date();
+        const endOfWeek = new Date(now);
+        endOfWeek.setDate(now.getDate() + (7 - now.getDay()));
+
+        const nowStr = now.toISOString().split('T')[0];
+        const endStr = endOfWeek.toISOString().split('T')[0];
+
+        return WorkModel.countDocuments({
+            workerId,
+            status: { $in: ['assigned', 'in-progress'] },
+            $or: [
+                { endDate: { $gte: nowStr, $lte: endStr } },
+                { date: { $gte: nowStr, $lte: endStr } }
+            ]
+        });
+    }
+
+    async getMonthlyCompletedCounts(workerId: string, months: number): Promise<{ month: number; year: number; count: number }[]> {
+        const start = new Date();
+        start.setMonth(start.getMonth() - (months - 1));
+        start.setDate(1);
+        start.setHours(0, 0, 0, 0);
+
+        const result = await WorkModel.aggregate([
+            {
+                $match: {
+                    workerId,
+                    status: 'completed',
+                    updatedAt: { $gte: start }
+                }
+            },
+            {
+                $group: {
+                    _id: { month: { $month: "$updatedAt" }, year: { $year: "$updatedAt" } },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1 } }
+        ]);
+
+        return result.map(r => ({ month: r._id.month, year: r._id.year, count: r.count }));
+    }
+
+    async getRecentCompletedWorks(workerId: string, limit: number): Promise<Work[]> {
+        const works = await WorkModel.find({ workerId, status: 'completed' })
+            .sort({ updatedAt: -1 })
+            .limit(limit);
+        return works.map(w => this.mapToEntity(w));
+    }
+
     private mapToEntity(doc: WorkTocument | WorkGeoResult): Work {
         return {
             id: doc._id.toString(),

@@ -66,4 +66,27 @@ export class TransactionRepository implements ITransactionRepository {
     });
     return rows.map((r) => this.mapTx(r));
   }
+
+  async getMonthlyEarnings(walletId: string, months: number): Promise<{ month: number; year: number; amount: number }[]> {
+    const start = new Date();
+    start.setMonth(start.getMonth() - (months - 1));
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+
+    const rows = await this.db.$queryRaw<{ month: number; year: number; amount: any }[]>`
+      SELECT
+        EXTRACT(MONTH FROM created_at)::int AS month,
+        EXTRACT(YEAR FROM created_at)::int AS year,
+        SUM(amount) AS amount
+      FROM transactions
+      WHERE wallet_id = ${walletId}
+        AND type IN ('credit', 'release')
+        AND status = 'completed'
+        AND created_at >= ${start}
+      GROUP BY year, month
+      ORDER BY year, month;
+    `;
+
+    return rows.map(r => ({ month: r.month, year: r.year, amount: Number(r.amount) }));
+  }
 }

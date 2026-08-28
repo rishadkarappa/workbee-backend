@@ -1,22 +1,28 @@
 import { Work } from "../entities/Work";
 
-export interface IWorkRepository{
-    create(work:Work):Promise<Work>;
-    findById(id:string):Promise<Work|null>;
-    findByUserId(userId:string):Promise<Work[]>;
+export interface IWorkRepository {
+    create(work: Work): Promise<Work>;
+    findById(id: string): Promise<Work | null>;
+    findByUserId(userId: string): Promise<Work[]>;
     update(id: string, workData: Partial<Work>): Promise<Work | null>;
-    delete(id:string):Promise<boolean>;
+    delete(id: string): Promise<boolean>;
     findAll(filters?: {
-        search?:string;
-        status?:string;
-        page?:number;
-        limit?:number;
-        latitude?:number;
-        longitude?: number; 
+        search?: string;
+        status?: string;
+        page?: number;
+        limit?: number;
+        latitude?: number;
+        longitude?: number;
         maxDistance?: number;
     }): Promise<{ works: Work[]; total: number }>;
-    getMyWorks(id:string):Promise<{works:Work[]|null}>;
+    getMyWorks(id: string): Promise<{ works: Work[] | null }>;
     findByWorkerId(workerId: string): Promise<{ works: Work[] }>;
-    
+
     countCompletedByWorkerId(workerId: string): Promise<number>;
+
+    //dashboard
+    countActiveByWorkerId(workerId: string): Promise<number>;
+    countDueThisWeek(workerId: string): Promise<number>;
+    getMonthlyCompletedCounts(workerId: string, months: number): Promise<{ month: number; year: number; count: number }[]>;
+    getRecentCompletedWorks(workerId: string, limit: number): Promise<Work[]>;
 }

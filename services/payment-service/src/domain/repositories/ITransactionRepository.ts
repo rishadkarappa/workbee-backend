@@ -5,4 +5,5 @@ export interface ITransactionRepository {
   findByWalletId(walletId: string, limit?: number): Promise<Transaction[]>;
   findByWorkId(workId: string): Promise<Transaction[]>;
   updateStatus(id: string, status: string): Promise<Transaction>;
+  getMonthlyEarnings(walletId: string, months: number): Promise<{ month: number; year: number; amount: number }[]>;
 }
