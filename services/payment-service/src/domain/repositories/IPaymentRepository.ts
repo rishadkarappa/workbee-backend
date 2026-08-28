@@ -12,4 +12,8 @@ export interface IPaymentRepository {
         total: number;
         totalPages: number;
     }>;
+    // to admin dash stati
+    countCompletedPayments(): Promise<number>;
+    findPendingPayouts(limit: number): Promise<Payment[]>;
+    getMonthlyRevenue(months: number): Promise<{ month: number; year: number; amount: number }[]>;
 }

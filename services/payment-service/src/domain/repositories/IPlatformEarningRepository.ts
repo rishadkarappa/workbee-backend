@@ -10,4 +10,7 @@ export interface IPlatformEarningRepository {
     refundedAmount: number;
   }>;
   findAll(limit?: number, offset?: number): Promise<PlatformEarning[]>;
+
+  //admin dash stat
+  getMonthlyPlatformEarnings(months: number): Promise<{ month: number; year: number; amount: number }[]>;
 }
