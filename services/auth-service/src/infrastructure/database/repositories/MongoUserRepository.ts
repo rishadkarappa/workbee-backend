@@ -22,7 +22,7 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             isBlocked: user.isBlocked,
             userProfileImage: user.userProfileImage,
             userProfileImagePublicId: user.userProfileImagePublicId,
-            
+
             createdAt: user.createdAt
         }
     }
@@ -101,5 +101,16 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             }
         }, { new: true })
         return !!result;
+    }
+
+    async countByRole(role: string): Promise<number> {
+        return UserModel.countDocuments({ role });
+    }
+
+    async countCreatedBetween(role: string, start: Date, end: Date): Promise<number> {
+        return UserModel.countDocuments({
+            role,
+            createdAt: { $gte: start, $lt: end }
+        });
     }
 }
