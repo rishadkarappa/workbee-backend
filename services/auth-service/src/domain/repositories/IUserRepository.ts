@@ -8,7 +8,7 @@ export interface IUserRepository {
     findByIds(ids: string[]): Promise<User[]>;
     saveNewPassword(userId: string, newHashedPassword: string): Promise<boolean>;
     updateProfileImage(userId: string, imageUrl: string, publicId: string): Promise<boolean>;
-    
+    updateProfile(userId: string,data: {name: string;phone: string;location?: string;bio?: string;}): Promise<User | null>;
     //admin dash
     countByRole(role: string): Promise<number>;
     countCreatedBetween(role: string, start: Date, end: Date): Promise<number>;

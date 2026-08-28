@@ -17,6 +17,8 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             name: user.name,
             email: user.email,
             password: user.password,
+            location: user.location,
+            bio: user.bio,
             role: user.role,
             isVerified: user.isVerified,
             isBlocked: user.isBlocked,
@@ -112,5 +114,21 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             role,
             createdAt: { $gte: start, $lt: end }
         });
+    }
+
+    async updateProfile(userId: string, data: { name: string; phone: string; location?: string; bio?: string; }): Promise<User | null> {
+        const updatedUser = await UserModel.findByIdAndUpdate(userId, {
+            $set: {
+                name: data.name,
+                phone: data.phone,
+                location: data.location,
+                bio: data.bio,
+            },
+        }, {
+            new: true,
+            runValidators: true,
+        });
+
+        return updatedUser ? this.map(updatedUser) : null;
     }
 }

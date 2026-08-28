@@ -16,9 +16,12 @@ router.post("/forgot-password", userController.forgotPassword.bind(userControlle
 router.post("/reset-password/:token", userController.resetPassword.bind(userController))
 router.post("/refresh-token", userController.refreshToken.bind(userController));
 router.post("/logout", userController.userLogout.bind(userController));
+
+//profile settings  
 router.get("/get-user-profile-settings", userController.getUserProfileSettings.bind(userController));
 router.post("/change-user-password", userController.chageUserPassword.bind(userController))
 router.patch("/profile-image", userController.updateProfileImage.bind(userController))
+router.patch("/update-user-profile",userController.updateUserProfile.bind(userController));
 
 // image uploads
 router.get("/profile-image/upload-signature",userController.getProfileImageUploadSignature.bind(userController));

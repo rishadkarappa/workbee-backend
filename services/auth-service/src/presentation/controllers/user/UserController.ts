@@ -38,6 +38,8 @@ import { IChangePasswordUseCase } from "../../../application/ports/user/profile-
 // services
 import { ICloudinaryService } from "../../../domain/services/ICloudinaryService";
 import { IUpdateProfileImageUseCase } from "../../../application/ports/user/profile-settings/IUpdateProfileImageUseCase";
+import { UpdateUserProfileRequestDTO } from "../../../application/dtos/user/UpdateUserProfileDTO";
+import { IUpdateUserProfileUseCase } from "../../../application/ports/user/profile-settings/IUpdateUserProfileUseCase";
 
 
 @injectable()
@@ -59,6 +61,7 @@ export class UserController implements IUserController {
     @inject("ChangePasswordUseCase") private readonly _changePasswordUseCase: IChangePasswordUseCase,
     @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService,
     @inject("UpdateProfileImageUseCase") private readonly _updateProfileImageUseCase: IUpdateProfileImageUseCase,
+    @inject("UpdateUserProfileUseCase") private readonly _updateUserProfileUseCase: IUpdateUserProfileUseCase,
   ) { }
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -319,6 +322,26 @@ export class UserController implements IUserController {
     }
   }
 
+  async updateUserProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+
+      const userId = req.headers["x-user-id"];
+
+      if (!userId || typeof userId !== "string") {
+        throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+      }
+
+      const { name, phone, location, bio } = req.body;
+      const dto: UpdateUserProfileRequestDTO = { userId, name, phone, location, bio, };
+      const result = await this._updateUserProfileUseCase.execute(dto);
+
+      res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Profile updated successfully", HttpStatus.OK));
+
+    } catch (error) {
+      next(error);
+    }
+  }
+
 
   // ------- 
   /**
@@ -359,6 +382,6 @@ export class UserController implements IUserController {
     }
   }
 
-  
+
 }
 

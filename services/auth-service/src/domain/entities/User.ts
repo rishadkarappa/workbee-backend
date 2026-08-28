@@ -5,6 +5,8 @@ export interface User {
   name: string;
   email: string;
   password?: string;
+  location?: string;
+  bio?: string;
   isVerified: boolean;
   isBlocked: boolean;
   role: UserRole;

@@ -55,9 +55,12 @@ export class UserMapper {
 
   static toUserProfileSettingsMapper(user: User): UserProfileSettingsResponseDto {
     return {
+      id:user.id,
       name: user.name,
       email: user.email,
       phone: user.phone,
+      location: user.location,
+      bio: user.bio,
       userProfileImage: user.userProfileImage,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
