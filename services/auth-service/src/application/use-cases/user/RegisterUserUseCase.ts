@@ -26,7 +26,7 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
 
   async execute(data: RegisterUserRequestDTO): Promise<RegisterUserResponseDTO> {
     // console.log('hited apl leyer')
-    const { name, email, password } = data;
+    const { name, email, phone, password } = data;
     const existing = await this._userRepository.findByEmail(email);
     if (existing && existing.isVerified) throw new Error(ErrorMessages.USER.ALREADY_EXISTS);
 
@@ -35,6 +35,7 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
     const user: NewUser = {
       name,
       email,
+      phone,
       password: hashed,
       role: UserRole.USER,
       isVerified: false,
@@ -43,8 +44,10 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
     const savedUser = await this._userRepository.save(user)
 
     const otp = this._otpService.generateOtp().toString()
+
     logger.info("otp", {otp});
     logger.info("otppppppppppp");
+
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
     await this._otpRepository.save({
       userId: savedUser.id!,
