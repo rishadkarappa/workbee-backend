@@ -1,3 +1,4 @@
+import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
 import { NewWorker, Worker } from "../entities/Worker";
 
 export interface IWorkerRepository {
@@ -11,8 +12,11 @@ export interface IWorkerRepository {
     findByIds(ids: string[]): Promise<Worker[]>;
 
     updateProfileImage(userId: string, imageUrl: string, publicId: string): Promise<boolean>;
-    updatePassword(workerId: string,hashedPassword: string): Promise<void>;
+    updatePassword(workerId: string, hashedPassword: string): Promise<void>;
     // addReviewField(workerId:string):Promise<boolean>
+    // add to the existing IWorkerRepository interface
+    countPendingAppliers(): Promise<number>;
+    countCreatedBetween(status: WorkerStatus, start: Date, end: Date): Promise<number>;
 }
 
 

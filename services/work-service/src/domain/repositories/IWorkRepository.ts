@@ -20,9 +20,13 @@ export interface IWorkRepository {
 
     countCompletedByWorkerId(workerId: string): Promise<number>;
 
-    //dashboard
+    //worker dashboard
     countActiveByWorkerId(workerId: string): Promise<number>;
     countDueThisWeek(workerId: string): Promise<number>;
     getMonthlyCompletedCounts(workerId: string, months: number): Promise<{ month: number; year: number; count: number }[]>;
     getRecentCompletedWorks(workerId: string, limit: number): Promise<Work[]>;
+
+    // admin dash
+    countAllActive(): Promise<number>;
+    countAllCompleted(): Promise<number>;
 }
