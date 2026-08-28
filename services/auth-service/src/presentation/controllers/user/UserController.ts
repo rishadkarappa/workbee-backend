@@ -205,9 +205,7 @@ export class UserController implements IUserController {
 
   async userLogout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // Get userId from JWT payload (set by gateway middleware)
       const userId = req.headers['x-user-id'] as string;
-
       if (!userId) {
         res
           .status(HttpStatus.UNAUTHORIZED)

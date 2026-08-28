@@ -17,6 +17,7 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             name: user.name,
             email: user.email,
             password: user.password,
+            phone: user.phone,
             location: user.location,
             bio: user.bio,
             role: user.role,
@@ -24,9 +25,9 @@ export class MongoUserRepository extends MongoBaseRepository<User, UserDocument>
             isBlocked: user.isBlocked,
             userProfileImage: user.userProfileImage,
             userProfileImagePublicId: user.userProfileImagePublicId,
-
-            createdAt: user.createdAt
-        }
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
     }
 
     async findByEmail(email: string): Promise<User | null> {
