@@ -71,4 +71,24 @@ export class PlatformEarningRepository implements IPlatformEarningRepository {
     });
     return rows.map((r) => this.mapEarning(r));
   }
+
+  async getMonthlyPlatformEarnings(months: number): Promise<{ month: number; year: number; amount: number }[]> {
+    const start = new Date();
+    start.setMonth(start.getMonth() - (months - 1));
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+
+    const rows = await this.db.$queryRaw<{ month: number; year: number; amount: any }[]>`
+      SELECT
+        EXTRACT(MONTH FROM collected_at)::int AS month,
+        EXTRACT(YEAR FROM collected_at)::int AS year,
+        SUM(fee_amount) AS amount
+      FROM platform_earnings
+      WHERE collected_at >= ${start}
+      GROUP BY year, month
+      ORDER BY year, month;
+    `;
+
+    return rows.map(r => ({ month: r.month, year: r.year, amount: Number(r.amount) }));
+}
 }

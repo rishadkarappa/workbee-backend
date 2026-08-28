@@ -96,4 +96,40 @@ export class PaymentRepository implements IPaymentRepository {
     const row = await this.db.payment.update({ where: { id }, data });
     return this.mapPayment(row);
   }
+
+  async countCompletedPayments(): Promise<number> {
+    return this.db.payment.count({
+        where: { status: { in: ["paid", "worker_credited"] as any } },
+    });
+}
+
+async findPendingPayouts(limit: number): Promise<Payment[]> {
+    const rows = await this.db.payment.findMany({
+        where: { status: "paid" as any },
+        orderBy: { workCompletedAt: "desc" },
+        take: limit,
+    });
+    return rows.map((r) => this.mapPayment(r));
+}
+
+async getMonthlyRevenue(months: number): Promise<{ month: number; year: number; amount: number }[]> {
+    const start = new Date();
+    start.setMonth(start.getMonth() - (months - 1));
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+
+    const rows = await this.db.$queryRaw<{ month: number; year: number; amount: any }[]>`
+      SELECT
+        EXTRACT(MONTH FROM created_at)::int AS month,
+        EXTRACT(YEAR FROM created_at)::int AS year,
+        SUM(amount) AS amount
+      FROM payments
+      WHERE status IN ('paid', 'worker_credited')
+        AND created_at >= ${start}
+      GROUP BY year, month
+      ORDER BY year, month;
+    `;
+
+    return rows.map(r => ({ month: r.month, year: r.year, amount: Number(r.amount) }));
+}
 }
