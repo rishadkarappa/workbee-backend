@@ -34,7 +34,8 @@ export const ResponseMessage = {
     ADMIN:{
         LOGINED_SUCCESFULLY:"admin Verified Logined successful",
         GET_USERS:"get suers successfully",
-        ADMIN_BLOCKED_USER:'admin blocked this user'
+        ADMIN_BLOCKED_USER:'admin blocked this user',
+        GET_USER_STATS:'get users stat'
     },
 
     OTP: {

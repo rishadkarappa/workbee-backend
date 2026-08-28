@@ -12,6 +12,7 @@ import { IGetUsersUseCase } from "../../../application/ports/admin/IGetUsersUseC
 import { IAdminContoller } from "../../ports/IAdminController";
 import { IBlockUserUseCase } from "../../../application/ports/admin/IBlockUserUseCase";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
+import { IGetAdminUserStatsUseCase } from "../../../application/ports/admin/IGetAdminUserStatsUseCase";
 
 @injectable()
 export class AdminController implements IAdminContoller {
@@ -19,6 +20,8 @@ export class AdminController implements IAdminContoller {
         @inject("LoginAdminUseCase") private readonly _loginAdminUseCase: ILoginAdminUseCase,
         @inject("GetUsersUseCase") private readonly _getUsersUseCase: IGetUsersUseCase,
         @inject("BlockUserUseCase") private readonly _blockUserUseCase: IBlockUserUseCase,
+        @inject("GetAdminUserStatsUseCase") private readonly _getAdminUserStatsUseCase: IGetAdminUserStatsUseCase,
+
     ) { }
 
     async adminLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -71,5 +74,14 @@ export class AdminController implements IAdminContoller {
         }
     }
 
+    //admin dash stats
+    async getUserStats(req: Request, res: Response, next: NextFunction): Promise < void> {
+        try {
+            const result = await this._getAdminUserStatsUseCase.execute();
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.GET_USER_STATS));
+        } catch(error) {
+            next(error);
+        }
+    }
 
 }
