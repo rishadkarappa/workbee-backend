@@ -6,14 +6,18 @@ import { UpdateWorkDto, WorkResponseDto } from "../../dtos/work/WorkDTO";
 import { WorkMapper } from "../../mappers/WorkMapper";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { logger } from "../../../infrastructure/logger/logger";
+import { WorkProgressEventPublisher } from "../../../infrastructure/message-bus/WorkProgressEventPublisher";
 
 @injectable()
 export class UpdateWorkUseCase implements IUpdateWorkUseCase {
   constructor(
     @inject("WorkRepository") private readonly _workRepository: IWorkRepository
+    @inject("WorkProgressEventPublisher") private readonly _workProgressEventPublisher: WorkProgressEventPublisher
   ) { }
 
   async execute(dto: UpdateWorkDto): Promise<WorkResponseDto> {
+    console.log('bla bla blaaaa')
+    // throw new Error('gotttt')
     const existingWork = await this._workRepository.findById(dto.workId);
 
     if (!existingWork) {
