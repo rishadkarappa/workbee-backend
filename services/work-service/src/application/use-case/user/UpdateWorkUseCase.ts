@@ -41,7 +41,7 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
       throw new Error(ErrorMessages.WORK.FAILED_TO_UPDATE_WORK);
     }
 
-    // ── Notify payment service when work is completed ─────────────────────
+    // Notify payment service when work is completed ─────────────────────
     // This triggers the 1-hour delayed payout to the worker
     if (dto.progress === "completed" || dto.status === "completed") {
       this._notifyPaymentService(workId).catch((err) => {
