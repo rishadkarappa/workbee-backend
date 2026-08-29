@@ -510,13 +510,4 @@ export class WorkController implements IWorkController {
         }
     }
 
-    // async AddWorkerReviewByClient(req:Request, res:Response, next:NextFunction):Promise<void> {
-    //     try {
-    //         const userId = req.headers["x-user-id"]
-    //         const addWorkerReviewReqDto:
-    //     } catch (error) {
-    //         next(error)
-    //     }
-    // }
-
 }

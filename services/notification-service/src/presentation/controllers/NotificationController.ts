@@ -68,6 +68,7 @@ export class NotificationController implements INotificationController {
 
   async markAllAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      
       const user = req.user;
 
       if (!user?.userId) {
