@@ -40,12 +40,19 @@ export class UpdateWorkUseCase implements IUpdateWorkUseCase {
     const { workId, userId: _authUserId, ...updateData } = dto;
 
     const updatedWork = await this._workRepository.update(workId, updateData);
+    if (!updatedWork) throw new Error(ErrorMessages.WORK.FAILED_TO_UPDATE_WORK);
 
-    if (!updatedWork) {
-      throw new Error(ErrorMessages.WORK.FAILED_TO_UPDATE_WORK);
+    // notify client when worker changes work progress
+    if(dto.progress !== undefined) {
+      await this._workProgressEventPublisher.publishWorkProgressChanged({
+        workId:workId,
+        userId:existingWork.userId,
+        workerId:existingWork.workerId!,
+        progress: dto.progress,
+      })
     }
 
-    // Notify payment service when work is completed ─────────────────────
+    // Notify payment service when work is completed 
     // This triggers the 1-hour delayed payout to the worker
     if (dto.progress === "completed" || dto.status === "completed") {
       this._notifyPaymentService(workId).catch((err) => {
