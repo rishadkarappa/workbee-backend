@@ -1,13 +1,13 @@
 import { injectable, inject } from "tsyringe";
 import { ConsumeMessage } from "amqplib";
+import { logger } from "../config/logger";
 
 import { RabbitMQConnection } from "../config/rabbitmq";
-import { CreateNotificationUseCase } from "../../application/use-cases/CreateNotificationUseCase";
 import { SocketGateway } from "../socket/SocketGateway";
 
 import { IWorkProgressChangedEvent } from "../../domain/message-contracts/IWorkProgressChangedEvent";
+import { ICreateNotificationUseCase } from "../../application/ports/ICreateNotificationUseCase";
 
-import { logger } from "../config/logger";
 
 @injectable()
 export class WorkProgressEventConsumer {
@@ -17,7 +17,7 @@ export class WorkProgressEventConsumer {
     private readonly ROUTING_KEY = "work.progress.changed";
 
     constructor(
-        @inject("CreateNotificationUseCase") private readonly createNotificationUseCase: CreateNotificationUseCase,
+        @inject("CreateNotificationUseCase") private readonly _createNotificationUseCase: ICreateNotificationUseCase,
         @inject("SocketManager") private readonly socketManager: SocketGateway
     ) { }
 
@@ -59,7 +59,7 @@ export class WorkProgressEventConsumer {
 
         const notificationContent = this.getNotificationContent(event.progress);
 
-        const notification = await this.createNotificationUseCase.execute({
+        const notification = await this._createNotificationUseCase.execute({
             userId: event.userId,
             type: "WORK_UPDATE",
             title: notificationContent.title,

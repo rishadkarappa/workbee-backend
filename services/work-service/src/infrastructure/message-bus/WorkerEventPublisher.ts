@@ -6,6 +6,7 @@
 import { injectable } from "tsyringe";
 import { RabbitMQConnection } from "./RabbitMQInitializer";
 import { logger } from "../logger/logger";
+import { IWorkerEventPublisher } from "../../domain/message-bus/IWorkerEventPublisher";
 
 export interface IWorkerBlockedEvent {
   workerId: string;
@@ -13,7 +14,7 @@ export interface IWorkerBlockedEvent {
 }
 
 @injectable()
-export class WorkerEventPublisher {
+export class WorkerEventPublisher implements IWorkerEventPublisher{
   private readonly EXCHANGE = "workbee.events";
 
   async publishWorkerBlocked(event: IWorkerBlockedEvent): Promise<void> {

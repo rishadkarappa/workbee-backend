@@ -17,13 +17,14 @@ export class RabbitMQInitializer {
             await RabbitMQConnection.connect();
             logger.info('- RabbitMQ connected');
 
-            //consumers
-            /** msg */
+            /** consumers */
+            
+            // msg 
             const messageConsumer = container.resolve(MessageEventConsumer);
             await messageConsumer.start();
             logger.info("- Message event consumer started");
 
-            /** work progress */
+            // work progress
             const workProgressEventConsumer = container.resolve(WorkProgressEventConsumer);
             await workProgressEventConsumer.start();
             logger.info("- Work Progress Notification Consumer started");

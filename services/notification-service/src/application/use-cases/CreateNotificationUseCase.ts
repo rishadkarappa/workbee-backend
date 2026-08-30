@@ -11,6 +11,7 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
   ) {}
 
   async execute(dto: CreateNotificationDTO): Promise<Notification> {
+    
     const notification: Omit<Notification, "id"> = {
       userId: dto.userId,
       type: dto.type,
