@@ -2,6 +2,7 @@ import { container } from "tsyringe";
 import { logger } from "../config/logger";
 import { RabbitMQConnection } from "../config/rabbitmq";
 import { MessageEventConsumer } from "./MessageEventConsumer";
+import { WorkProgressEventConsumer } from "./WorkProgressEventConsumer";
 
 export class RabbitMQInitializer {
     private static isInitialized = false;
@@ -17,9 +18,15 @@ export class RabbitMQInitializer {
             logger.info('- RabbitMQ connected');
 
             //consumers
+            /** msg */
             const messageConsumer = container.resolve(MessageEventConsumer);
             await messageConsumer.start();
             logger.info("- Message event consumer started");
+
+            /** work progress */
+            const workProgressEventConsumer = container.resolve(WorkProgressEventConsumer);
+            await workProgressEventConsumer.start();
+            logger.info("- Work Progress Notification Consumer started");
 
             this.isInitialized = true;
             logger.info('- Messaging Service initialized successfully');

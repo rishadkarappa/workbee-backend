@@ -6,19 +6,16 @@ export interface Notification {
   type: 'NEW_MESSAGE' | 'WORK_UPDATE' | 'BOOKING_UPDATE' | 'PAYMENT';
   title: string;
   message: string;
-
   data?: {
     chatId?: string;
-
     senderId?: string;
     senderName?: string;
-    senderRole?: "USER" | "WORKER";
-
+    senderRole?: UserRole.USER | UserRole.WORKER ;
+    
     workId?: string;
     workerId?: string;
     progress?: "started" | "ongoing" | "completed";
   };
-
   isRead: boolean;
   createdAt: Date;
 }

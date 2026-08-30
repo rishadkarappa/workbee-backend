@@ -13,6 +13,9 @@ export interface NotificationDataDTO {
   senderId?: string;
   senderName?: string;
   senderRole?: SenderRole;
+  workId?: string;
+  workerId?: string;
+  progress?: "started" | "ongoing" | "completed";
 }
 
 export interface CreateNotificationDTO {
