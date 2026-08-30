@@ -13,7 +13,7 @@ export interface IWorkerRepository {
 
     updateProfileImage(userId: string, imageUrl: string, publicId: string): Promise<boolean>;
     updatePassword(workerId: string, hashedPassword: string): Promise<void>;
-    updateWorkerProfile(userId: string, data: { name: string; phone: string; location: string; bio: string; }): Promise<any>;
+    updateWorkerProfile(userId: string, data: { name: string; phone: string; location: string; bio: string; }): Promise<void>;
 
     // addReviewField(workerId:string):Promise<boolean>
     countPendingAppliers(): Promise<number>;

@@ -76,6 +76,7 @@ export class WorkerChangePasswordClient implements IWorkerChangePasswordClient {
                     } catch (error) {
                         channel.ack(msg);
                         reject(new Error("Invalid password response."));
+                        logger.error(error)
                     }
                 }, { noAck: false });
 

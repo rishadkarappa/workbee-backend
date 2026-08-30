@@ -14,7 +14,7 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
 
     async execute(dto: ChangePasswordReqDTO): Promise<ChangePasswordResponseDTO> {
 
-        let user = await this._userRepository.findById(dto.userId)
+        const user = await this._userRepository.findById(dto.userId)
 
         if (!user) {
             throw new Error(ErrorMessages.USER.NOT_FOUND)
@@ -27,10 +27,10 @@ export class ChangePasswordUseCase implements IChangePasswordUseCase {
         }
 
         // hash service : check password
-        let hashNewPassword = await this._hashService.hash(dto.newPassword)
+        const hashNewPassword = await this._hashService.hash(dto.newPassword)
 
 
-        let result = await this._userRepository.saveNewPassword(dto.userId, hashNewPassword)
+        const result = await this._userRepository.saveNewPassword(dto.userId, hashNewPassword)
 
         return {
             isChanged: result
