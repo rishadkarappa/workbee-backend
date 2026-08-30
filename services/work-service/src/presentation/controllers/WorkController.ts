@@ -394,7 +394,7 @@ export class WorkController implements IWorkController {
 
             res
                 .status(HttpStatus.OK)
-                .json(ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
+                .json(ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_PROFILE_IMAGE_UPDATED));
 
         } catch (error) {
             next(error);
@@ -411,17 +411,11 @@ export class WorkController implements IWorkController {
 
             const { name, phone, location, bio } = req.body;
 
-            const updateWorkerProfileData: UpdateWorkerProfileReqDTO = {
-                userId,
-                name,
-                phone,
-                location,
-                bio,
-            };
+            const updateWorkerProfileData: UpdateWorkerProfileReqDTO = {userId, name, phone, location, bio,};
 
             const result = await this._updateWorkerProfileUseCase.execute(updateWorkerProfileData);
 
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Profile updated successfully"));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.WORKER.WORKER_PROFILE_UPDATED));
         } catch (error) {
             next(error);
         }

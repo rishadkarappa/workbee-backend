@@ -1,8 +1,17 @@
 import { injectable } from "tsyringe";
+import { Prisma } from "../../../generated/prisma/client";
+
 import { getPrisma } from "../../config/prisma";
 import { IPaymentRepository } from "../../../domain/repositories/IPaymentRepository";
 import { Payment } from "../../../domain/entities/Payment";
-import { Prisma } from "../../../generated/prisma/client";
+
+type PrismaPayment = Prisma.PaymentGetPayload<{}>;
+
+interface MonthlyRevenueRow {
+  month: number;
+  year: number;
+  amount: number;
+}
 
 @injectable()
 export class PaymentRepository implements IPaymentRepository {
@@ -10,22 +19,27 @@ export class PaymentRepository implements IPaymentRepository {
     return getPrisma();
   }
 
-  private mapPayment(row: any): Payment {
+  private mapPayment(row: PrismaPayment): Payment {
     return {
       id: row.id,
       workId: row.workId,
       userId: row.userId,
       workerId: row.workerId,
+
       razorpayOrderId: row.razorpayOrderId ?? undefined,
       razorpayPaymentId: row.razorpayPaymentId ?? undefined,
+
       amount: Number(row.amount),
       platformFee: Number(row.platformFee),
       workerPayout: Number(row.workerPayout),
+
       currency: row.currency,
       status: row.status,
+
       workCompletedAt: row.workCompletedAt ?? undefined,
       payoutScheduledAt: row.payoutScheduledAt ?? undefined,
       payoutCompletedAt: row.payoutCompletedAt ?? undefined,
+
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     };
@@ -37,20 +51,27 @@ export class PaymentRepository implements IPaymentRepository {
         workId: data.workId,
         userId: data.userId,
         workerId: data.workerId,
+
         razorpayOrderId: data.razorpayOrderId ?? null,
         razorpayPaymentId: data.razorpayPaymentId ?? null,
+
         amount: data.amount,
         platformFee: data.platformFee,
         workerPayout: data.workerPayout,
+
         currency: data.currency,
-        status: data.status as any,
+        status: data.status,
       },
     });
+
     return this.mapPayment(row);
   }
 
   async findById(id: string): Promise<Payment | null> {
-    const row = await this.db.payment.findUnique({ where: { id } });
+    const row = await this.db.payment.findUnique({
+      where: { id },
+    });
+
     return row ? this.mapPayment(row) : null;
   }
 
@@ -63,66 +84,115 @@ export class PaymentRepository implements IPaymentRepository {
   }
 
   async findByRazorpayOrderId(orderId: string): Promise<Payment | null> {
-    const row = await this.db.payment.findUnique({ where: { razorpayOrderId: orderId } });
+    const row = await this.db.payment.findUnique({
+      where: {
+        razorpayOrderId: orderId,
+      },
+    });
+
     return row ? this.mapPayment(row) : null;
   }
 
   async findByRazorpayPaymentId(paymentId: string): Promise<Payment | null> {
-    const row = await this.db.payment.findUnique({ where: { razorpayPaymentId: paymentId } });
+    const row = await this.db.payment.findUnique({
+      where: {
+        razorpayPaymentId: paymentId,
+      },
+    });
+
     return row ? this.mapPayment(row) : null;
   }
 
-  async findAllPaginated(page: number, limit: number) {
+  async findAllPaginated(page: number, limit: number
+  ): Promise<{ payments: Payment[]; total: number; totalPages: number; }> {
     const skip = (page - 1) * limit;
+
     const [rows, total] = await this.db.$transaction([
-      this.db.payment.findMany({ orderBy: { createdAt: "desc" }, take: limit, skip }),
+      this.db.payment.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: limit,
+        skip,
+      }),
       this.db.payment.count(),
     ]);
+
     return {
-      payments: rows.map((r) => this.mapPayment(r)),
+      payments: rows.map((row) => this.mapPayment(row)),
       total,
       totalPages: Math.ceil(total / limit),
     };
   }
 
-  async updateStatus(id: string, status: string, extra: Partial<Payment> = {}): Promise<Payment> {
-    const data: Prisma.PaymentUpdateInput = { status: status as any };
-    if (extra.razorpayPaymentId) data.razorpayPaymentId = extra.razorpayPaymentId;
-    if (extra.razorpayOrderId) data.razorpayOrderId = extra.razorpayOrderId;
-    if (extra.workCompletedAt) data.workCompletedAt = extra.workCompletedAt;
-    if (extra.payoutScheduledAt) data.payoutScheduledAt = extra.payoutScheduledAt;
-    if (extra.payoutCompletedAt) data.payoutCompletedAt = extra.payoutCompletedAt;
+  async updateStatus(id: string, status: Payment["status"], extra: Partial<Payment> = {}): Promise<Payment> {
+    const data: Prisma.PaymentUpdateInput = { status, };
 
-    const row = await this.db.payment.update({ where: { id }, data });
+    if (extra.razorpayPaymentId !== undefined) {
+      data.razorpayPaymentId = extra.razorpayPaymentId;
+    }
+
+    if (extra.razorpayOrderId !== undefined) {
+      data.razorpayOrderId = extra.razorpayOrderId;
+    }
+
+    if (extra.workCompletedAt !== undefined) {
+      data.workCompletedAt = extra.workCompletedAt;
+    }
+
+    if (extra.payoutScheduledAt !== undefined) {
+      data.payoutScheduledAt = extra.payoutScheduledAt;
+    }
+
+    if (extra.payoutCompletedAt !== undefined) {
+      data.payoutCompletedAt = extra.payoutCompletedAt;
+    }
+
+    const row = await this.db.payment.update({
+      where: { id },
+      data,
+    });
+
     return this.mapPayment(row);
   }
 
   async countCompletedPayments(): Promise<number> {
     return this.db.payment.count({
-        where: { status: { in: ["paid", "worker_credited"] as any } },
+      where: {
+        status: {
+          in: ["paid", "worker_credited"],
+        },
+      },
     });
-}
+  }
 
-async findPendingPayouts(limit: number): Promise<Payment[]> {
+  async findPendingPayouts(limit: number): Promise<Payment[]> {
     const rows = await this.db.payment.findMany({
-        where: { status: "paid" as any },
-        orderBy: { workCompletedAt: "desc" },
-        take: limit,
+      where: {
+        status: "paid",
+      },
+      orderBy: {
+        workCompletedAt: "desc",
+      },
+      take: limit,
     });
-    return rows.map((r) => this.mapPayment(r));
-}
 
-async getMonthlyRevenue(months: number): Promise<{ month: number; year: number; amount: number }[]> {
+    return rows.map((row) => this.mapPayment(row));
+  }
+
+  async getMonthlyRevenue(months: number): Promise<{month: number;year: number;amount: number;}[]
+  > {
     const start = new Date();
+
     start.setMonth(start.getMonth() - (months - 1));
     start.setDate(1);
     start.setHours(0, 0, 0, 0);
 
-    const rows = await this.db.$queryRaw<{ month: number; year: number; amount: any }[]>`
+    const rows = await this.db.$queryRaw<MonthlyRevenueRow[]>`
       SELECT
         EXTRACT(MONTH FROM created_at)::int AS month,
         EXTRACT(YEAR FROM created_at)::int AS year,
-        SUM(amount) AS amount
+        SUM(amount)::float AS amount
       FROM payments
       WHERE status IN ('paid', 'worker_credited')
         AND created_at >= ${start}
@@ -130,6 +200,10 @@ async getMonthlyRevenue(months: number): Promise<{ month: number; year: number; 
       ORDER BY year, month;
     `;
 
-    return rows.map(r => ({ month: r.month, year: r.year, amount: Number(r.amount) }));
-}
+    return rows.map((row) => ({
+      month: row.month,
+      year: row.year,
+      amount: Number(row.amount),
+    }));
+  }
 }

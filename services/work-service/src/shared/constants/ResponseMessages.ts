@@ -21,7 +21,8 @@ export const ResponseMessage = {
         GET_WORKER_PROFILE: "Worker profile fetched successfully",
         UPLOAD_SIGN_GENERATED: "Worker upload signature generated",
         PROFILE_STAT_RETRIEVED: "Worker profile stats retrieved",
-        WORKER_PROFILE_UPDATED: "Worker profile image updated successfully"
+        WORKER_PROFILE_IMAGE_UPDATED: "Worker profile image updated successfully",
+        WORKER_PROFILE_UPDATED: "Worker profile updated successfully",
     },
     REVIEW: {
         CREATED_REVIEW: "review created successfully",
