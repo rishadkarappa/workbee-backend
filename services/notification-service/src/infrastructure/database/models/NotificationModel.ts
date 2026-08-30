@@ -2,15 +2,15 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { Notification } from '../../../domain/entities/Notification';
 import { UserRole } from 'workbee-common';
 
-export interface NotificationDocument extends Omit<Notification, 'id'>, Document {}
+export interface NotificationDocument extends Omit<Notification, 'id'>, Document { }
 
 const NotificationSchema = new Schema<NotificationDocument>(
   {
     userId: { type: String, required: true, index: true },
-    type: { 
-      type: String, 
+    type: {
+      type: String,
       enum: ['NEW_MESSAGE', 'WORK_UPDATE', 'BOOKING_UPDATE', 'PAYMENT'],
-      required: true 
+      required: true
     },
     title: { type: String, required: true },
     message: { type: String, required: true },
@@ -18,7 +18,16 @@ const NotificationSchema = new Schema<NotificationDocument>(
       chatId: String,
       senderId: String,
       senderName: String,
-      senderRole: { type: String, enum: [UserRole.USER, UserRole.WORKER] }
+      senderRole: {
+        type: String,
+        enum: [UserRole.USER, UserRole.WORKER]
+      },
+      workId: String,
+      workerId: String,
+      progress: {
+        type: String,
+        enum: ["started", "ongoing", "completed"],
+      },
     },
     isRead: { type: Boolean, default: false, index: true },
   },
