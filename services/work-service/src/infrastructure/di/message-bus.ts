@@ -5,10 +5,11 @@ import { WorkerChangePasswordConsumer } from "../message-bus/WorkerChangePasswor
 import { WorkProgressEventPublisher } from "../message-bus/WorkProgressEventPublisher";
 import { IWorkProgressEventPublisher } from "../../domain/message-bus/IWorkProgressEventPublisher";
 import { IWorkerEventPublisher } from "../../domain/message-bus/IWorkerEventPublisher";
+import { IWorkerChangePasswordConsumer } from "../../domain/message-bus/IIWorkerChangePasswordConsumer";
 
 /** publishers */
 container.registerSingleton<IWorkerEventPublisher>("WorkerEventPublisher", WorkerEventPublisher)
 container.registerSingleton<IWorkProgressEventPublisher>("WorkProgressEventPublisher", WorkProgressEventPublisher)
 
 /** consumers */
-container.registerSingleton("WorkerChangePasswordConsumer", WorkerChangePasswordConsumer)
+container.registerSingleton<IWorkerChangePasswordConsumer>("WorkerChangePasswordConsumer", WorkerChangePasswordConsumer)

@@ -5,22 +5,13 @@ import { IWorkerRepository } from "../../domain/repositories/IWorkerRepository";
 import { IHashService } from "../../domain/services/IHashService";
 
 import { logger } from "../logger/logger";
+import { IWorkerChangePasswordConsumer } from "../../domain/message-bus/IIWorkerChangePasswordConsumer";
+import { ChangePasswordRequest, ChangePasswordResponse } from "./types/types";
 
-interface ChangePasswordRequest {
-    workerId: string;
-    currentPassword: string;
-    newPassword: string;
-    correlationId: string;
-}
 
-interface ChangePasswordResponse {
-    success: boolean;
-    message?: string;
-    error?: string;
-}
 
 @injectable()
-export class WorkerChangePasswordConsumer {
+export class WorkerChangePasswordConsumer implements IWorkerChangePasswordConsumer {
 
     private readonly REQUEST_QUEUE = "worker.change-password.request";
     private readonly RESPONSE_QUEUE = "worker.change-password.response";
@@ -44,19 +35,15 @@ export class WorkerChangePasswordConsumer {
             }
 
             try {
-                const request:
-                    ChangePasswordRequest =
-                    JSON.parse(msg.content.toString());
+                const request: ChangePasswordRequest = JSON.parse(msg.content.toString());
 
-                const response =
-                    await this.changePassword(request);
+                const response = await this.changePassword(request);
 
                 channel.sendToQueue(this.RESPONSE_QUEUE, Buffer.from(
                     JSON.stringify(response)), {
                     correlationId: request.correlationId,
                     persistent: true
-                }
-                );
+                });
 
                 channel.ack(msg);
 
@@ -69,13 +56,9 @@ export class WorkerChangePasswordConsumer {
                 };
 
                 channel.sendToQueue(this.RESPONSE_QUEUE, Buffer.from(JSON.stringify(response)), {
-                    correlationId:
-                        request.correlationId,
-
+                    correlationId:request.correlationId,
                     persistent: true
-                }
-                );
-
+                });
                 channel.ack(msg);
             }
         }

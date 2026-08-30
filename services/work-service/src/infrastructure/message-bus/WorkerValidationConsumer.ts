@@ -11,28 +11,7 @@ import { IHashService } from "../../domain/services/IHashService";
 import { WorkerStatus } from "../database/models/WorkerSchema";
 import { getErrorMessage } from "workbee-common";
 import { logger } from "../logger/logger";
-
-interface WorkerLoginRequest {
-    email: string;
-    password: string;
-    correlationId: string;
-}
-
-interface WorkerLoginResponse {
-    success: boolean;
-    data?: {
-        id: string;
-        name: string;
-        email: string;
-        phone: string;
-        role: string;
-        location: string;
-        workType: string;
-        preferredWorks: string[];
-        status: string;
-    };
-    error?: string;
-}
+import { WorkerLoginRequest, WorkerLoginResponse } from "./types/types";
 
 @injectable()
 export class WorkerValidationConsumer {

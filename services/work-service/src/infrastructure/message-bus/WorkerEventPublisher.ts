@@ -7,11 +7,8 @@ import { injectable } from "tsyringe";
 import { RabbitMQConnection } from "./RabbitMQInitializer";
 import { logger } from "../logger/logger";
 import { IWorkerEventPublisher } from "../../domain/message-bus/IWorkerEventPublisher";
+import { IWorkerBlockedEvent } from "./types/types";
 
-export interface IWorkerBlockedEvent {
-  workerId: string;
-  isBlocked: boolean;
-}
 
 @injectable()
 export class WorkerEventPublisher implements IWorkerEventPublisher{
