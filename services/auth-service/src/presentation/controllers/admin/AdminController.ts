@@ -44,18 +44,14 @@ export class AdminController implements IAdminContoller {
 
             const result = await this._getUsersUseCase.execute(page, limit, search, status);
 
-            res.status(HttpStatus.OK).json(
-                ResponseHelper.success(
-                    {
-                        users: result.users,
-                        total: result.total,
-                        page,
-                        limit,
-                        totalPages: Math.ceil(result.total / limit)
-                    },
-                    ResponseMessage.ADMIN.GET_USERS
-                )
-            );
+            res.status(HttpStatus.OK).json(ResponseHelper.success({
+                users: result.users,
+                total: result.total,
+                page,
+                limit,
+                totalPages: Math.ceil(result.total / limit)
+            }, ResponseMessage.ADMIN.GET_USERS));
+            
         } catch (error) {
             next(error)
         }
@@ -75,11 +71,11 @@ export class AdminController implements IAdminContoller {
     }
 
     //admin dash stats
-    async getUserStats(req: Request, res: Response, next: NextFunction): Promise < void> {
+    async getUserStats(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const result = await this._getAdminUserStatsUseCase.execute();
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.ADMIN.GET_USER_STATS));
-        } catch(error) {
+        } catch (error) {
             next(error);
         }
     }

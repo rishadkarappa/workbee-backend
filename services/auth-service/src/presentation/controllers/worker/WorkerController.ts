@@ -46,9 +46,7 @@ export class WorkerController implements IWorkerController {
             const { currentPassword, newPassword } = req.body;
             await this._changeWorkerPasswordUseCase.execute(workerId, { currentPassword, newPassword });
 
-            res
-                .status(HttpStatus.OK)
-                .json(ResponseHelper.success(null, "Password changed successfully"));
+            res.status(HttpStatus.OK).json(ResponseHelper.success(null, ResponseMessage.WORKER.CHANGED_WORKER_PASS));
 
         } catch (err) {
             next(err);
@@ -65,12 +63,9 @@ export class WorkerController implements IWorkerController {
                 );
                 return;
             }
-
             const profile = await this._getUserProfileStatUseCase.execute({ userId });
 
-            res.status(HttpStatus.OK).json(
-                ResponseHelper.success(profile, "User profile retrieved")
-            );
+            res.status(HttpStatus.OK).json(ResponseHelper.success(profile, ResponseMessage.USER.USER_PROFILE_RETRIEVED));
         } catch (err) {
             next(err);
         }

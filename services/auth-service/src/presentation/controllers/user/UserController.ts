@@ -333,7 +333,7 @@ export class UserController implements IUserController {
       const dto: UpdateUserProfileRequestDTO = { userId, name, phone, location, bio, };
       const result = await this._updateUserProfileUseCase.execute(dto);
 
-      res.status(HttpStatus.OK).json(ResponseHelper.success(result, "Profile updated successfully", HttpStatus.OK));
+      res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.USER.PROFILE_UPDATED, HttpStatus.OK));
 
     } catch (error) {
       next(error);

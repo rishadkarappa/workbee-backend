@@ -29,6 +29,7 @@ export const ResponseMessage = {
         CHANGE_PASS_SUCCESSFULLY:'CHANGED user password successfully',
         GET_UPLOAD_SIGNATURE:'successfully got cloudinary upload signature',
         PROFILE_IMAGE_UPDATED:"Profile image updated successfully",
+        PROFILE_UPDATED:"Profile updated successfully",
     },
 
     ADMIN:{
@@ -36,6 +37,9 @@ export const ResponseMessage = {
         GET_USERS:"get suers successfully",
         ADMIN_BLOCKED_USER:'admin blocked this user',
         GET_USER_STATS:'get users stat'
+    },
+    WORKER:{
+        CHANGED_WORKER_PASS:"Password changed successfully"
     },
 
     OTP: {
