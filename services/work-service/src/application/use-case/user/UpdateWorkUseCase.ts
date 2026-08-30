@@ -6,13 +6,13 @@ import { UpdateWorkDto, WorkResponseDto } from "../../dtos/work/WorkDTO";
 import { WorkMapper } from "../../mappers/WorkMapper";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 import { logger } from "../../../infrastructure/logger/logger";
-import { WorkProgressEventPublisher } from "../../../infrastructure/message-bus/WorkProgressEventPublisher";
+import { IWorkProgressEventPublisher } from "../../../domain/message-bus/IWorkProgressEventPublisher";
 
 @injectable()
 export class UpdateWorkUseCase implements IUpdateWorkUseCase {
   constructor(
-    @inject("WorkRepository") private readonly _workRepository: IWorkRepository
-    @inject("WorkProgressEventPublisher") private readonly _workProgressEventPublisher: WorkProgressEventPublisher
+    @inject("WorkRepository") private readonly _workRepository: IWorkRepository,
+    @inject("WorkProgressEventPublisher") private readonly _workProgressEventPublisher: IWorkProgressEventPublisher,
   ) { }
 
   async execute(dto: UpdateWorkDto): Promise<WorkResponseDto> {
