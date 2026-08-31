@@ -65,6 +65,7 @@ export class WorkController implements IWorkController {
 
         @inject("GetAdminWorkStatsUseCase") private readonly _getAdminWorkStatsUseCase: IGetAdminWorkStatsUseCase,
         @inject("UpdateWorkerProfileUseCase") private readonly _updateWorkerProfileUseCase: IUpdateWorkerProfileUseCase,
+        // @inject("ReApplyAsAWorkerUseCase") private readonly _reApplyAsAWorkerUseCase: ReApplyAsAWorkerUseCase,
 
 
     ) { }
@@ -411,7 +412,7 @@ export class WorkController implements IWorkController {
 
             const { name, phone, location, bio } = req.body;
 
-            const updateWorkerProfileData: UpdateWorkerProfileReqDTO = {userId, name, phone, location, bio,};
+            const updateWorkerProfileData: UpdateWorkerProfileReqDTO = { userId, name, phone, location, bio, };
 
             const result = await this._updateWorkerProfileUseCase.execute(updateWorkerProfileData);
 
@@ -503,5 +504,25 @@ export class WorkController implements IWorkController {
             next(err);
         }
     }
+
+    // async updateTheRejectedReasonWithData(req: Request, res: Response, next: NextFunction): Promise<void> {
+    //     try {
+
+    //         const workerId = req.headers['x-user-id'] as string;
+    //         const { rejData } = req.body
+    //         if (!workerId) {
+    //             res.status(HttpStatus.UNAUTHORIZED).json(
+    //                 ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
+    //             );
+    //             return;
+    //         }
+
+    //         const works = await this._reApplyAsAWorkerUseCase.execute({ workerId ,rejData});
+    //         res.status(HttpStatus.OK).json(ResponseHelper.success(works, ResponseMessage.GENERAL.SUCCESS, HttpStatus.OK));
+
+    //     } catch (err) {
+    //         next(err);
+    //     }
+    // }
 
 }

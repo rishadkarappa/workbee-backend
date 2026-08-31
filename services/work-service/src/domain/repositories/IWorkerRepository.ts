@@ -18,6 +18,10 @@ export interface IWorkerRepository {
     // addReviewField(workerId:string):Promise<boolean>
     countPendingAppliers(): Promise<number>;
     countCreatedBetween(status: WorkerStatus, start: Date, end: Date): Promise<number>;
+
+
+    /** reapply  */
+    // findByIdAndUpdateRejectedReason(userId:string, rejData:string):Promise<boolean>;
 }
 
 

@@ -206,4 +206,9 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     return updatedWorker ? this.map(updatedWorker) : null;
   }
 
+  // async findByIdAndUpdateRejectedReason(userId: string, rejData: string): Promise<boolean> {
+  //   const resp = await WorkerModel.findByIdAndUpdate({userId},{$set:{rejData:{rejData}}})
+  //   return true
+  // }
+
 }
