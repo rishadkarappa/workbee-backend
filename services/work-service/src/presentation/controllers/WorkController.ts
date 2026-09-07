@@ -505,24 +505,5 @@ export class WorkController implements IWorkController {
         }
     }
 
-    // async updateTheRejectedReasonWithData(req: Request, res: Response, next: NextFunction): Promise<void> {
-    //     try {
-
-    //         const workerId = req.headers['x-user-id'] as string;
-    //         const { rejData } = req.body
-    //         if (!workerId) {
-    //             res.status(HttpStatus.UNAUTHORIZED).json(
-    //                 ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
-    //             );
-    //             return;
-    //         }
-
-    //         const works = await this._reApplyAsAWorkerUseCase.execute({ workerId ,rejData});
-    //         res.status(HttpStatus.OK).json(ResponseHelper.success(works, ResponseMessage.GENERAL.SUCCESS, HttpStatus.OK));
-
-    //     } catch (err) {
-    //         next(err);
-    //     }
-    // }
 
 }
