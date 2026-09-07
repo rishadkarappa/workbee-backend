@@ -7,8 +7,10 @@ import path from "path";
 import { connectDatabase } from "./infrastructure/config/connectMongo";
 import { RabbitMQInitializer } from "./infrastructure/message-bus/RabbitMQInitializer";
 
+/** work service routes */
 import WorkRoutes from "./presentation/routes/WorkRoutes" 
 import reviewRoutes from "./presentation/routes/ReviewRoutes" 
+import disputeRoutes from "./presentation/routes/DisputeRoutes" 
 
 import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
 import { logger } from "./infrastructure/logger/logger";
@@ -23,6 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use("/", WorkRoutes)
 app.use("/", reviewRoutes)
+app.use("/", disputeRoutes)
 
 app.use(errorHandler);
 
