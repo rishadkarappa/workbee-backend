@@ -164,4 +164,62 @@ export class EmailService implements IEmailService {
             //dont throw error bec allow the rejection to succeed even if email fails
         }
     }
+
+        async sendWarningEmail(email: string, name: string, reason: string): Promise<void> {
+        if (!this.transporter) {
+            logger.info("[SIMULATED] Warning email to:", email, reason);
+            return;
+        }
+        try {
+            await this.transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: "⚠️ WorkBee - Important Notice Regarding Your Account",
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <h2 style="color: #d97706;">Account Warning</h2>
+                        <p>Dear <strong>${name}</strong>,</p>
+                        <p>Following a review of a complaint filed against your account, our team has issued the following warning:</p>
+                        <div style="background:#fef3c7;border-left:4px solid #d97706;padding:15px;margin:15px 0;">
+                            <p style="margin:0;color:#92400e;">${reason}</p>
+                        </div>
+                        <p>Please ensure this does not happen again, as repeated violations may lead to suspension of your account.</p>
+                        <p>Best regards,<br/><strong>The WorkBee Team</strong></p>
+                    </div>
+                `,
+            });
+            logger.info("Warning email sent to:", email);
+        } catch (error) {
+            logger.error("Failed to send warning email:", error);
+        }
+    }
+
+    async sendBlacklistedEmail(email: string, name: string, reason: string): Promise<void> {
+        if (!this.transporter) {
+            logger.info("[SIMULATED] Blacklist email to:", email, reason);
+            return;
+        }
+        try {
+            await this.transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: "WorkBee - Account Blacklisted",
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <h2 style="color: #dc2626;">Account Blacklisted</h2>
+                        <p>Dear <strong>${name}</strong>,</p>
+                        <p>Following a formal review of a complaint against your account, your WorkBee account has been <strong>blacklisted</strong>.</p>
+                        <div style="background:#fee2e2;border-left:4px solid #dc2626;padding:15px;margin:15px 0;">
+                            <p style="margin:0;color:#991b1b;">${reason}</p>
+                        </div>
+                        <p>If you believe this was a mistake, please contact our support team.</p>
+                        <p>Best regards,<br/><strong>The WorkBee Team</strong></p>
+                    </div>
+                `,
+            });
+            logger.info("Blacklist email sent to:", email);
+        } catch (error) {
+            logger.error("Failed to send blacklist email:", error);
+        }
+    }
 }

@@ -58,5 +58,14 @@ export const ErrorMessages = {
         WORK_NOT_COMPLETED: "Work must be completed before it can be reviewed",
         ALREADY_REVIEWED: "This work has already been reviewed",
     },
-
+    DISPUTE: {
+        COMPLAINT_TYPE_REQUIRED: "Please select a complaint type.",
+        DESCRIPTION_TOO_SHORT: "Please describe the issue in at least 10 characters.",
+        TOO_MANY_IMAGES: "You can upload a maximum of 2 images.",
+        DISPUTE_NOT_FOUND: "Dispute not found.",
+        INVALID_DISPUTE_ID: "Invalid dispute id.",
+        REASON_REQUIRED: "Please provide a reason (min 5 characters) for this action.",
+        INVALID_ACTION_TYPE: "Invalid dispute action type.",
+        ACTION_FAILED: "Failed to apply the requested action.",
+    },
 }

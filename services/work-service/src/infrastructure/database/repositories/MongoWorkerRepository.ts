@@ -33,6 +33,10 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       workerProfileImage: worker.workerProfileImage,
       workerProfileImagePublicId: worker.workerProfileImagePublicId,
 
+      isBlacklisted: worker.isBlacklisted,
+      blacklistReason: worker.blacklistReason,
+      blacklistedAt: worker.blacklistedAt,
+
       createdAt: worker.createdAt,
       updatedAt: worker.updatedAt
     }
@@ -205,5 +209,6 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     });
     return updatedWorker ? this.map(updatedWorker) : null;
   }
+
 
 }

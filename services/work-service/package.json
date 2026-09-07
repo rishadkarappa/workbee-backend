@@ -25,6 +25,7 @@
     "nodemailer": "^7.0.11",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
+    "uuid": "^14.0.2",
     "winston": "^3.18.3",
     "winston-logstash-transport": "^2.0.0",
     "workbee-common": "^1.0.0"

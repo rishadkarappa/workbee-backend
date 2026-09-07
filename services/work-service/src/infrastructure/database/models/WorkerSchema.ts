@@ -24,6 +24,9 @@ export interface WorkerDocument extends Document {
   workerProfileImage?: string;
   workerProfileImagePublicId?: string;
   isBlocked: boolean;
+  isBlacklisted: boolean;
+  blacklistReason: string;
+  blacklistedAt: Date;
   status: WorkerStatus;
   rejectionReason?: string;
   rejectedAt?: Date;
@@ -47,7 +50,9 @@ const WorkerSchema = new Schema<WorkerDocument>({
     termsAccepted: { type: Boolean, required: true },
   },
   isBlocked: { type: Boolean, default: false },
-
+  isBlacklisted: { type: Boolean, default: false },
+  blacklistReason: { type: String, required: false },
+  blacklistedAt: { type: Date, required: false },
   workerProfileImage: {
     type: String,
     required: false

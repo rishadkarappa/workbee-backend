@@ -34,6 +34,12 @@ export const ResponseMessage = {
         RETRIEVED_WORKS: "Successfully retrieved user works",
         WORK_UPDATED: "Work updated successfully",
         WORK_DELETED: "Work deleted successfully",
-    }
+    },
+    DISPUTE: {
+        UPLOAD_SIGN_GENERATED: "Upload signature generated",
+        CREATED: "Complaint submitted successfully",
+        RETRIEVED: "Disputes retrieved successfully",
+        ACTION_APPLIED: "Action applied successfully",
+    },
 
 }

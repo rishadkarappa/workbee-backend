@@ -47,6 +47,22 @@ import { UpdateWorkerProfileUseCase } from "../../application/use-case/worker/pr
 import { IUpdateWorkerProfileUseCase } from "../../application/ports/worker/IUpdateWorkerProfileUseCase";
 import { IUpdateWorkerProfileImageUseCase } from "../../application/ports/worker/IUpdateWorkerProfileImageUseCase";
 import { IGetWorkerProfileSettingsUseCase } from "../../application/ports/worker/IGetWorkerProfileSettingsUseCase";
+import { IDisputeRepository } from "../../domain/repositories/IDisputeRepository";
+import { ICreateDisputeUseCase } from "../../application/ports/dispute/ICreateDisputeUseCase";
+import { IGetUserDisputesUseCase } from "../../application/ports/dispute/IGetUserDisputesUseCase";
+import { IGetWorkerDisputesUseCase } from "../../application/ports/dispute/IGetWorkerDisputesUseCase";
+import { IGetAllDisputesUseCase } from "../../application/ports/dispute/IGetAllDisputesUseCase";
+import { IGetDisputeByIdUseCase } from "../../application/ports/dispute/IGetDisputeByIdUseCase";
+import { IApplyDisputeActionUseCase } from "../../application/ports/dispute/IApplyDisputeActionUseCase";
+import { IUserDisputeActionClient } from "../../domain/message-bus/IUserDisputeActionClient";
+import { MongoDisputeRepository } from "../database/repositories/MongoDisputeRepository";
+import { CreateDisputeUseCase } from "../../application/use-case/dispute/CreateDisputeUseCase";
+import { GetUserDisputesUseCase } from "../../application/use-case/dispute/GetUserDisputesUseCase";
+import { GetWorkerDisputesUseCase } from "../../application/use-case/dispute/GetWorkerDisputesUseCase";
+import { GetAllDisputesUseCase } from "../../application/use-case/dispute/GetAllDisputesUseCase";
+import { GetDisputeByIdUseCase } from "../../application/use-case/dispute/GetDisputeByIdUseCase";
+import { ApplyDisputeActionUseCase } from "../../application/use-case/dispute/ApplyDisputeActionUseCase";
+import { UserDisputeActionClient } from "../message-bus/UserDisputeActionClient";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -78,3 +94,13 @@ container.register<IGetWorkerProfileStatsUseCase>("GetWorkerProfileStatsUseCase"
 container.registerSingleton<IGetWorkerAssignedWorksUseCase>("GetWorkerAssignedWorksUseCase", GetWorkerAssignedWorksUseCase);
 container.register<IGetWorkerDashboardStatsUseCase>("GetWorkerDashboardStatsUseCase", GetWorkerDashboardStatsUseCase);
 container.register<IGetAdminWorkStatsUseCase>("GetAdminWorkStatsUseCase", GetAdminWorkStatsUseCase);
+
+//dispute
+container.registerSingleton<IDisputeRepository>("DisputeRepository", MongoDisputeRepository);
+container.registerSingleton<ICreateDisputeUseCase>("CreateDisputeUseCase", CreateDisputeUseCase);
+container.registerSingleton<IGetUserDisputesUseCase>("GetUserDisputesUseCase", GetUserDisputesUseCase);
+container.registerSingleton<IGetWorkerDisputesUseCase>("GetWorkerDisputesUseCase", GetWorkerDisputesUseCase);
+container.registerSingleton<IGetAllDisputesUseCase>("GetAllDisputesUseCase", GetAllDisputesUseCase);
+container.registerSingleton<IGetDisputeByIdUseCase>("GetDisputeByIdUseCase", GetDisputeByIdUseCase);
+container.registerSingleton<IApplyDisputeActionUseCase>("ApplyDisputeActionUseCase", ApplyDisputeActionUseCase);
+container.registerSingleton<IUserDisputeActionClient>("UserDisputeActionClient", UserDisputeActionClient);

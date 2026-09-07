@@ -11,6 +11,9 @@ export interface UserDocument extends Document {
   bio?: string;
   isVerified: boolean;
   isBlocked: boolean;
+  isBlacklisted: boolean;
+  blacklistReason: string;
+  blacklistedAt: Date;
   role: UserRole;
   userProfileImage?: string;
   userProfileImagePublicId?: string;
@@ -68,6 +71,19 @@ const UserSchema = new Schema<UserDocument>(
       default: false,
     },
 
+    isBlacklisted: {
+      type: Boolean,
+      default: false,
+    },
+    blacklistReason: {
+      type: String,
+      required: false,
+    },
+    blacklistedAt: {
+      type: Date,
+      required: false,
+    },
+
     role: {
       type: String,
       enum: UserRole,
@@ -88,4 +104,4 @@ const UserSchema = new Schema<UserDocument>(
   { timestamps: true }
 );
 
-export const UserModel = mongoose.model<UserDocument>("User",UserSchema);
+export const UserModel = mongoose.model<UserDocument>("User", UserSchema);

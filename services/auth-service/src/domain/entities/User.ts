@@ -9,6 +9,11 @@ export interface User {
   bio?: string;
   isVerified: boolean;
   isBlocked: boolean;
+
+  isBlacklisted?: boolean;
+  blacklistReason?: string;
+  blacklistedAt?: Date;
+  
   role: UserRole;
   phone?: string;
   countofpost?: number;

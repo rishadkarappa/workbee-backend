@@ -1,7 +1,8 @@
 import { container } from "tsyringe";
 import { RabbitMQConnection } from "../config/rabbitmq";
-import { WorkerEventConsumer } from "./WorkerEventConsumer"; 
+import { WorkerEventConsumer } from "./WorkerEventConsumer";
 import { logger } from "../logger/logger";
+import { UserDisputeActionConsumer } from "./UserDisputeActionConsumer";
 
 export class RabbitMQInitializer {
   private static isInitialized = false;
@@ -20,6 +21,10 @@ export class RabbitMQInitializer {
       const workerEventConsumer = container.resolve(WorkerEventConsumer);
       await workerEventConsumer.start();
       logger.info("- Worker event consumer started");
+
+      const userDisputeActionConsumer = container.resolve(UserDisputeActionConsumer);
+      await userDisputeActionConsumer.start();
+      logger.info("- User Dispute Action Consumer started");
 
       this.isInitialized = true;
       logger.info("- Messaging Service initialized successfully");

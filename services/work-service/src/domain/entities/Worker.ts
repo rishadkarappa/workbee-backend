@@ -25,6 +25,11 @@ export interface Worker {
     workerProfileImagePublicId?: string;
 
     isBlocked?: boolean;
+
+    isBlacklisted?: boolean;
+    blacklistReason?: string;
+    blacklistedAt?: Date;
+    
     createdAt?: Date;
     updatedAt?: Date;
 }

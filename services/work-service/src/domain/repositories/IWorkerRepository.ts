@@ -15,7 +15,6 @@ export interface IWorkerRepository {
     updatePassword(workerId: string, hashedPassword: string): Promise<void>;
     updateWorkerProfile(userId: string, data: { name: string; phone: string; location: string; bio: string; }): Promise<Worker | null>;
 
-    // addReviewField(workerId:string):Promise<boolean>
     countPendingAppliers(): Promise<number>;
     countCreatedBetween(status: WorkerStatus, start: Date, end: Date): Promise<number>;
 
