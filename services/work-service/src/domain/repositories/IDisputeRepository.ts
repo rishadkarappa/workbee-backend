@@ -9,4 +9,6 @@ export interface IDisputeRepository {
     page: number; limit: number; status?: string; search?: string;
   }): Promise<{ disputes: Dispute[]; total: number }>;
   addAction(id: string, action: DisputeAction, newStatus: DisputeStatus): Promise<Dispute | null>;
+  countActionsForWorker(workerId: string): Promise<number>;
+  countActionsForUser(userId: string): Promise<number>;
 }

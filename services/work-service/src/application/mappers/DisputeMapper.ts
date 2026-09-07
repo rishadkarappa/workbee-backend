@@ -1,5 +1,5 @@
 import { Dispute } from "../../domain/entities/Dispute";
-import { DisputeResponseDto } from "../dtos/dispute/DisputeDTO";
+import { DisputeResponseDto, DisputeDetailResponseDto, WorkerSummaryDto, UserSummaryDto } from "../dtos/dispute/DisputeDTO";
 
 export class DisputeMapper {
   static toResponseDto(dispute: Dispute): DisputeResponseDto {
@@ -18,5 +18,14 @@ export class DisputeMapper {
       createdAt: dispute.createdAt,
       updatedAt: dispute.updatedAt,
     };
+  }
+
+
+  static toDetailResponseDto(
+    dispute: Dispute,
+    worker: WorkerSummaryDto,
+    user: UserSummaryDto
+  ): DisputeDetailResponseDto {
+    return { ...this.toResponseDto(dispute), worker, user };
   }
 }

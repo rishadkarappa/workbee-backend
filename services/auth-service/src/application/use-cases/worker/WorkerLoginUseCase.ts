@@ -24,11 +24,13 @@ export class WorkerLoginUseCase implements IWorkerLoginUseCase {
         const { email, password } = data;
 
         const response = await this._workerValidationClient.validateWorker(email, password);
+        
         if (!response.success) {
             throw new Error(ErrorMessages.WORKER.WORKER_VALIDATION_FAILED);
         }
 
         const worker = response.data;
+
         if (!worker) {
             throw new Error(ErrorMessages.WORKER.WORKER_VALIDATION_FAILED);
         }
@@ -40,10 +42,6 @@ export class WorkerLoginUseCase implements IWorkerLoginUseCase {
         // store refresh token in Redis
         await this._tokenService.storeRefreshToken(worker.id, refreshToken);
 
-        return WorkerMapper.toLoginResponse({
-            ...worker,
-            accessToken,
-            refreshToken
-        });
+        return WorkerMapper.toLoginResponse({...worker,accessToken,refreshToken});
     }
 }

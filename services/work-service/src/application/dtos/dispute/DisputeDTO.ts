@@ -44,3 +44,29 @@ export interface DisputeResponseDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface WorkerSummaryDto {
+  id: string;
+  name: string;
+  email: string;
+  profileImage?: string;
+  isBlocked: boolean;
+  isBlacklisted: boolean;
+  totalWorksCompleted: number;
+  totalActionsTaken: number;
+}
+
+export interface UserSummaryDto {
+  id: string;
+  name: string;
+  email: string;
+  profileImage?: string;
+  isBlocked: boolean;
+  isBlacklisted: boolean;
+  totalActionsTaken: number;
+}
+
+export interface DisputeDetailResponseDto extends DisputeResponseDto {
+  worker: WorkerSummaryDto;
+  user: UserSummaryDto;
+}

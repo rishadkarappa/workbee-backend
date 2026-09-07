@@ -6,6 +6,8 @@ import { WorkProgressEventPublisher } from "../message-bus/WorkProgressEventPubl
 import { IWorkProgressEventPublisher } from "../../domain/message-bus/IWorkProgressEventPublisher";
 import { IWorkerEventPublisher } from "../../domain/message-bus/IWorkerEventPublisher";
 import { IWorkerChangePasswordConsumer } from "../../domain/message-bus/IIWorkerChangePasswordConsumer";
+import { GetUserProfileRpcClient } from "../message-bus/GetUserProfileRpcClient";
+import { IGetUserProfileRpcClient } from "../../domain/message-bus/IGetUserProfileRpcClient";
 
 /** publishers */
 container.registerSingleton<IWorkerEventPublisher>("WorkerEventPublisher", WorkerEventPublisher)
@@ -13,3 +15,6 @@ container.registerSingleton<IWorkProgressEventPublisher>("WorkProgressEventPubli
 
 /** consumers */
 container.registerSingleton<IWorkerChangePasswordConsumer>("WorkerChangePasswordConsumer", WorkerChangePasswordConsumer)
+
+/** clients */
+container.registerSingleton<IGetUserProfileRpcClient>("GetUserProfileRpcClient", GetUserProfileRpcClient);

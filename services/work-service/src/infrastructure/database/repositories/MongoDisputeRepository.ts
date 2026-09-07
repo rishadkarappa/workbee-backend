@@ -78,4 +78,24 @@ export class MongoDisputeRepository implements IDisputeRepository {
     );
     return updated ? this.map(updated) : null;
   }
+
+  async countActionsForWorker(workerId: string): Promise<number> {
+    const result = await DisputeModel.aggregate([
+      { $match: { workerId } },
+      { $unwind: "$actions" },
+      { $match: { "actions.actionType": { $regex: /_worker$/ } } },
+      { $count: "total" },
+    ]);
+    return result.length ? result[0].total : 0;
+  }
+
+  async countActionsForUser(userId: string): Promise<number> {
+    const result = await DisputeModel.aggregate([
+      { $match: { userId } },
+      { $unwind: "$actions" },
+      { $match: { "actions.actionType": { $regex: /_user$/ } } },
+      { $count: "total" },
+    ]);
+    return result.length ? result[0].total : 0;
+  }
 }

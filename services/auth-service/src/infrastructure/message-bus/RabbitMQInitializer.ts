@@ -3,6 +3,7 @@ import { RabbitMQConnection } from "../config/rabbitmq";
 import { WorkerEventConsumer } from "./WorkerEventConsumer";
 import { logger } from "../logger/logger";
 import { UserDisputeActionConsumer } from "./UserDisputeActionConsumer";
+import { UserProfileRpcConsumer } from "./UserProfileRpcConsumer";
 
 export class RabbitMQInitializer {
   private static isInitialized = false;
@@ -25,6 +26,10 @@ export class RabbitMQInitializer {
       const userDisputeActionConsumer = container.resolve(UserDisputeActionConsumer);
       await userDisputeActionConsumer.start();
       logger.info("- User Dispute Action Consumer started");
+
+      const userProfileRpcConsumer = container.resolve(UserProfileRpcConsumer);
+      await userProfileRpcConsumer.start();
+      logger.info("- User Profile RPC Consumer started");
 
       this.isInitialized = true;
       logger.info("- Messaging Service initialized successfully");
