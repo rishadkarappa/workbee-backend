@@ -8,7 +8,7 @@ import { connectDatabase } from "./infrastructure/config/connectMongo";
 import { RabbitMQInitializer } from "./infrastructure/message-bus/RabbitMQInitializer";
 
 import WorkRoutes from "./presentation/routes/WorkRoutes" 
-import reviewRoutes from "./presentation/routes/review-routes" 
+import reviewRoutes from "./presentation/routes/ReviewRoutes" 
 
 import { errorHandler } from './presentation/middlewares/ErrorHandlerMiddleware';
 import { logger } from "./infrastructure/logger/logger";
