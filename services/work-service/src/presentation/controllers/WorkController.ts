@@ -4,7 +4,6 @@ import { inject, injectable } from "tsyringe";
 import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
-import { WorkUploadFiles } from "../types/WorkUploadFiles";
 import { ENV } from "../../infrastructure/config/env";
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 
@@ -20,7 +19,6 @@ import { IGetNewAppliersUseCase } from "../../application/ports/worker/IGetNewAp
 import { IWorkerApproveUseCase } from "../../application/ports/worker/IWorkerApproveUseCase";
 import { IGetAllWorkersUseCase } from "../../application/ports/worker/IGetAllWorkersUseCase";
 import { IPostWorkUseCase } from "../../application/ports/work/IPostWorkUseCase";
-import { IFileUploadService } from "../../domain/services/IFileUploadService";
 import { IGetAllWorksUseCase } from "../../application/ports/work/IGetAllWorksUseCase";
 import { IBlockWorkerUseCase } from "../../application/ports/worker/IBlockWorkerUseCase";
 import { IGetMyWorksUseCase } from "../../application/ports/user/IGetMyWorksUseCase";
@@ -47,7 +45,6 @@ export class WorkController implements IWorkController {
         @inject("WorkerApproveUseCase") private readonly _workerApproveUseCase: IWorkerApproveUseCase,
         @inject("GetAllWorkersUseCase") private readonly _getAllWorkersUseCase: IGetAllWorkersUseCase,
         @inject("PostWorkUseCase") private readonly _postWorkUseCase: IPostWorkUseCase,
-        @inject("FileUploadService") private readonly _fileUploadService: IFileUploadService,
         @inject("GetAllWorksUseCase") private readonly _getAllWorksUseCase: IGetAllWorksUseCase,
         @inject("BlockWorkerUseCase") private readonly _blockWorkerUseCase: IBlockWorkerUseCase,
         @inject("GetMyWorksUseCase") private readonly _getMyWorksUseCase: IGetMyWorksUseCase,
@@ -107,7 +104,6 @@ export class WorkController implements IWorkController {
     }
 
     async approveWorker(req: Request, res: Response, next: NextFunction): Promise<void> {
-        // logger.info('req bodyyy', req.body)
         try {
             const dto: WorkerApproveDto = {
                 workerId: req.body.workerId,
@@ -150,36 +146,20 @@ export class WorkController implements IWorkController {
         }
     }
 
-    async postWork(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async postWork(req: Request,res: Response,next: NextFunction): Promise<void> {
         try {
-            const rawData = req.body;
-            const files = req.files as WorkUploadFiles;
-
-            if (files?.voiceFile) {
-                rawData.voiceFile = await this._fileUploadService.saveFile(files.voiceFile[0], 'voice');
-            }
-
-            const termsAccepted = rawData.termsAccepted === 'true' || rawData.termsAccepted === true;
-
-            let images = [];
-            let videos = [];
-            try {
-                images = rawData.images ? JSON.parse(rawData.images) : [];
-                videos = rawData.videos ? JSON.parse(rawData.videos) : [];
-            } catch {
-                images = [];
-                videos = [];
-            }
-
-            const dto: PostWorkDto = {
-                ...rawData,
-                termsAccepted,
-                images,
-                videos,
-            };
+            const dto: PostWorkDto = req.body;
 
             const result = await this._postWorkUseCase.execute(dto);
-            res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.WORK.WORK_BOOKED));
+
+            res
+                .status(HttpStatus.OK)
+                .json(
+                    ResponseHelper.success(
+                        result,
+                        ResponseMessage.WORK.WORK_BOOKED
+                    )
+                );
         } catch (err) {
             next(err);
         }
@@ -499,8 +479,8 @@ export class WorkController implements IWorkController {
                 throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
             }
 
-            // temp folder keyed by user + timestamp — media gets permanently
-            // associated with the work record once postWork saves the url/publicId
+            // temp folder keyed by user + timestamp — media (images/videos/voice notes)
+            // gets permanently associated with the work record once postWork saves the url/publicId
             const folder = `workbee/work-media/${userId}`;
 
             const { signature, timestamp } = this._cloudinaryService.generateUploadSignature({ folder });

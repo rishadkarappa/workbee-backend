@@ -2,7 +2,6 @@ import "reflect-metadata";
 import "./infrastructure/di/container"
 
 import express from "express";
-import path from "path";
 
 import { connectDatabase } from "./infrastructure/config/connectMongo";
 import { RabbitMQInitializer } from "./infrastructure/message-bus/RabbitMQInitializer";
@@ -19,9 +18,6 @@ import { ENV } from "./infrastructure/config/env";
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use("/", WorkRoutes)
 app.use("/", reviewRoutes)

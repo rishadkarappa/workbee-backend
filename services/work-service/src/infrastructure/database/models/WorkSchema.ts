@@ -25,7 +25,7 @@ const WorkSchema = new Schema<WorkTocument>(
         endDate: { type: String },
         time: { type: String, required: true },
         description: { type: String, required: true },
-        voiceFile: { type: String },
+        voiceFile: { type: MediaItemSchema, default: null },
         videoFile: { type: String },
         images: {
             type: [MediaItemSchema],
@@ -88,6 +88,3 @@ const WorkSchema = new Schema<WorkTocument>(
 WorkSchema.index({ location: "2dsphere" });
 
 export const WorkModel = mongoose.model<WorkTocument>("Work", WorkSchema);
-
-
-

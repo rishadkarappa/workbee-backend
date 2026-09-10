@@ -1,12 +1,9 @@
 import { Router } from "express";
 import { WorkController } from "../controllers/WorkController";
 import { container } from "tsyringe";
-import multer from "multer";
 
 const router = Router();
 const workController = container.resolve(WorkController)
-
-const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/apply-worker", workController.applyWorker.bind(workController))
 router.get("/get-new-appliers", workController.getNewAppliers.bind(workController))
@@ -15,13 +12,12 @@ router.get("/get-workers", workController.getWorkers.bind(workController))
 router.get("/get-all-works", workController.getAllWorks.bind(workController))
 router.get('/work-media/upload-signature', workController.getWorkMediaUploadSignature.bind(workController));
 
-router.post("/post-work", upload.fields([{ name: 'voiceFile', maxCount: 1 }]),workController.postWork.bind(workController));
+router.post("/post-work", workController.postWork.bind(workController));
 
 router.patch('/block-worker/:id', workController.blockWorker.bind(workController))
 router.get('/get-my-works', workController.getMyWorks.bind(workController));
 router.put('/update-work/:workId', workController.updateWork.bind(workController))
 router.delete('/delete-my-work/:workId', workController.deleteMyWork.bind(workController))
-
 
 // inter ser comm (http)
 router.get('/get-worker-profile/:workerId', workController.getWorkerProfile.bind(workController));

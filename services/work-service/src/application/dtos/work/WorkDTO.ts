@@ -12,7 +12,8 @@ export interface PostWorkDto {
     startDate?: string;
     endDate?: string;
     images?: WorkMediaItemDto[];
-  videos?: WorkMediaItemDto[];
+    videos?: WorkMediaItemDto[];
+    voiceFile?: WorkMediaItemDto | null;
     time: string;
     description: string;
     duration?: string;
@@ -41,8 +42,8 @@ export interface WorkResponseDto {
     time: string;
     description: string;
     images?: WorkMediaItemDto[];
-  videos?: WorkMediaItemDto[];
-    voiceFile?: string;
+    videos?: WorkMediaItemDto[];
+    voiceFile?: WorkMediaItemDto | null;
     videoFile?: string;
     duration?: string;
     budget?: string;

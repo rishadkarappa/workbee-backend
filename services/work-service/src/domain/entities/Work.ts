@@ -15,7 +15,7 @@ export interface Work {
     time: string;
     description: string;
 
-    voiceFile?: string;
+    voiceFile?: WorkMediaItem | null;
     videoFile?: string;
     beforeImage?: string;
 
