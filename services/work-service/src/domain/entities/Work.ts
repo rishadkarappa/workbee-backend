@@ -1,3 +1,8 @@
+export interface WorkMediaItem {
+  url: string;
+  publicId: string;
+}
+
 export interface Work {
     id?: string;
     userId: string;
@@ -9,19 +14,24 @@ export interface Work {
     endDate?: string;
     time: string;
     description: string;
+
     voiceFile?: string;
     videoFile?: string;
+    beforeImage?: string;
+
+    images?: WorkMediaItem[]; 
+    videos?: WorkMediaItem[]; 
+
     duration?: string;
     budget?: string;
-    location:{
-        type:'Point',
-        coordinates:[number, number]
+    location: {
+        type: 'Point',
+        coordinates: [number, number]
     };
     currentLocation?: string;
     manualAddress?: string;
     landmark?: string;
     contactNumber: string;
-    beforeImage?: string;
     petrolAllowance?: string;
     extraRequirements?: string;
     anythingElse?: string;
@@ -31,5 +41,5 @@ export interface Work {
     workerId?: string;
     createdAt?: Date;
     updatedAt?: Date;
-    
+
 }

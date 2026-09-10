@@ -253,8 +253,13 @@ export class MongoWorkRepository implements IWorkRepository {
             endDate: doc.endDate,
             time: doc.time,
             description: doc.description,
+
             voiceFile: doc.voiceFile,
             videoFile: doc.videoFile,
+            beforeImage: doc.beforeImage,
+            images: doc.images ?? [],
+            videos: doc.videos ?? [],
+            
             duration: doc.duration,
             budget: doc.budget,
             location: doc.location,
@@ -262,7 +267,6 @@ export class MongoWorkRepository implements IWorkRepository {
             manualAddress: doc.manualAddress,
             landmark: doc.landmark,
             contactNumber: doc.contactNumber,
-            beforeImage: doc.beforeImage,
             petrolAllowance: doc.petrolAllowance,
             extraRequirements: doc.extraRequirements,
             anythingElse: doc.anythingElse,

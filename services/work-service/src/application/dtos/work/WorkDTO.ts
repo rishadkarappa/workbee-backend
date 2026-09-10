@@ -1,3 +1,8 @@
+export interface WorkMediaItemDto {
+  url: string;
+  publicId: string;
+}
+
 export interface PostWorkDto {
     userId: string;
     workTitle: string;
@@ -6,6 +11,8 @@ export interface PostWorkDto {
     date?: string;
     startDate?: string;
     endDate?: string;
+    images?: WorkMediaItemDto[];
+  videos?: WorkMediaItemDto[];
     time: string;
     description: string;
     duration?: string;
@@ -33,6 +40,8 @@ export interface WorkResponseDto {
     endDate?: string;
     time: string;
     description: string;
+    images?: WorkMediaItemDto[];
+  videos?: WorkMediaItemDto[];
     voiceFile?: string;
     videoFile?: string;
     duration?: string;

@@ -13,11 +13,9 @@ router.get("/get-new-appliers", workController.getNewAppliers.bind(workControlle
 router.post("/approve-worker", workController.approveWorker.bind(workController))
 router.get("/get-workers", workController.getWorkers.bind(workController))
 router.get("/get-all-works", workController.getAllWorks.bind(workController))
-router.post("/post-work",
-    upload.fields([
-        { name: 'voiceFile', maxCount: 1 },
-        { name: 'videoFile', maxCount: 1 },
-        { name: 'beforeImage', maxCount: 1 }]), workController.postWork.bind(workController));
+router.get('/work-media/upload-signature', workController.getWorkMediaUploadSignature.bind(workController));
+
+router.post("/post-work", upload.fields([{ name: 'voiceFile', maxCount: 1 }]),workController.postWork.bind(workController));
 
 router.patch('/block-worker/:id', workController.blockWorker.bind(workController))
 router.get('/get-my-works', workController.getMyWorks.bind(workController));

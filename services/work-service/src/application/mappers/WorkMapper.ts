@@ -10,15 +10,18 @@ export class WorkMapper {
             workCategory: dto.workCategory,
             workType: dto.workType,
             date: dto.date,
+
             startDate: dto.startDate,
             endDate: dto.endDate,
             time: dto.time,
+            images: (dto.images ?? []).slice(0, 3),
+            videos: (dto.videos ?? []).slice(0, 3),
             description: dto.description,
             duration: dto.duration,
             budget: dto.budget,
-            location:{
-                type:'Point',
-                coordinates:[dto.longitude, dto.latitude]
+            location: {
+                type: 'Point',
+                coordinates: [dto.longitude, dto.latitude]
             },
             currentLocation: dto.currentLocation,
             manualAddress: dto.manualAddress,
@@ -44,6 +47,8 @@ export class WorkMapper {
             endDate: entity.endDate,
             time: entity.time,
             description: entity.description,
+            images: entity.images ?? [],
+            videos: entity.videos ?? [],
             voiceFile: entity.voiceFile,
             videoFile: entity.videoFile,
             duration: entity.duration,

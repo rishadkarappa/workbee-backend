@@ -158,41 +158,30 @@ export class WorkController implements IWorkController {
             const rawData = req.body;
             const files = req.files as WorkUploadFiles;
 
-            // Handle file uploads
-            if (files) {
-                logger.info("processing fileeee")
-                if (files.voiceFile) {
-                    rawData.voiceFile = await this._fileUploadService.saveFile(
-                        files.voiceFile[0],
-                        'voice'
-                    );
-                    console.log("Voice file saved:", rawData.voiceFile);
-                }
-                if (files.videoFile) {
-                    rawData.videoFile = await this._fileUploadService.saveFile(
-                        files.videoFile[0],
-                        'video'
-                    );
-                    console.log("Video file saved:", rawData.videoFile);
-                }
-                if (files.beforeImage) {
-                    rawData.beforeImage = await this._fileUploadService.saveFile(
-                        files.beforeImage[0],
-                        'images'
-                    );
-                    console.log("Image file saved:", rawData.beforeImage);
-                }
+            if (files?.voiceFile) {
+                rawData.voiceFile = await this._fileUploadService.saveFile(files.voiceFile[0], 'voice');
             }
 
             const termsAccepted = rawData.termsAccepted === 'true' || rawData.termsAccepted === true;
 
+            let images = [];
+            let videos = [];
+            try {
+                images = rawData.images ? JSON.parse(rawData.images) : [];
+                videos = rawData.videos ? JSON.parse(rawData.videos) : [];
+            } catch {
+                images = [];
+                videos = [];
+            }
+
             const dto: PostWorkDto = {
                 ...rawData,
-                termsAccepted
+                termsAccepted,
+                images,
+                videos,
             };
 
             const result = await this._postWorkUseCase.execute(dto);
-
             res.status(HttpStatus.OK).json(ResponseHelper.success(result, ResponseMessage.WORK.WORK_BOOKED));
         } catch (err) {
             next(err);
@@ -502,6 +491,36 @@ export class WorkController implements IWorkController {
 
         } catch (err) {
             next(err);
+        }
+    }
+
+    async getWorkMediaUploadSignature(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.headers["x-user-id"];
+
+            if (!userId || typeof userId !== "string") {
+                throw new Error(ErrorMessages.AUTH.UNAUTHORIZED);
+            }
+
+            // temp folder keyed by user + timestamp — media gets permanently
+            // associated with the work record once postWork saves the url/publicId
+            const folder = `workbee/work-media/${userId}`;
+
+            const { signature, timestamp } = this._cloudinaryService.generateUploadSignature({ folder });
+
+            const data = {
+                signature,
+                timestamp,
+                apiKey: ENV.CLOUDINARY_API_KEY,
+                cloudName: ENV.CLOUDINARY_CLOUD_NAME,
+                folder,
+            };
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(data, ResponseMessage.WORK.UPLOAD_SIGN_GENERATED ?? "Upload signature generated")
+            );
+        } catch (error) {
+            next(error);
         }
     }
 

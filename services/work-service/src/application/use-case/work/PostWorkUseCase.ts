@@ -8,10 +8,10 @@ import { IPostWorkUseCase } from "../../ports/work/IPostWorkUseCase";
 import { ErrorMessages } from "../../../shared/constants/ErrorMessages";
 
 @injectable()
-export class PostWorkUseCase implements IPostWorkUseCase{
+export class PostWorkUseCase implements IPostWorkUseCase {
     constructor(
         @inject("WorkRepository") private readonly _workRepository: IWorkRepository
-    ) {}
+    ) { }
 
     async execute(dto: PostWorkDto): Promise<WorkResponseDto> {
 
@@ -41,8 +41,13 @@ export class PostWorkUseCase implements IPostWorkUseCase{
             throw new Error("Description must be at least 3 words");
         }
 
-       
-        
+        if (dto.images && dto.images.length > 3) {
+            throw new Error("You can upload a maximum of 3 images");
+        }
+        if (dto.videos && dto.videos.length > 3) {
+            throw new Error("You can upload a maximum of 3 videos");
+        }
+
 
         const work = WorkMapper.toEntity(dto);
         const createdWork = await this._workRepository.create(work);

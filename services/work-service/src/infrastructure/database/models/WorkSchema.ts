@@ -6,6 +6,14 @@ export interface WorkTocument extends Omit<Work, 'id'>, Document {
     _id: Types.ObjectId;
 }
 
+const MediaItemSchema = new Schema(
+    {
+        url: { type: String, required: true },
+        publicId: { type: String, required: true },
+    },
+    { _id: false }
+);
+
 const WorkSchema = new Schema<WorkTocument>(
     {
         userId: { type: String, required: true, index: true },
@@ -19,6 +27,22 @@ const WorkSchema = new Schema<WorkTocument>(
         description: { type: String, required: true },
         voiceFile: { type: String },
         videoFile: { type: String },
+        images: {
+            type: [MediaItemSchema],
+            default: [],
+            validate: {
+                validator: (arr: unknown[]) => arr.length <= 3,
+                message: "A work can have a maximum of 3 images",
+            },
+        },
+        videos: {
+            type: [MediaItemSchema],
+            default: [],
+            validate: {
+                validator: (arr: unknown[]) => arr.length <= 3,
+                message: "A work can have a maximum of 3 videos",
+            },
+        },
         duration: { type: String },
         budget: { type: String },
         location: {
