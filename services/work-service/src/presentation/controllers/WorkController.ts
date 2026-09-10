@@ -5,7 +5,6 @@ import { HttpStatus } from "../../shared/enums/HttpStatus";
 import { ResponseHelper } from "../../shared/helpers/ResponseHelper";
 import { ResponseMessage } from "../../shared/constants/ResponseMessages";
 import { WorkUploadFiles } from "../types/WorkUploadFiles";
-import { logger } from "../../infrastructure/logger/logger";
 import { ENV } from "../../infrastructure/config/env";
 import { ErrorMessages } from "../../shared/constants/ErrorMessages";
 
@@ -65,8 +64,6 @@ export class WorkController implements IWorkController {
 
         @inject("GetAdminWorkStatsUseCase") private readonly _getAdminWorkStatsUseCase: IGetAdminWorkStatsUseCase,
         @inject("UpdateWorkerProfileUseCase") private readonly _updateWorkerProfileUseCase: IUpdateWorkerProfileUseCase,
-        // @inject("ReApplyAsAWorkerUseCase") private readonly _reApplyAsAWorkerUseCase: ReApplyAsAWorkerUseCase,
-
 
     ) { }
 
