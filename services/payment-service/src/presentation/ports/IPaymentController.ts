@@ -7,4 +7,5 @@ export interface IPaymentController {
     getWallet(req: Request, res : Response,next:NextFunction) : Promise<Response | void>
     getAdminSummary(req: Request, res : Response, next:NextFunction) : Promise<Response | void>
     getAdminPaymentsList(req: Request, res: Response, next:NextFunction) : Promise<Response | void>
+    markPaymentFailed(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

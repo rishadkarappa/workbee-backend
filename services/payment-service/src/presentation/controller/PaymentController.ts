@@ -7,6 +7,7 @@ import { IPaymentController } from "../ports/IPaymentController";
 
 import { ICreateRazorpayOrderUseCase } from "../../application/ports/user/ICreateRazorpayOrderUseCase";
 import { IVerifyRazorpayPaymentUseCase } from "../../application/ports/payment/IVerifyRazorpayPaymentUseCase";
+import { IMarkPaymentFailedUseCase } from "../../application/ports/payment/IMarkPaymentFailedUseCase";
 import { IScheduleWorkerPayoutUseCase } from "../../application/ports/worker/IScheduleWorkerPayoutUseCase";
 import { IGetWalletUseCase } from "../../application/ports/wallet/IGetWalletUseCase";
 import { IGetAdminPaymentSummaryUseCase } from "../../application/ports/admin/IGetAdminPaymentSummaryUseCase";
@@ -25,13 +26,13 @@ export class PaymentController implements IPaymentController {
   constructor(
     @inject("CreateRazorpayOrderUseCase") private readonly _createOrderUseCase: ICreateRazorpayOrderUseCase,
     @inject("VerifyRazorpayPaymentUseCase") private readonly _verifyPaymentUseCase: IVerifyRazorpayPaymentUseCase,
+    @inject("MarkPaymentFailedUseCase") private readonly _markPaymentFailedUseCase: IMarkPaymentFailedUseCase,
     @inject("ScheduleWorkerPayoutUseCase") private readonly _schedulePayoutUseCase: IScheduleWorkerPayoutUseCase,
     @inject("GetWalletUseCase") private readonly _getWalletUseCase: IGetWalletUseCase,
     @inject("GetAdminPaymentSummaryUseCase") private readonly _adminSummaryUseCase: IGetAdminPaymentSummaryUseCase,
     @inject("GetAdminPaymentsListUseCase") private readonly _adminPaymentsListUseCase: IGetAdminPaymentsListUseCase,
     @inject("GetWorkerEarningsStatsUseCase") private readonly _getWorkerEarningsStatsUseCase: IGetWorkerEarningsStatsUseCase,
     @inject("GetAdminPaymentStatsUseCase") private readonly _getAdminPaymentStatsUseCase: IGetAdminPaymentStatsUseCase,
-
   ) { }
 
   async createOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -85,6 +86,37 @@ export class PaymentController implements IPaymentController {
       }
 
       const result = await this._verifyPaymentUseCase.execute({ razorpayOrderId, razorpayPaymentId, razorpaySignature, });
+
+      res
+        .status(HttpStatusCode.OK)
+        .json(ResponseHelper.success(result, ResponseMessage.GENERAL.SUCCESS, HttpStatusCode.OK));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async markPaymentFailed(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.headers["x-user-id"] as string;
+      const userRole = req.headers["x-user-role"] as string;
+
+      if (!userId || userRole !== UserRole.USER) {
+        res
+          .status(HttpStatusCode.UNAUTHORIZED)
+          .json(ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatusCode.UNAUTHORIZED));
+        return;
+      }
+
+      const { razorpayOrderId, reason } = req.body;
+
+      if (!razorpayOrderId) {
+        res
+          .status(HttpStatusCode.BAD_REQUEST)
+          .json(ResponseHelper.error(ErrorMessages.PAYMENT.MISSING_REQUIRED_FIELDS, HttpStatusCode.BAD_REQUEST));
+        return;
+      }
+
+      const result = await this._markPaymentFailedUseCase.execute({ razorpayOrderId, reason });
 
       res
         .status(HttpStatusCode.OK)
@@ -220,7 +252,6 @@ export class PaymentController implements IPaymentController {
     }
   }
 
-  // admin dash stati
   async getAdminPaymentStats(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userRole = req.headers["x-user-role"] as string;
