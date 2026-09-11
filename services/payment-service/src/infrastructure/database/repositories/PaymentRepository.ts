@@ -103,89 +103,68 @@ export class PaymentRepository implements IPaymentRepository {
     return row ? this.mapPayment(row) : null;
   }
 
-  // async findAllPaginated(page: number, limit: number
-  // ): Promise<{ payments: Payment[]; total: number; totalPages: number; }> {
-  //   const skip = (page - 1) * limit;
-
-  //   const [rows, total] = await this.db.$transaction([
-  //     this.db.payment.findMany({
-  //       orderBy: {
-  //         createdAt: "desc",
-  //       },
-  //       take: limit,
-  //       skip,
-  //     }),
-  //     this.db.payment.count(),
-  //   ]);
-
-  //   return {
-  //     payments: rows.map((row) => this.mapPayment(row)),
-  //     total,
-  //     totalPages: Math.ceil(total / limit),
-  //   };
-  // }
   async findAllPaginated(
-  page: number,
-  limit: number,
-  filters?: {
-    status?: PaymentStatus;
-    startDate?: string;
-    endDate?: string;
-  }
-): Promise<{
-  payments: Payment[];
-  total: number;
-  totalPages: number;
-}> {
-  const skip = (page - 1) * limit;
+    page: number,
+    limit: number,
+    filters?: {
+      status?: PaymentStatus;
+      startDate?: string;
+      endDate?: string;
+    }
+  ): Promise<{
+    payments: Payment[];
+    total: number;
+    totalPages: number;
+  }> {
+    const skip = (page - 1) * limit;
 
-  const where: Prisma.PaymentWhereInput = {};
+    const where: Prisma.PaymentWhereInput = {};
 
-  if (filters?.status) {
-    where.status = filters.status;
-  }
-
-  if (filters?.startDate || filters?.endDate) {
-    where.createdAt = {};
-
-    if (filters.startDate) {
-      where.createdAt.gte = new Date(
-        `${filters.startDate}T00:00:00.000`
-      );
+    if (filters?.status) {
+      where.status = filters.status;
     }
 
-    if (filters.endDate) {
-      const endDate = new Date(
-        `${filters.endDate}T00:00:00.000`
-      );
+    if (filters?.startDate || filters?.endDate) {
+      where.createdAt = {};
 
-      endDate.setDate(endDate.getDate() + 1);
+      if (filters.startDate) {
+        where.createdAt.gte = new Date(
+          `${filters.startDate}T00:00:00.000`
+        );
+      }
 
-      where.createdAt.lt = endDate;
+      if (filters.endDate) {
+        const endDate = new Date(
+          `${filters.endDate}T00:00:00.000`
+        );
+
+        endDate.setDate(endDate.getDate() + 1);
+
+        where.createdAt.lt = endDate;
+      }
     }
+
+    const [rows, total] = await this.db.$transaction([
+      this.db.payment.findMany({
+        where,
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: limit,
+        skip,
+      }),
+
+      this.db.payment.count({
+        where,
+      }),
+    ]);
+
+    return {
+      payments: rows.map((row) => this.mapPayment(row)),
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   }
-
-  const [rows, total] = await this.db.$transaction([
-    this.db.payment.findMany({
-      where,
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: limit,
-      skip,
-    }),
-
-    this.db.payment.count({
-      where,
-    }),
-  ]);
-
-  return {
-    payments: rows.map((row) => this.mapPayment(row)),
-    total,
-    totalPages: Math.ceil(total / limit),
-  };
-}
 
   async updateStatus(id: string, status: Payment["status"], extra: Partial<Payment> = {}): Promise<Payment> {
     const data: Prisma.PaymentUpdateInput = { status, };

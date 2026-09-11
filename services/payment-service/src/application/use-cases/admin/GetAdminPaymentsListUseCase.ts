@@ -13,7 +13,7 @@ export class GetAdminPaymentsListUseCase implements IGetAdminPaymentsListUseCase
   ) { }
 
   async execute(data: AdminPaymentsListRequestDTO): Promise<AdminPaymentsListResponseDTO> {
-    // const { payments, total, totalPages } = await this.paymentRepo.findAllPaginated(data.page, data.limit);
+    
     const { payments, total, totalPages } = await this.paymentRepo.findAllPaginated(data.page, data.limit, {
       status: data.status,
       startDate: data.startDate,

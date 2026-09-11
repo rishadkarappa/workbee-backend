@@ -7,19 +7,10 @@ export interface IPaymentRepository {
     findByRazorpayOrderId(orderId: string): Promise<Payment | null>;
     findByRazorpayPaymentId(paymentId: string): Promise<Payment | null>;
     updateStatus(id: string, status: string, extra?: Partial<Payment>): Promise<Payment>;
-    findAllPaginated(
-        page: number,
-        limit: number,
-        filters?: {
-            status?: string;
-            startDate?: string;
-            endDate?: string;
-        }
-    ): Promise<{
-        payments: Payment[];
-        total: number;
-        totalPages: number;
-    }>;
+    findAllPaginated(page: number, limit: number,
+        filters?: { status?: string; startDate?: string; endDate?: string; }
+    ): Promise<{ payments: Payment[]; total: number; totalPages: number; }>;
+
     // to admin dash stati
     countCompletedPayments(): Promise<number>;
     findPendingPayouts(limit: number): Promise<Payment[]>;
