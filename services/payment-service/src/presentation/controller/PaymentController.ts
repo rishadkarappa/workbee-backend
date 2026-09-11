@@ -221,10 +221,20 @@ export class PaymentController implements IPaymentController {
         return;
       }
 
-      const page = Number(req.query.page ?? 1);
-      const limit = Number(req.query.limit ?? 20);
+      // const page = Number(req.query.page ?? 1);
+      // const limit = Number(req.query.limit ?? 20);
 
-      const data = await this._adminPaymentsListUseCase.execute({ page, limit });
+      // const data = await this._adminPaymentsListUseCase.execute({ page, limit });
+      const page = Number(req.query.page ?? 1);
+      const limit = Number(req.query.limit ?? 15);
+
+      const status = typeof req.query.status === "string"? req.query.status: undefined;
+
+      const startDate = typeof req.query.startDate === "string"? req.query.startDate: undefined;
+
+      const endDate = typeof req.query.endDate === "string"? req.query.endDate: undefined;
+
+      const data = await this._adminPaymentsListUseCase.execute({page,limit,status,startDate,endDate,});
 
       res
         .status(HttpStatusCode.OK)

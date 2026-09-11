@@ -11,10 +11,18 @@ export interface AdminPaymentDTO {
   createdAt: Date;
 }
 
+// export interface AdminPaymentsListRequestDTO {
+//   page: number;
+//   limit: number;
+// }
 export interface AdminPaymentsListRequestDTO {
   page: number;
   limit: number;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
 }
+
 export interface AdminPaymentsListResponseDTO {
   payments: AdminPaymentDTO[];
   total: number;
