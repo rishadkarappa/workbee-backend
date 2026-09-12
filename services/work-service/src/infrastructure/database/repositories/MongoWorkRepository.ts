@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe";
-import { IWorkRepository } from "../../../domain/repositories/IWorkRepository";
+import { IWorkRepository, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/repositories/IWorkRepository";
 import { Work } from "../../../domain/entities/Work";
 import { WorkModel, WorkTocument } from "../models/WorkSchema";
 import { FilterQuery, PipelineStage } from "mongoose";
@@ -161,13 +161,67 @@ export class MongoWorkRepository implements IWorkRepository {
         };
     }
 
-    async findByWorkerId(workerId: string): Promise<{ works: Work[] }> {
-        const works = await WorkModel.find({
-            workerId,
-            status: { $in: ['assigned', 'in-progress', 'completed'] }
-        }).sort({ updatedAt: -1 });
+    async findByWorkerId(
+        workerId: string,
+        options: WorkerWorksQueryOptions
+    ): Promise<{ works: Work[]; total: number }> {
+        const { page, limit, bucket, startDate, endDate } = options;
+        const skip = (page - 1) * limit;
 
-        return { works: works.map(w => this.mapToEntity(w)) };
+        const query: FilterQuery<WorkTocument> = {
+            workerId,
+            status: { $in: ['assigned', 'in-progress', 'completed'] },
+        };
+
+        switch (bucket) {
+            case 'assigned':
+                //just assigned, worker hasn't marked any progress yet
+                query.progress = { $exists: false };
+                break;
+            case 'started':
+                query.progress = 'started';
+                break;
+            case 'ongoing':
+                query.progress = 'ongoing';
+                break;
+            case 'completed':
+                query.progress = 'completed';
+                break;
+            case 'all':
+            default:
+                break; //no progress filter
+        }
+
+        if (startDate || endDate) {
+            query.createdAt = {
+                ...(startDate ? { $gte: new Date(startDate) } : {}),
+                ...(endDate ? { $lte: new Date(endDate) } : {}),
+            };
+        }
+
+        const [works, total] = await Promise.all([
+            WorkModel.find(query).sort({ updatedAt: -1 }).skip(skip).limit(limit),
+            WorkModel.countDocuments(query),
+        ]);
+
+        return { works: works.map((w) => this.mapToEntity(w)), total };
+    }
+
+    async countWorkerBuckets(workerId: string): Promise<WorkerBucketCounts> {
+        const base: FilterQuery<WorkTocument> = {
+            workerId,
+            status: { $in: ['assigned', 'in-progress', 'completed'] },
+        };
+
+        const [all, assigned, started, ongoing, completed] = await Promise.all([
+            WorkModel.countDocuments(base),
+            WorkModel.countDocuments({ ...base, progress: { $exists: false } }),
+            WorkModel.countDocuments({ ...base, progress: 'started' }),
+            WorkModel.countDocuments({ ...base, progress: 'ongoing' }),
+            WorkModel.countDocuments({ ...base, progress: 'completed' }),
+        ]);
+
+        return { all, assigned, started, ongoing, completed };
     }
 
     async countCompletedByWorkerId(workerId: string): Promise<number> {
@@ -259,7 +313,7 @@ export class MongoWorkRepository implements IWorkRepository {
             beforeImage: doc.beforeImage,
             images: doc.images ?? [],
             videos: doc.videos ?? [],
-            
+
             duration: doc.duration,
             budget: doc.budget,
             location: doc.location,

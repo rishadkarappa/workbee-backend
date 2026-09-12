@@ -146,7 +146,7 @@ export class WorkController implements IWorkController {
         }
     }
 
-    async postWork(req: Request,res: Response,next: NextFunction): Promise<void> {
+    async postWork(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const dto: PostWorkDto = req.body;
 
@@ -463,9 +463,18 @@ export class WorkController implements IWorkController {
                 return;
             }
 
-            const works = await this._getWorkerAssignedWorksUseCase.execute({ workerId });
-            res.status(HttpStatus.OK).json(ResponseHelper.success(works, ResponseMessage.GENERAL.SUCCESS, HttpStatus.OK));
+            const { page, limit, bucket, startDate, endDate } = req.query;
 
+            const works = await this._getWorkerAssignedWorksUseCase.execute({
+                workerId,
+                page: page ? Number(page) : undefined,
+                limit: limit ? Number(limit) : undefined,
+                bucket: bucket ? (String(bucket) as any) : undefined,
+                startDate: startDate ? String(startDate) : undefined,
+                endDate: endDate ? String(endDate) : undefined,
+            });
+
+            res.status(HttpStatus.OK).json(ResponseHelper.success(works, ResponseMessage.GENERAL.SUCCESS, HttpStatus.OK));
         } catch (err) {
             next(err);
         }

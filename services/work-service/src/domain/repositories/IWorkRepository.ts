@@ -1,5 +1,23 @@
 import { Work } from "../entities/Work";
 
+export type WorkerBucket = 'all' | 'assigned' | 'started' | 'ongoing' | 'completed';
+
+export interface WorkerWorksQueryOptions {
+    page: number;
+    limit: number;
+    bucket: WorkerBucket;
+    startDate?: string;
+    endDate?: string;
+}
+
+export interface WorkerBucketCounts {
+    all: number;
+    assigned: number;
+    started: number;
+    ongoing: number;
+    completed: number;
+}
+
 export interface IWorkRepository {
     create(work: Work): Promise<Work>;
     findById(id: string): Promise<Work | null>;
@@ -16,7 +34,9 @@ export interface IWorkRepository {
         maxDistance?: number;
     }): Promise<{ works: Work[]; total: number }>;
     getMyWorks(id: string): Promise<{ works: Work[] | null }>;
-    findByWorkerId(workerId: string): Promise<{ works: Work[] }>;
+    // findByWorkerId(workerId: string): Promise<{ works: Work[] }>;
+    findByWorkerId(workerId: string, options: WorkerWorksQueryOptions): Promise<{ works: Work[]; total: number }>;
+    countWorkerBuckets(workerId: string): Promise<WorkerBucketCounts>;
 
     countCompletedByWorkerId(workerId: string): Promise<number>;
 
