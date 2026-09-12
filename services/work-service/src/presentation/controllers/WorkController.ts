@@ -77,27 +77,25 @@ export class WorkController implements IWorkController {
         }
     }
 
-
     async getNewAppliers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
             const search = (req.query.search as string) || "";
+            const status = ((req.query.status as string) || "all") as 'all' | 'pending' | 'approved' | 'rejected';
 
-            const result = await this._getNewAppliersUseCase.execute(page, limit, search);
+            const result = await this._getNewAppliersUseCase.execute(page, limit, search, status);
 
             res.status(HttpStatus.OK).json(
-                ResponseHelper.success(
-                    {
-                        workers: result.workers,
-                        total: result.total,
-                        page,
-                        limit,
-                        totalPages: Math.ceil(result.total / limit)
-                    },
+                ResponseHelper.success({
+                    workers: result.workers,
+                    total: result.total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(result.total / limit)
+                },
                     ResponseMessage.WORKER.GET_ALL_APPLIERS
-                )
-            );
+                ));
         } catch (err) {
             next(err);
         }

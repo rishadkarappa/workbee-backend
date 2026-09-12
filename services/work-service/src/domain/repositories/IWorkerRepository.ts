@@ -5,7 +5,9 @@ export interface IWorkerRepository {
     save(worker: NewWorker): Promise<Worker>;
     findByEmail(email: string): Promise<Worker | null>;
     findById(id: string): Promise<Worker | null>;
-    getNewAppliers(page: number, limit: number, search: string): Promise<{ workers: Worker[]; total: number }>;
+    getNewAppliers(
+        page: number, limit: number, search: string, status: 'all' | 'pending' | 'approved' | 'rejected'
+    ): Promise<{ workers: Worker[]; total: number }>;
     getAllWorkers(page: number, limit: number, search: string, status?: string): Promise<{ workers: Worker[]; total: number }>;
 
     getWorkersCount(): Promise<number>;

@@ -72,13 +72,15 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
   async getNewAppliers(
     page: number = 1,
     limit: number = 10,
-    search: string = ""
+    search: string = "",
+    status: 'all' | 'pending' | 'approved' | 'rejected' = 'all'
   ): Promise<{ workers: Worker[]; total: number }> {
     const skip = (page - 1) * limit;
 
-    const searchQuery: FilterQuery<WorkerDocument> = {
-      status: { $in: ["pending", "rejected"] }
-    };
+    const searchQuery: FilterQuery<WorkerDocument> =
+      status === 'all'
+        ? { status: { $in: ["pending", "approved", "rejected"] } }
+        : { status };
 
     if (search) {
       searchQuery.$or = [
