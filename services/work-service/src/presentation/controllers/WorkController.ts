@@ -264,7 +264,7 @@ export class WorkController implements IWorkController {
                 userId,
                 page: page ? Number(page) : undefined,
                 limit: limit ? Number(limit) : undefined,
-                bucket: bucket ? (String(bucket) as any) : undefined,
+                bucket: bucket ? (String(bucket) as 'active' | 'completed') : undefined,
             });
 
             res.status(HttpStatus.OK).json(

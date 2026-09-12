@@ -217,25 +217,14 @@ export class MongoWorkRepository implements IWorkRepository {
         const { page, limit, bucket } = options;
         const skip = (page - 1) * limit;
 
-        const query: FilterQuery<WorkTocument> = {
-            userId,
-            status: { $in: ['assigned', 'in-progress'] },
-        };
+        const query: FilterQuery<WorkTocument> = { userId };
 
-        switch (bucket) {
-            case 'assigned':
-                query.progress = { $exists: false };
-                break;
-            case 'started':
-                query.progress = 'started';
-                break;
-            case 'ongoing':
-                query.progress = 'ongoing';
-                break;
-            case 'all':
-            default:
-                break;
-        }
+        // Two states only, driven by `status` — not `progress` — so a work
+        // moves tabs the instant the worker marks it completed, regardless
+        // of any stale progress value.
+        query.status = bucket === 'completed'
+            ? 'completed'
+            : { $in: ['assigned', 'in-progress'] };
 
         const [works, total] = await Promise.all([
             WorkModel.find(query).sort({ updatedAt: -1 }).skip(skip).limit(limit),
@@ -246,19 +235,14 @@ export class MongoWorkRepository implements IWorkRepository {
     }
 
     async countLiveWorkBuckets(userId: string): Promise<LiveWorkBucketCounts> {
-        const base: FilterQuery<WorkTocument> = {
-            userId,
-            status: { $in: ['assigned', 'in-progress'] },
-        };
+        const base: FilterQuery<WorkTocument> = { userId };
 
-        const [all, assigned, started, ongoing] = await Promise.all([
-            WorkModel.countDocuments(base),
-            WorkModel.countDocuments({ ...base, progress: { $exists: false } }),
-            WorkModel.countDocuments({ ...base, progress: 'started' }),
-            WorkModel.countDocuments({ ...base, progress: 'ongoing' }),
+        const [active, completed] = await Promise.all([
+            WorkModel.countDocuments({ ...base, status: { $in: ['assigned', 'in-progress'] } }),
+            WorkModel.countDocuments({ ...base, status: 'completed' }),
         ]);
 
-        return { all, assigned, started, ongoing };
+        return { active, completed };
     }
 
     async findByWorkerId(

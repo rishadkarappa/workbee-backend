@@ -34,7 +34,7 @@ export interface UserBucketCounts {
     cancelled: number;
 }
 
-export type LiveWorkBucket = 'all' | 'assigned' | 'started' | 'ongoing';
+export type LiveWorkBucket = 'active' | 'completed';
 
 export interface LiveWorksQueryOptions {
     page: number;
@@ -43,10 +43,8 @@ export interface LiveWorksQueryOptions {
 }
 
 export interface LiveWorkBucketCounts {
-    all: number;
-    assigned: number;
-    started: number;
-    ongoing: number;
+    active: number;
+    completed: number;
 }
 
 export interface IWorkRepository {
@@ -67,9 +65,10 @@ export interface IWorkRepository {
 
     getMyWorksPaginated(userId: string, options: UserWorksQueryOptions): Promise<{ works: Work[]; total: number }>;
     countUserWorkBuckets(userId: string): Promise<UserBucketCounts>;
+    
     getLiveWorksByUserId(userId: string, options: LiveWorksQueryOptions): Promise<{ works: Work[]; total: number }>;
     countLiveWorkBuckets(userId: string): Promise<LiveWorkBucketCounts>;
-    
+
     getMyWorks(id: string): Promise<{ works: Work[] | null }>;
     findByWorkerId(workerId: string, options: WorkerWorksQueryOptions): Promise<{ works: Work[]; total: number }>;
     countWorkerBuckets(workerId: string): Promise<WorkerBucketCounts>;
