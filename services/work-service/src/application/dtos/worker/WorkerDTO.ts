@@ -1,59 +1,59 @@
+import { Address } from "../../../domain/entities/Address";
+
 export interface ApplyWorkerDto {
-    name: string;
-    email: string;
-    phone: string;
-    password: string;
-    location: string;
-    workTypes: string[];            
-    preferredWorks: string[];
-    confirmations: {
-        reliable: boolean;
-        experienced: boolean; 
-        honest: boolean;
-        termsAccepted: boolean;
-    };
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  address: Address;
+  workTypes: string[];
+  preferredWorks: string[];
+  confirmations: {
+    reliable: boolean;
+    experienced: boolean;
+    honest: boolean;
+    termsAccepted: boolean;
+  };
 }
 
 export interface WorkerResponseDto {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    password: string; 
-    location: string;
-    workTypes: string[];   
-    preferredWorks: string[];
-    confirmations: {
-        reliable: boolean;
-        experienced: boolean;  
-        honest: boolean;
-        termsAccepted: boolean;
-    };
-    status: "pending" | "approved" | "rejected";
-    isBlocked: boolean;
-    rejectionReason?: string;
-    rejectedAt?: Date;
-    canReapply?: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  address: Address;
+  workTypes: string[];
+  preferredWorks: string[];
+  confirmations: {
+    reliable: boolean;
+    experienced: boolean;
+    honest: boolean;
+    termsAccepted: boolean;
+  };
+  status: "pending" | "approved" | "rejected";
+  isBlocked: boolean;
+  rejectionReason?: string;
+  rejectedAt?: Date;
+  canReapply?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface WorkerApproveDto {
-    workerId: string;
-    status: "approved" | "rejected";
-    rejectionReason?: string;
+  workerId: string;
+  status: "approved" | "rejected";
+  rejectionReason?: string;
 }
 
-
-/** get worker prife req and res dtos */
 export interface GetWorkerProfileDto {
-    workerId:string
+  workerId: string
 }
 
 export interface GetWorkerProfileReponseDto {
-    id?:string;
-    name:string;
-    email:string;
-    role : 'worker'| 'admin'|'user';
-    createdAt?:Date;
+  id?: string;
+  name: string;
+  email: string;
+  role: 'worker' | 'admin' | 'user';
+  createdAt?: Date;
 }

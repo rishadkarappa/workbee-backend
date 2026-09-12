@@ -4,7 +4,6 @@ import { Worker } from "../../../domain/entities/Worker";
 import { IWorkerRepository } from "../../../domain/repositories/IWorkerRepository";
 import { WorkerModel, WorkerDocument, WorkerStatus } from "../models/WorkerSchema";
 import mongoose, { FilterQuery } from "mongoose";
-// import { addWorkerReviewReqDto } from "../../../application/dtos/worker/AddWorkerReviewClientReqDTO";
 
 @injectable()
 export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDocument> implements IWorkerRepository {
@@ -19,9 +18,9 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       email: worker.email,
       phone: worker.phone,
       password: worker.password,
-      location: worker.location,
+      address: worker.address,
       bio: worker.bio,
-      workTypes: worker.workTypes, 
+      workTypes: worker.workTypes,
       preferredWorks: worker.preferredWorks,
       confirmations: worker.confirmations,
       status: worker.status,
@@ -87,7 +86,10 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
         { name: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
         { phone: { $regex: search, $options: 'i' } },
-        { location: { $regex: search, $options: 'i' } }
+        { "address.city": { $regex: search, $options: 'i' } },
+        { "address.panchayath": { $regex: search, $options: 'i' } },
+        { "address.pincode": { $regex: search, $options: 'i' } },
+        { "address.state": { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -121,7 +123,10 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
         { name: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
         { phone: { $regex: search, $options: 'i' } },
-        { location: { $regex: search, $options: 'i' } }
+        { "address.city": { $regex: search, $options: 'i' } },
+        { "address.panchayath": { $regex: search, $options: 'i' } },
+        { "address.pincode": { $regex: search, $options: 'i' } },
+        { "address.state": { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -190,7 +195,13 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     data: {
       name: string;
       phone: string;
-      location: string;
+      address: {
+        state: string;
+        pincode: string;
+        panchayath: string;
+        city: string;
+        place: string;
+      };
       bio: string;
     }): Promise<Worker | null> {
 
@@ -202,7 +213,7 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       $set: {
         name: data.name,
         phone: data.phone,
-        location: data.location,
+        address: data.address,
         bio: data.bio,
       },
     }, {
@@ -211,6 +222,5 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
     });
     return updatedWorker ? this.map(updatedWorker) : null;
   }
-
 
 }

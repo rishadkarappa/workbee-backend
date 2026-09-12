@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
+import { Address } from "../../../domain/entities/Address";
 
 export enum WorkerStatus {
   PENDING = "pending",
@@ -13,12 +14,12 @@ export interface WorkerDocument extends Document {
   phone: string;
   password: string;
   bio?: string;
-  location: string;
-  workTypes: string[];          
+  address: Address;
+  workTypes: string[];
   preferredWorks: string[];
   confirmations: {
     reliable: boolean;
-    experienced: boolean; 
+    experienced: boolean;
     honest: boolean;
     termsAccepted: boolean;
   };
@@ -36,13 +37,20 @@ export interface WorkerDocument extends Document {
   updatedAt: Date;
 }
 
+const AddressSchema = new Schema<Address>({
+  state: { type: String, required: true },
+  pincode: { type: String, required: true },
+  panchayath: { type: String, required: true },
+  city: { type: String, required: true },
+  place: { type: String, required: true },
+}, { _id: false });
 
 const WorkerSchema = new Schema<WorkerDocument>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true },
   password: { type: String, required: true },
-  location: { type: String, required: true },
+  address: { type: AddressSchema, required: true },
   workTypes: {
     type: [String],
     required: true,

@@ -1,4 +1,4 @@
-import { WorkerStatus } from "../../../infrastructure/database/models/WorkerSchema";
+import { Address } from "../../../domain/entities/Address";
 
 export interface UpdateWorkerProfileReqDTO {
   userId: string;
@@ -9,16 +9,16 @@ export interface UpdateWorkerProfileReqDTO {
 }
 
 export interface WorkerProfileResponseDTO {
-    id: string;
+    id?: string;
     name: string;
     email: string;
     phone: string;
-    location: string;
+    address: Address;
     workTypes: string[];
     preferredWorks: string[];
     bio?: string;
     workerProfileImage?: string;
-    status: WorkerStatus;
+    status: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

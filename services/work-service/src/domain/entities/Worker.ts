@@ -1,4 +1,5 @@
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
+import { Address } from "./Address";
 
 export interface Worker {
     id: string;
@@ -6,7 +7,7 @@ export interface Worker {
     email: string;
     phone: string;
     password: string;
-    location: string;
+    address: Address;
     workTypes: string[];
     preferredWorks: string[];
     bio?: string;
@@ -30,7 +31,7 @@ export interface Worker {
     isBlacklisted?: boolean;
     blacklistReason?: string;
     blacklistedAt?: Date;
-    
+
     createdAt?: Date;
     updatedAt?: Date;
 }

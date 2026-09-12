@@ -1,4 +1,5 @@
 import { WorkerStatus } from "../../infrastructure/database/models/WorkerSchema";
+import { Address } from "../entities/Address";
 import { NewWorker, Worker } from "../entities/Worker";
 
 export interface IWorkerRepository {
@@ -15,7 +16,15 @@ export interface IWorkerRepository {
 
     updateProfileImage(userId: string, imageUrl: string, publicId: string): Promise<boolean>;
     updatePassword(workerId: string, hashedPassword: string): Promise<void>;
-    updateWorkerProfile(userId: string, data: { name: string; phone: string; location: string; bio: string; }): Promise<Worker | null>;
+    updateWorkerProfile(
+    userId: string,
+    data: {
+      name: string;
+      phone: string;
+      address: Address;
+      bio: string;
+    }
+  ): Promise<Worker | null>;
 
     countPendingAppliers(): Promise<number>;
     countCreatedBetween(status: WorkerStatus, start: Date, end: Date): Promise<number>;
