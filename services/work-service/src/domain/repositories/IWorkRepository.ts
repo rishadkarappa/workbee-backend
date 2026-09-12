@@ -18,6 +18,37 @@ export interface WorkerBucketCounts {
     completed: number;
 }
 
+export type UserWorkBucket = 'all' | 'active' | 'completed' | 'pending' | 'cancelled';
+
+export interface UserWorksQueryOptions {
+    page: number;
+    limit: number;
+    bucket: UserWorkBucket;
+}
+
+export interface UserBucketCounts {
+    all: number;
+    active: number;
+    completed: number;
+    pending: number;
+    cancelled: number;
+}
+
+export type LiveWorkBucket = 'all' | 'assigned' | 'started' | 'ongoing';
+
+export interface LiveWorksQueryOptions {
+    page: number;
+    limit: number;
+    bucket: LiveWorkBucket;
+}
+
+export interface LiveWorkBucketCounts {
+    all: number;
+    assigned: number;
+    started: number;
+    ongoing: number;
+}
+
 export interface IWorkRepository {
     create(work: Work): Promise<Work>;
     findById(id: string): Promise<Work | null>;
@@ -33,8 +64,13 @@ export interface IWorkRepository {
         longitude?: number;
         maxDistance?: number;
     }): Promise<{ works: Work[]; total: number }>;
+
+    getMyWorksPaginated(userId: string, options: UserWorksQueryOptions): Promise<{ works: Work[]; total: number }>;
+    countUserWorkBuckets(userId: string): Promise<UserBucketCounts>;
+    getLiveWorksByUserId(userId: string, options: LiveWorksQueryOptions): Promise<{ works: Work[]; total: number }>;
+    countLiveWorkBuckets(userId: string): Promise<LiveWorkBucketCounts>;
+    
     getMyWorks(id: string): Promise<{ works: Work[] | null }>;
-    // findByWorkerId(workerId: string): Promise<{ works: Work[] }>;
     findByWorkerId(workerId: string, options: WorkerWorksQueryOptions): Promise<{ works: Work[]; total: number }>;
     countWorkerBuckets(workerId: string): Promise<WorkerBucketCounts>;
 

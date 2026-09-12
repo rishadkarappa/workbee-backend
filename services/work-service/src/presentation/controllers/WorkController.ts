@@ -36,6 +36,7 @@ import { IGetWorkerDashboardStatsUseCase } from "../../application/ports/worker/
 import { IGetAdminWorkStatsUseCase } from "../../application/ports/admin/IGetAdminWorkStatsUseCase";
 import { IUpdateWorkerProfileUseCase } from "../../application/ports/worker/IUpdateWorkerProfileUseCase";
 import { UpdateWorkerProfileReqDTO } from "../../application/dtos/worker/UpdateWorkerProfileDTO";
+import { IGetLiveWorksUseCase } from "../../application/ports/user/IGetLiveWorksUseCase";
 
 @injectable()
 export class WorkController implements IWorkController {
@@ -53,6 +54,7 @@ export class WorkController implements IWorkController {
         @inject("GetWorkerProfileUseCase") private readonly _getWorkerProfileUseCase: IGetWorkerProfileUseCase,
         @inject("GetWorkerProfilesBatchUseCase") private readonly _getWorkerProfilesBatchUseCase: IGetWorkerProfileBatchUseCase,
         @inject("GetWorkerAssignedWorksUseCase") private readonly _getWorkerAssignedWorksUseCase: IGetWorkerAssignedWorksUseCase,
+        @inject("GetLiveWorksUseCase") private readonly _getLiveWorksUseCase: IGetLiveWorksUseCase,
 
         @inject("UpdateWorkerProfileImageUseCase") private readonly _updateWorkerProfileImageUseCase: IUpdateWorkerProfileImageUseCase,
         @inject("GetWorkerProfileSettingsUseCase") private readonly _getWorkerProfileSettingsUseCase: IGetWorkerProfileSettingsUseCase,
@@ -222,7 +224,6 @@ export class WorkController implements IWorkController {
     async getMyWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const userId = req.headers['x-user-id'] as string;
-
             if (!userId) {
                 res.status(HttpStatus.UNAUTHORIZED).json(
                     ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
@@ -230,7 +231,42 @@ export class WorkController implements IWorkController {
                 return;
             }
 
-            const result = await this._getMyWorksUseCase.execute(userId);
+            const { page, limit, bucket } = req.query;
+
+            const result = await this._getMyWorksUseCase.execute({
+                userId,
+                page: page ? Number(page) : undefined,
+                limit: limit ? Number(limit) : undefined,
+                bucket: bucket ? (String(bucket) as any) : undefined,
+            });
+
+            res.status(HttpStatus.OK).json(
+                ResponseHelper.success(result, ResponseMessage.WORK.RETRIEVED_WORKS)
+            );
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getLiveWorks(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.headers['x-user-id'] as string;
+            if (!userId) {
+                res.status(HttpStatus.UNAUTHORIZED).json(
+                    ResponseHelper.error(ErrorMessages.AUTH.UNAUTHORIZED, HttpStatus.UNAUTHORIZED)
+                );
+                return;
+            }
+
+            const { page, limit, bucket } = req.query;
+
+            const result = await this._getLiveWorksUseCase.execute({
+                userId,
+                page: page ? Number(page) : undefined,
+                limit: limit ? Number(limit) : undefined,
+                bucket: bucket ? (String(bucket) as any) : undefined,
+            });
+
             res.status(HttpStatus.OK).json(
                 ResponseHelper.success(result, ResponseMessage.WORK.RETRIEVED_WORKS)
             );

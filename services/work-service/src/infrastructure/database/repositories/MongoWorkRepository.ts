@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe";
-import { IWorkRepository, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/repositories/IWorkRepository";
+import { IWorkRepository, LiveWorkBucketCounts, LiveWorksQueryOptions, UserBucketCounts, UserWorksQueryOptions, WorkerBucketCounts, WorkerWorksQueryOptions } from "../../../domain/repositories/IWorkRepository";
 import { Work } from "../../../domain/entities/Work";
 import { WorkModel, WorkTocument } from "../models/WorkSchema";
 import { FilterQuery, PipelineStage } from "mongoose";
@@ -159,6 +159,106 @@ export class MongoWorkRepository implements IWorkRepository {
         return {
             works: works.length > 0 ? works.map(w => this.mapToEntity(w)) : null
         };
+    }
+
+    async getMyWorksPaginated(
+        userId: string,
+        options: UserWorksQueryOptions
+    ): Promise<{ works: Work[]; total: number }> {
+        const { page, limit, bucket } = options;
+        const skip = (page - 1) * limit;
+
+        const query: FilterQuery<WorkTocument> = { userId };
+
+        switch (bucket) {
+            case 'active':
+                query.status = { $in: ['assigned', 'in-progress'] };
+                break;
+            case 'completed':
+                query.status = 'completed';
+                break;
+            case 'pending':
+                query.status = 'pending';
+                break;
+            case 'cancelled':
+                query.status = 'cancelled';
+                break;
+            case 'all':
+            default:
+                break;
+        }
+
+        const [works, total] = await Promise.all([
+            WorkModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            WorkModel.countDocuments(query),
+        ]);
+
+        return { works: works.map((w) => this.mapToEntity(w)), total };
+    }
+
+    async countUserWorkBuckets(userId: string): Promise<UserBucketCounts> {
+        const base: FilterQuery<WorkTocument> = { userId };
+
+        const [all, active, completed, pending, cancelled] = await Promise.all([
+            WorkModel.countDocuments(base),
+            WorkModel.countDocuments({ ...base, status: { $in: ['assigned', 'in-progress'] } }),
+            WorkModel.countDocuments({ ...base, status: 'completed' }),
+            WorkModel.countDocuments({ ...base, status: 'pending' }),
+            WorkModel.countDocuments({ ...base, status: 'cancelled' }),
+        ]);
+
+        return { all, active, completed, pending, cancelled };
+    }
+
+    async getLiveWorksByUserId(
+        userId: string,
+        options: LiveWorksQueryOptions
+    ): Promise<{ works: Work[]; total: number }> {
+        const { page, limit, bucket } = options;
+        const skip = (page - 1) * limit;
+
+        const query: FilterQuery<WorkTocument> = {
+            userId,
+            status: { $in: ['assigned', 'in-progress'] },
+        };
+
+        switch (bucket) {
+            case 'assigned':
+                query.progress = { $exists: false };
+                break;
+            case 'started':
+                query.progress = 'started';
+                break;
+            case 'ongoing':
+                query.progress = 'ongoing';
+                break;
+            case 'all':
+            default:
+                break;
+        }
+
+        const [works, total] = await Promise.all([
+            WorkModel.find(query).sort({ updatedAt: -1 }).skip(skip).limit(limit),
+            WorkModel.countDocuments(query),
+        ]);
+
+        return { works: works.map((w) => this.mapToEntity(w)), total };
+    }
+
+    async countLiveWorkBuckets(userId: string): Promise<LiveWorkBucketCounts> {
+        const base: FilterQuery<WorkTocument> = {
+            userId,
+            status: { $in: ['assigned', 'in-progress'] },
+        };
+
+        const [all, assigned, started, ongoing] = await Promise.all([
+            WorkModel.countDocuments(base),
+            WorkModel.countDocuments({ ...base, progress: { $exists: false } }),
+            WorkModel.countDocuments({ ...base, progress: 'started' }),
+            WorkModel.countDocuments({ ...base, progress: 'ongoing' }),
+        ]);
+
+        return { all, assigned, started, ongoing };
     }
 
     async findByWorkerId(

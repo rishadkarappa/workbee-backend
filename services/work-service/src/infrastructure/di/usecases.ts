@@ -63,6 +63,8 @@ import { GetAllDisputesUseCase } from "../../application/use-case/dispute/GetAll
 import { GetDisputeByIdUseCase } from "../../application/use-case/dispute/GetDisputeByIdUseCase";
 import { ApplyDisputeActionUseCase } from "../../application/use-case/dispute/ApplyDisputeActionUseCase";
 import { UserDisputeActionClient } from "../message-bus/UserDisputeActionClient";
+import { GetLiveWorksUseCase } from "../../application/use-case/user/GetLiveWorksUseCase";
+import { IGetLiveWorksUseCase } from "../../application/ports/user/IGetLiveWorksUseCase";
 
 // register worker usecase
 container.registerSingleton<IApplyWorkerUseCase>("ApplyWorkerUseCase", ApplyWorkerUseCase);
@@ -70,6 +72,7 @@ container.registerSingleton<IGetAllWorkersUseCase>("GetAllWorkersUseCase", GetAl
 container.registerSingleton<IGetNewAppliersUseCase>("GetNewAppliersUseCase", GetNewAppliersUseCase);
 container.registerSingleton<IWorkerApproveUseCase>("WorkerApproveUseCase", WorkerApproveUseCase);
 container.registerSingleton<IBlockWorkerUseCase>("BlockWorkerUseCase", BlockWorkerUseCase);
+container.registerSingleton<IGetLiveWorksUseCase>("GetLiveWorksUseCase", GetLiveWorksUseCase);
 
 container.registerSingleton<IGetWorkerProfileUseCase>("GetWorkerProfileUseCase", GetWorkerProfileUseCase);
 container.registerSingleton<IGetWorkerProfileBatchUseCase>("GetWorkerProfilesBatchUseCase", GetWorkerProfilesBatchUseCase);
