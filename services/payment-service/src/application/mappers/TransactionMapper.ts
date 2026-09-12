@@ -15,15 +15,22 @@ export class TransactionMapper {
     };
   }
 
-  // Worker/user-facing list: strips internal audit rows (platform_fee)
-  // that exist in the DB for admin reporting but should never surface
-  // in a non-admin wallet view. Admin gets the unfiltered list.
+  static toDTOList(transactions: Transaction[]): TransactionDTO[] {
+    return transactions.map(this.toDTO);
+  }
 
-  static toRoleFilteredList(transactions: Transaction[], role: string): TransactionDTO[] {
-    const visible = role === "admin"
-      ? transactions
-      : transactions.filter(tx => tx.type !== "platform_fee");
-
-    return visible.map(this.toDTO);
+  /**
+   * Types a given role should never see. Used to build the DB query
+   * (WHERE type NOT IN (...)) so pagination totals stay accurate —
+   * never apply this as a post-fetch filter.
+   */
+  
+  static getExcludedTypesForRole(role: string): string[] {
+    switch (role) {
+      case "worker":
+        return ["platform_fee"];
+      default:
+        return [];
+    }
   }
 }

@@ -14,14 +14,27 @@ export interface TransactionDTO {
 export interface GetWalletRequestDTO {
   ownerId: string;
   role: string;
+  page?: number;
+  limit?: number;
+  status?: string; 
+  startDate?: string; 
+  endDate?: string;
+}
+
+export interface PaginationDTO {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 export interface WalletResponseDTO {
   id: string;
-  role: UserRole
+  role: UserRole;
   balance: number;
   pendingBalance: number;
   totalEarned: number;
   totalSpent: number;
   transactions: TransactionDTO[];
+  pagination: PaginationDTO;
 }

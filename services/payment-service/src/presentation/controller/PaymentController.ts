@@ -167,6 +167,7 @@ export class PaymentController implements IPaymentController {
     }
   }
 
+
   async getWallet(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.headers["x-user-id"] as string;
@@ -179,7 +180,17 @@ export class PaymentController implements IPaymentController {
         return;
       }
 
-      const data = await this._getWalletUseCase.execute({ ownerId: userId, role: userRole, });
+      const { page, limit, status, startDate, endDate } = req.query;
+
+      const data = await this._getWalletUseCase.execute({
+        ownerId: userId,
+        role: userRole,
+        page: page ? Number(page) : undefined,
+        limit: limit ? Number(limit) : undefined,
+        status: status ? String(status) : undefined,
+        startDate: startDate ? String(startDate) : undefined,
+        endDate: endDate ? String(endDate) : undefined,
+      });
 
       res
         .status(HttpStatusCode.OK)

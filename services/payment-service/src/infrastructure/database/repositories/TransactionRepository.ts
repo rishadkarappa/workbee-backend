@@ -1,7 +1,8 @@
 import { injectable } from "tsyringe";
 import { getPrisma } from "../../config/prisma";
-import { ITransactionRepository } from "../../../domain/repositories/ITransactionRepository";
+import { ITransactionRepository, PaginatedTransactions, TransactionQueryOptions } from "../../../domain/repositories/ITransactionRepository";
 import { Transaction, TransactionStatus, TransactionType } from "../../../domain/entities/Transaction";
+import { Prisma } from "../../../generated/prisma/client";
 
 @injectable()
 export class TransactionRepository implements ITransactionRepository {
@@ -50,13 +51,41 @@ export class TransactionRepository implements ITransactionRepository {
     return this.mapTx(row);
   }
 
-  async findByWalletId(walletId: string, limit = 50): Promise<Transaction[]> {
-    const rows = await this.db.transaction.findMany({
-      where: { walletId },
-      orderBy: { createdAt: "desc" },
-      take: limit,
-    });
-    return rows.map((r) => this.mapTx(r));
+  async findByWalletId(walletId: string,options: TransactionQueryOptions): Promise<PaginatedTransactions> {
+    const { page, limit, status, startDate, endDate, excludeTypes } = options;
+
+    const where: Prisma.TransactionWhereInput = {
+      walletId,
+      ...(status && status !== "all" ? { status: status as any } : {}),
+      ...(excludeTypes && excludeTypes.length > 0
+        ? { type: { notIn: excludeTypes as any } }
+        : {}),
+      ...(startDate || endDate
+        ? {
+          createdAt: {
+            ...(startDate ? { gte: startDate } : {}),
+            ...(endDate ? { lte: endDate } : {}),
+          },
+        }
+        : {}),
+    };
+
+    const skip = (page - 1) * limit;
+
+    const [rows, total] = await Promise.all([
+      this.db.transaction.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      this.db.transaction.count({ where }),
+    ]);
+
+    return {
+      transactions: rows.map((r) => this.mapTx(r)),
+      total,
+    };
   }
 
   async findByWorkId(workId: string): Promise<Transaction[]> {

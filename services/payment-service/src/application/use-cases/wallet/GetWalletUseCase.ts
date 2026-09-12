@@ -4,27 +4,41 @@ import { ITransactionRepository } from "../../../domain/repositories/ITransactio
 import { IGetWalletUseCase } from "../../ports/wallet/IGetWalletUseCase";
 import { GetWalletRequestDTO, WalletResponseDTO } from "../../dtos/wallet/TransactionDTO";
 import { WalletMapper } from "../../mappers/WalletMapper";
+import { TransactionMapper } from "../../mappers/TransactionMapper";
+
+const DEFAULT_LIMIT = 5;
 
 @injectable()
 export class GetWalletUseCase implements IGetWalletUseCase {
   constructor(
     @inject("WalletRepository") private walletRepo: IWalletRepository,
     @inject("TransactionRepository") private txRepo: ITransactionRepository
-  ) { }
-
+  ) {}
 
   async execute(data: GetWalletRequestDTO): Promise<WalletResponseDTO> {
+    const wallet = await this.walletRepo.findOrCreate(data.ownerId, data.role);
 
-    // console.log(data);
+    const page = data.page && data.page > 0 ? data.page : 1;
+    const limit = data.limit && data.limit > 0 ? data.limit : DEFAULT_LIMIT;
 
-    const wallet = await this.walletRepo.findOrCreate(data.ownerId,data.role);
+    const excludeTypes = TransactionMapper.getExcludedTypesForRole(data.role);
 
-    // console.log(wallet);
+    const { transactions, total } = await this.txRepo.findByWalletId(wallet.id, {
+      page,
+      limit,
+      status: data.status && data.status !== "all" ? data.status : undefined,
+      startDate: data.startDate ? new Date(data.startDate) : undefined,
+      endDate: data.endDate ? new Date(data.endDate) : undefined,
+      excludeTypes,
+    });
 
-    const transactions = await this.txRepo.findByWalletId(wallet.id);
+    const pagination = {
+      page,
+      limit,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+    };
 
-    // console.log(transactions);
-
-    return WalletMapper.toResponseDTO(wallet, transactions);
+    return WalletMapper.toResponseDTO(wallet, transactions, pagination);
   }
 }
