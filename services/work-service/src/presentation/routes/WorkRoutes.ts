@@ -33,6 +33,7 @@ router.get("/worker/profile", workController.getWorkerProfileSettings.bind(workC
 router.get("/worker/profile-image/upload-signature", workController.getWorkerProfileImageUploadSignature.bind(workController));
 router.patch("/worker/profile-image", workController.updateWorkerProfileImage.bind(workController));
 router.patch("/worker/profile", workController.updateWorkerProfile.bind(workController));
+
 //worker dash
 router.get('/worker/dashboard-stats', workController.getWorkerDashboardStats.bind(workController));
 
