@@ -14,7 +14,7 @@ export interface WorkerProfileResponseDTO {
     email: string;
     phone: string;
     location: string;
-    workType: string;
+    workTypes: string[];
     preferredWorks: string[];
     bio?: string;
     workerProfileImage?: string;

@@ -4,10 +4,11 @@ export interface ApplyWorkerDto {
     phone: string;
     password: string;
     location: string;
-    workType: string;
+    workTypes: string[];            
     preferredWorks: string[];
     confirmations: {
         reliable: boolean;
+        experienced: boolean; 
         honest: boolean;
         termsAccepted: boolean;
     };
@@ -20,10 +21,11 @@ export interface WorkerResponseDto {
     phone: string;
     password: string; 
     location: string;
-    workType: string;
+    workTypes: string[];   
     preferredWorks: string[];
     confirmations: {
         reliable: boolean;
+        experienced: boolean;  
         honest: boolean;
         termsAccepted: boolean;
     };

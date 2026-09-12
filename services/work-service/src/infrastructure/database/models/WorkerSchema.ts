@@ -14,10 +14,11 @@ export interface WorkerDocument extends Document {
   password: string;
   bio?: string;
   location: string;
-  workType: string;
+  workTypes: string[];          
   preferredWorks: string[];
   confirmations: {
     reliable: boolean;
+    experienced: boolean; 
     honest: boolean;
     termsAccepted: boolean;
   };
@@ -35,17 +36,33 @@ export interface WorkerDocument extends Document {
   updatedAt: Date;
 }
 
+
 const WorkerSchema = new Schema<WorkerDocument>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true },
   password: { type: String, required: true },
   location: { type: String, required: true },
-  workType: { type: String, required: true },
+  workTypes: {
+    type: [String],
+    required: true,
+    validate: {
+      validator: (v: string[]) => Array.isArray(v) && v.length > 0,
+      message: "At least one work type is required",
+    },
+  },
   bio: { type: String, required: false },
-  preferredWorks: { type: [String], required: true },
+  preferredWorks: {
+    type: [String],
+    required: true,
+    validate: {
+      validator: (v: string[]) => Array.isArray(v) && v.length > 0,
+      message: "At least one preferred work is required",
+    },
+  },
   confirmations: {
     reliable: { type: Boolean, required: true },
+    experienced: { type: Boolean, required: true },
     honest: { type: Boolean, required: true },
     termsAccepted: { type: Boolean, required: true },
   },
@@ -53,17 +70,8 @@ const WorkerSchema = new Schema<WorkerDocument>({
   isBlacklisted: { type: Boolean, default: false },
   blacklistReason: { type: String, required: false },
   blacklistedAt: { type: Date, required: false },
-  workerProfileImage: {
-    type: String,
-    required: false
-  },
-
-  workerProfileImagePublicId: {
-    type: String,
-    required: false
-  },
-
-
+  workerProfileImage: { type: String, required: false },
+  workerProfileImagePublicId: { type: String, required: false },
   status: {
     type: String,
     enum: Object.values(WorkerStatus),

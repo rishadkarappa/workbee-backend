@@ -7,11 +7,12 @@ export interface Worker {
     phone: string;
     password: string;
     location: string;
-    workType: string;
+    workTypes: string[];
     preferredWorks: string[];
     bio?: string;
     confirmations: {
         reliable: boolean;
+        experienced: boolean;
         honest: boolean;
         termsAccepted: boolean;
     };

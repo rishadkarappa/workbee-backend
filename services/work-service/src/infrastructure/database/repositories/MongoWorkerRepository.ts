@@ -21,7 +21,7 @@ export class MongoWorkerRepository extends MongoBaseRepository<Worker, WorkerDoc
       password: worker.password,
       location: worker.location,
       bio: worker.bio,
-      workType: worker.workType,
+      workTypes: worker.workTypes, 
       preferredWorks: worker.preferredWorks,
       confirmations: worker.confirmations,
       status: worker.status,
