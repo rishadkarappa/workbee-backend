@@ -5,9 +5,11 @@ export interface IDisputeRepository {
   findById(id: string): Promise<Dispute | null>;
   findByUserId(userId: string): Promise<Dispute[]>;
   findByWorkerId(workerId: string): Promise<Dispute[]>;
+  
   findAll(filters: {
-    page: number; limit: number; status?: string; search?: string;
+    page: number; limit: number; status?: string; actionTarget?: 'all' | 'worker' | 'user'; search?: string;
   }): Promise<{ disputes: Dispute[]; total: number }>;
+
   addAction(id: string, action: DisputeAction, newStatus: DisputeStatus): Promise<Dispute | null>;
   countActionsForWorker(workerId: string): Promise<number>;
   countActionsForUser(userId: string): Promise<number>;

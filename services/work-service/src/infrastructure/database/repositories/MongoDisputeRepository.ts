@@ -48,17 +48,27 @@ export class MongoDisputeRepository implements IDisputeRepository {
     page: number;
     limit: number;
     status?: string;
+    actionTarget?: 'all' | 'worker' | 'user';
     search?: string;
   }): Promise<{ disputes: Dispute[]; total: number }> {
-    const { page, limit, status, search } = filters;
+    const { page, limit, status, actionTarget, search } = filters;
     const skip = (page - 1) * limit;
 
     const query: FilterQuery<DisputeDocument> = {};
-    if (status && status !== "all") query.status = status as DisputeStatus;
+
+    if (status && status !== 'all') {
+      query.status = status as DisputeStatus;
+    }
+
+    if (actionTarget && actionTarget !== 'all') {
+      const suffix = actionTarget === 'worker' ? '_worker' : '_user';
+      query.actions = { $elemMatch: { actionType: { $regex: new RegExp(`${suffix}$`) } } };
+    }
+
     if (search && search.trim()) {
       query.$or = [
-        { workTitle: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
+        { workTitle: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
       ];
     }
 

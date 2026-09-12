@@ -16,11 +16,13 @@ export interface ApplyDisputeActionDto {
   reason: string;
   adminId: string;
 }
+export type ActionTargetFilter = 'all' | 'worker' | 'user';
 
 export interface GetAllDisputesFilterDto {
   page: number;
   limit: number;
   status?: string;
+  actionTarget?: ActionTargetFilter; 
   search?: string;
 }
 

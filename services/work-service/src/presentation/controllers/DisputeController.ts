@@ -29,7 +29,7 @@ export class DisputeController implements IDisputeController {
     @inject("GetDisputeByIdUseCase") private readonly _getDisputeByIdUseCase: IGetDisputeByIdUseCase,
     @inject("ApplyDisputeActionUseCase") private readonly _applyDisputeActionUseCase: IApplyDisputeActionUseCase,
     @inject("CloudinaryService") private readonly _cloudinaryService: ICloudinaryService
-  ) {}
+  ) { }
 
   async getUploadSignature(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -105,17 +105,18 @@ export class DisputeController implements IDisputeController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const status = (req.query.status as string) || "all";
+      const actionTarget = ((req.query.actionTarget as string) || "all") as "all" | "worker" | "user";
       const search = (req.query.search as string) || "";
 
-      const filters: GetAllDisputesFilterDto = { page, limit, status, search };
+      const filters: GetAllDisputesFilterDto = { page, limit, status, actionTarget, search };
       const result = await this._getAllDisputesUseCase.execute(filters);
 
-      res.status(HttpStatus.OK).json(
-        ResponseHelper.success(
+      res
+        .status(HttpStatus.OK)
+        .json(ResponseHelper.success(
           { disputes: result.disputes, total: result.total, page, limit, totalPages: Math.ceil(result.total / limit) },
           ResponseMessage.DISPUTE.RETRIEVED
-        )
-      );
+        ));
     } catch (err) {
       next(err);
     }
